@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\user_information;
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\dti_id;
+use Illuminate\Support\Facades\Hash;
 
 class UserInformationController extends Controller
 {
@@ -12,7 +15,11 @@ class UserInformationController extends Controller
      */
     public function index()
     {
-        //
+        $users = User::with(['staff', 'information'])
+                ->where('role', '!=', 'admin') // Exclude admins
+                ->paginate(4);
+
+        return view('Auth.Admin.view.manage-user', compact('users'));
     }
 
     /**
@@ -28,8 +35,29 @@ class UserInformationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'id' => 'required|unique:staff_id', // assuming 'staff_id' column in users table
+            'email' => 'required|email|unique:users,email',
+            'office' => 'required',
+            'password' => 'required|min:6',
+        ]);
+
+        // Save user and link staff_id
+        $user = User::create([
+        'email' => $validated['email'],
+        'password' => Hash::make($validated['password']),
+        ]);
+
+        // Save to staff_id table
+        dti_id::create([
+            'staff_id' => $validated['id'],
+            'office' => $validated['office'],
+            'user_id' => $user->id,
+        ]);
+
+        return redirect()->back()->with('success', 'User added successfully!');
     }
+
 
     /**
      * Display the specified resource.

@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\jornals;
 use Illuminate\Http\Request;
+use App\Models\User;
 
-class JornalsController extends Controller
+class AdminDashboardController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $totalUsers = User::count();
+
+        return view('Auth.Admin.view.dashboard', compact('totalUsers'));
     }
 
     /**
@@ -34,7 +36,7 @@ class JornalsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(jornals $jornals)
+    public function show(string $id)
     {
         //
     }
@@ -42,7 +44,7 @@ class JornalsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(jornals $jornals)
+    public function edit(string $id)
     {
         //
     }
@@ -50,7 +52,7 @@ class JornalsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, jornals $jornals)
+    public function update(Request $request, string $id)
     {
         //
     }
@@ -58,7 +60,7 @@ class JornalsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(jornals $jornals)
+    public function destroy(string $id)
     {
         //
     }
