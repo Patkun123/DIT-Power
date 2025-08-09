@@ -21,9 +21,8 @@ class AdminRole
             if (Auth::user()->role === $role) {
                 return $next($request);
             }
-
             // User is authenticated but does not have the required role
-            return redirect()->route('index');
+            return redirect()->route('home');
         }
 
         // User is not authenticated

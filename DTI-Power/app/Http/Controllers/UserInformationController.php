@@ -36,7 +36,7 @@ class UserInformationController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'id' => 'required|unique:staff_id', // assuming 'staff_id' column in users table
+            'id' => 'required|unique:dti_id',
             'email' => 'required|email|unique:users,email',
             'office' => 'required',
             'password' => 'required|min:6',

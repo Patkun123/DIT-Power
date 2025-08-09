@@ -1,24 +1,43 @@
 <?php
 
+use App\Http\Controllers\JournalsController;
+use App\Http\Controllers\NutritionController;
+use App\Http\Controllers\UserInformationController;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 })->name('home');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+Route::middleware(['auth', 'is_admin:admin'])->group(function () {
+    Route::view('Dashboard', 'Auth.Admin.view.dashboard')->name('dashboard');
 
-Route::middleware(['auth'])->group(function () {
+    //user managements
+    Route::get('/Manage-users', [UserInformationController::class, 'index'])->name('manage.user');
+    Route::post('/Manage-users', [UserInformationController::class, 'store'])->name('users.store');
+
+
+    //Quiz
+    Route::view('ManageQuiz', 'Auth.Admin.view.managequiz')->name('managequiz');
+});
+
+Route::middleware(['auth','check_profile'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
+
+    Route::view('/index','Auth.Users.view.index')->name('index');
+
+    Route::get('Journal', [JournalsController::class, 'index'])->name('journal');
+    Route::post('Journal', [JournalsController::class, 'store'])->name('journal.store');
+
+    Route::get('Nutrition', [NutritionController::class, 'index'])->name('nutrition');
+
 });
 
 require __DIR__.'/auth.php';

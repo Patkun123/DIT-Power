@@ -1,10 +1,7 @@
-import "../../node_modules/flowbite/dist/flowbite.min.js";
 
-
-//line graph
 const options = {
   chart: {
-    height: "70%",
+    height: "100%",
     maxWidth: "100%",
     type: "area",
     fontFamily: "Inter, sans-serif",

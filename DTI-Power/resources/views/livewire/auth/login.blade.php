@@ -1,52 +1,70 @@
-<div class="flex flex-col gap-6">
-    <x-auth-header :title="__('Log in to your account')" :description="__('Enter your email and password below to log in')" />
+<div class="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+                <div class="absolute inset-0 z-0 bg-cover bg-center opacity-30"
+                style="background-image: url('{{ asset('images/pic/6.jpg') }}');">
+            </div>
+    <div class="relative w-full max-w-5xl p-4">
+        <div class="relative flex bg-white rounded-xl shadow-md dark:shadow-gray-500 dark:bg-gray-800 h-[600px]">
+            <div class="w-full md:w-1/2 p-6 flex items-center justify-center">
 
-    <!-- Session Status -->
-    <x-auth-session-status class="text-center" :status="session('status')" />
+                <form wire:submit="login" class="w-full max-w-sm space-y-6">
+                    @csrf
+                    <div class="space-y-1">
+                        <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white text-center space-y-2">Welcome Back</h1>
+                    <p class="text-sam text-gray-400 text-center">Sign in to continue to your wellness journey</p>
+                    </div>
 
-    <form wire:submit="login" class="flex flex-col gap-6">
-        <!-- Email Address -->
-        <flux:input
-            wire:model="email"
-            :label="__('Email address')"
-            type="email"
-            required
-            autofocus
-            autocomplete="email"
-            placeholder="email@example.com"
-        />
 
-        <!-- Password -->
-        <div class="relative">
-            <flux:input
-                wire:model="password"
-                :label="__('Password')"
-                type="password"
-                required
-                autocomplete="current-password"
-                :placeholder="__('Password')"
-                viewable
-            />
+                    <!-- Email Input -->
+                    <div>
+                        <flux:input
+                            wire:model="email"
+                            :label="__('Email address')"
+                            type="email"
+                            required
+                            autofocus
+                            autocomplete="email"
+                            placeholder="email@example.com"
+                        />
+                    </div>
 
-            @if (Route::has('password.request'))
-                <flux:link class="absolute end-0 top-0 text-sm" :href="route('password.request')" wire:navigate>
-                    {{ __('Forgot your password?') }}
-                </flux:link>
-            @endif
+                    <!-- Password Input -->
+                    <div>
+                        <flux:input
+                            wire:model="password"
+                            :label="__('Password')"
+                            type="password"
+                            required
+                            autocomplete="current-password"
+                            :placeholder="__('Password')"
+                            viewable
+                        />
+                    </div>
+
+                    <!-- Remember Me and Forgot -->
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center space-x-2">
+                            <flux:checkbox wire:model="remember" :label="__('Remember me')" />
+                        </label>
+                        <a href="{{ route(name: 'password.request') }}" class="text-sm text-blue-600 hover:underline dark:text-blue-400">Forgot password?</a>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="flex items-center justify-end">
+                        <flux:button variant="primary" color="lime" type="submit" class="w-full">{{ __('Log in') }}</flux:button>
+                    </div>
+                </form>
+
+            </div>
+            <div class="w-1/2 hidden md:block relative shadow-4xl bg-black shadow-gray-300 rounded-r-lg overflow-hidden">
+                <img src="/images/pic/12.jpg" alt="Wellness"
+                    class="object-cover opacity-40 w-full h-full">
+
+                <!-- Bottom Text -->
+                <div class="absolute bottom-10 left-0 w-full bg-opacity-50 text-white text-center p-4">
+                    <h1 class="text-4xl font-extrabold">Your Wellness Journey<br />Starts Here</h1><br>
+                    <p class="text-sm">Join our community and take the first step towards a healthier <br> lifestyle</p>
+                </div>
+            </div>
         </div>
-
-        <!-- Remember Me -->
-        <flux:checkbox wire:model="remember" :label="__('Remember me')" />
-
-        <div class="flex items-center justify-end">
-            <flux:button variant="primary" type="submit" class="w-full">{{ __('Log in') }}</flux:button>
-        </div>
-    </form>
-
-    @if (Route::has('register'))
-        <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-600 dark:text-zinc-400">
-            <span>{{ __('Don\'t have an account?') }}</span>
-            <flux:link :href="route('register')" wire:navigate>{{ __('Sign up') }}</flux:link>
-        </div>
-    @endif
+    </div>
 </div>

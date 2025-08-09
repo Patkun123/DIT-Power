@@ -1,12 +1,17 @@
 @import 'tailwindcss';
 @import '../../vendor/livewire/flux/dist/flux.css';
+@import "flowbite/src/themes/default";
+@plugin "flowbite/plugin";
 
+@source "../node_modules/flowbite";
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
 @source '../../vendor/livewire/flux/stubs/**/*.blade.php';
 
+
 @custom-variant dark (&:where(.dark, .dark *));
+
 
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
@@ -22,6 +27,18 @@
     --color-zinc-800: #262626;
     --color-zinc-900: #171717;
     --color-zinc-950: #0a0a0a;
+
+    --color-primary-50: #f7fee7;
+    --color-primary-100: #ecfcca;
+    --color-primary-200: #d8f999;
+    --color-primary-300: #bbf451;
+    --color-primary-400: #9ae600;
+    --color-primary-500: #7ccf00;
+    --color-primary-600: #5ea500;
+    --color-primary-700: #497d00;
+    --color-primary-800: #3d6300;
+    --color-primary-900: #35530e;
+    --color-primary-950: #172554;
 
     --color-accent: var(--color-neutral-800);
     --color-accent-content: var(--color-neutral-800);
