@@ -19,9 +19,11 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'firstname',
+        'lastname',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -57,5 +59,15 @@ class User extends Authenticatable
             ->take(2)
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
+    }
+
+    public function staff()
+    {
+        return $this->hasOne(dti_Id::class, 'user_id', 'id');
+    }
+
+    public function information()
+    {
+        return $this->hasOne(user_information::class);
     }
 }
