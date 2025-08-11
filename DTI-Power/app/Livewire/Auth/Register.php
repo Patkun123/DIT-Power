@@ -92,7 +92,7 @@ class Register extends Component
 
     event(new Registered($user));
 
-    $this->redirect(route('dashboard', absolute: false), navigate: true);
+    $this->redirect(route('index', absolute: false), navigate: true);
 }
 
     protected function validateCurrentStep(): void

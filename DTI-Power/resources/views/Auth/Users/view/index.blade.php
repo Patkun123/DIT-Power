@@ -7,17 +7,17 @@
     {{-- TOP QUIZ PERFORMERS & WELLNESS STATS --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Top Quiz Performers -->
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+        <div class="bg-white h-100 dark:bg-gray-800 p-6 rounded-xl shadow">
             <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center justify-between">
                 Top Quiz Performers
                 <svg class="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 15l-5.878 3.09L5.64 12.18.782 8.91l6.74-.979L10 2.5l2.478 5.43 6.74.98-4.857 3.268 1.518 5.91z" />
                 </svg>
             </h2>
-            <div class="flex flex-col items-center gap-6 sm:flex-row sm:justify-around sm:items-end">
+            <div class="flex flex-row items-center gap-4 sm:gap-0 sm:justify-around">
                 <!-- 2nd -->
-                <div class="text-center">
-                    <div class="bg-gray-200 w-16 h-16 rounded-full mx-auto mb-2 flex items-center justify-center">
+                <div class="text-center bg-gray-100 h-60 mt-10 w-35 rounded-2xl">
+                    <div class="bg-gray-200 w-16 h-16 mt-5 rounded-full mx-auto mb-2 flex items-center justify-center">
                         <span class="text-lg font-bold">2</span>
                     </div>
                     <div class="font-semibold">Neil Morala</div>
@@ -25,8 +25,8 @@
                     <div class="text-lg font-bold mt-1">82 pts</div>
                 </div>
                 <!-- 1st -->
-                <div class="text-center transform -translate-y-6">
-                    <div class="bg-yellow-400 w-20 h-20 rounded-full mx-auto mb-2 flex items-center justify-center">
+                <div class="text-center bg-yellow-500 h-60 w-35 rounded-2xl">
+                    <div class="bg-yellow-400 w-16 h-16 mt-5 rounded-full mx-auto mb-2 flex items-center justify-center">
                         <span class="text-lg font-bold">1</span>
                     </div>
                     <div class="font-semibold">Hazel E. Hautea</div>
@@ -34,8 +34,8 @@
                     <div class="text-lg font-bold mt-1">95 pts</div>
                 </div>
                 <!-- 3rd -->
-                <div class="text-center">
-                    <div class="bg-gray-300 w-16 h-16 rounded-full mx-auto mb-2 flex items-center justify-center">
+                <div class="text-center bg-orange-500 h-60 mt-10 w-35 rounded-2xl">
+                    <div class="bg-gray-200 w-16 h-16 mt-5 rounded-full mx-auto mb-2 flex items-center justify-center">
                         <span class="text-lg font-bold">3</span>
                     </div>
                     <div class="font-semibold">Jinnard Lubaton</div>
@@ -43,9 +43,9 @@
                     <div class="text-lg font-bold mt-1">78 pts</div>
                 </div>
             </div>
-            <div class="text-center mt-6">
+            {{-- <div class="text-center mt-3">
                 <a href="#" class="px-6 py-2 bg-emerald-500 text-white rounded-full hover:bg-emerald-600 transition">Start Quiz</a>
-            </div>
+            </div> --}}
         </div>
 
         <!-- Wellness Stats -->

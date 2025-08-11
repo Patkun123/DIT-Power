@@ -7,33 +7,38 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Profile extends Component
 {
-    public string $name = '';
+    use WithFileUploads;
 
+    public string $firstname = '';
+    public string $lastname = '';
     public string $email = '';
+    public string $bio = '';
+    public $profileImage; // For uploads
 
-    /**
-     * Mount the component.
-     */
     public function mount(): void
     {
-        $this->name = Auth::user()->name;
-        $this->email = Auth::user()->email;
+        $user = Auth::user();
+        $this->firstname = $user->firstname;
+        $this->lastname = $user->lastname;
+        $this->email = $user->email;
+        $this->bio = $user->bio ?? '';
+        $this->profileImage = $user->profileimage;
     }
 
-    /**
-     * Update the profile information for the currently authenticated user.
-     */
     public function updateProfileInformation(): void
     {
         $user = Auth::user();
 
         $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-
-            'email' => [
+            'firstname'    => ['nullable', 'string', 'max:255'],
+            'lastname'     => ['nullable', 'string', 'max:255'],
+            'bio'          => ['nullable', 'string', 'max:500'],
+            'profileImage' => ['nullable', 'image', 'max:10000'], // ✅ fixed name + type
+            'email'        => [
                 'required',
                 'string',
                 'lowercase',
@@ -43,6 +48,11 @@ class Profile extends Component
             ],
         ]);
 
+        // Handle image upload if present
+        if ($this->profileImage) {
+            $validated['profileimage'] = $this->profileImage->store('profile', 'public');
+        }
+
         $user->fill($validated);
 
         if ($user->isDirty('email')) {
@@ -51,24 +61,19 @@ class Profile extends Component
 
         $user->save();
 
-        $this->dispatch('profile-updated', name: $user->name);
+        $this->dispatch('profile-updated', name: $user->firstname);
     }
 
-    /**
-     * Send an email verification notification to the current user.
-     */
     public function resendVerificationNotification(): void
     {
         $user = Auth::user();
 
         if ($user->hasVerifiedEmail()) {
             $this->redirectIntended(default: route('dashboard', absolute: false));
-
             return;
         }
 
         $user->sendEmailVerificationNotification();
-
         Session::flash('status', 'verification-link-sent');
     }
 }

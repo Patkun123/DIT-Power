@@ -37,12 +37,12 @@
                     </h1>
                     <p class="mb-8 leading-relaxed xl:text-lg dark:text-gray-400">Empowering Wellness, Anytime, Anywhere.</p>
                     <div class="flex justify-center">
-                        <button class="group cursor-pointer relative inline-flex items-center px-6 py-2 text-lg bg-primary-500 hover:bg-gray-100 hover:ring-2 dark:hover:ring-2 hover:text-primary-500 dark:hover:bg-gray-800 hover:ring-primary-400 text-white rounded border-0 transition-all duration-300 hover:-translate-y-1 focus:outline-none">
+                        <a href="{{route('login')}}" class="group cursor-pointer relative inline-flex items-center px-6 py-2 text-lg bg-primary-500 hover:bg-gray-100 hover:ring-2 dark:hover:ring-2 hover:text-primary-500 dark:hover:bg-gray-800 hover:ring-primary-400 text-white rounded border-0 transition-all duration-300 hover:-translate-y-1 focus:outline-none">
                         <span class="relative inline-block">
-                            Our Services
+                            Get Started
                             <span class="absolute left-0 -bottom-0.5 w-0 h-0.5 dark:bg-primary-400 bg-primary-500 transition-all duration-300 group-hover:w-full"></span>
                         </span>
-                        </button>
+                        </a>
                         <button class="group relative inline-flex items-center px-6 hover:text-primary-500 py-2 ml-4 text-lg dark:text-gray-100 text-gray-800 rounded border-0 transition-all duration-300 hover:-translate-x-1 cursor-pointer">
                         <span class="relative inline-block  ">
                             Learn More

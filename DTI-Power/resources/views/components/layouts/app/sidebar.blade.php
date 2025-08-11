@@ -3,10 +3,8 @@
     <head>
         @include('partials.head')
     </head>
-    <body class="bg-white dark:bg-zinc-800">
-
+    <body class="bg-white dark:bg-gray-800">
         {{ $slot }}
-
         @fluxScripts
     </body>
 </html>

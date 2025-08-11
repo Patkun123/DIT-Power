@@ -1,7 +1,4 @@
 <div class="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-                <div class="absolute inset-0 z-0 bg-cover bg-center opacity-30"
-                style="background-image: url('{{ asset('images/pic/6.jpg') }}');">
-            </div>
     <div class="relative w-full max-w-5xl p-4">
         <div class="relative flex bg-white rounded-xl shadow-md dark:shadow-gray-500 dark:bg-gray-800 h-[600px]">
             <div class="w-full md:w-1/2 p-6 flex items-center justify-center">

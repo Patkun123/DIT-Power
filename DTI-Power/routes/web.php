@@ -10,7 +10,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('home');
-})->name('home');
+})->middleware([
+    'guest',        // Laravel's built-in authentication check
+    'check_profile' // Your custom middleware to check if the user profile is complete
+])->name('home');
+
 
 Route::middleware(['auth', 'is_admin:admin'])->group(function () {
     Route::view('Dashboard', 'Auth.Admin.view.dashboard')->name('dashboard');
