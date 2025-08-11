@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\JournalsController;
 use App\Http\Controllers\NutritionController;
+use App\Http\Controllers\QuizController;
 use App\Http\Controllers\UserInformationController;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
@@ -41,6 +42,7 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::post('Journal', [JournalsController::class, 'store'])->name('journal.store');
 
     Route::get('Nutrition', [NutritionController::class, 'index'])->name('nutrition');
+    Route::get('quiz', [QuizController::class, 'index'])->name('quiz');
 
 });
 
