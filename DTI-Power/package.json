@@ -3,7 +3,7 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite --host 0.0.0.0 --port 5173"
+        "dev": "vite"
     },
     "dependencies": {
         "@tailwindcss/vite": "^4.1.11",
