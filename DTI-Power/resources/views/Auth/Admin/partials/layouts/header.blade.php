@@ -44,8 +44,6 @@
                 <flux:navlist.item :href="route('manage.user')" :current="request()->routeIs('manage.user')" wire:navigate>{{ __('Manage User') }}</flux:navlist.item>
                 <flux:navlist.item :href="route('article')" :current="request()->routeIs('article')" wire:navigate>{{ __('News Article') }}</flux:navlist.item>
             </flux:navlist.group>
-            <flux:navlist.item icon="calendar" href="#">Calendar</flux:navlist.item>
-            <flux:navlist.item icon="document-text" href="#">Manage User</flux:navlist.item>
         </flux:navlist>
         </ul>
       </div>
