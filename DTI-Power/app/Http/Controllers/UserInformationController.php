@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\dti_id;
 use Illuminate\Support\Facades\Hash;
+use SweetAlert2\Laravel\Swal;
 
 class UserInformationController extends Controller
 {
@@ -35,28 +36,46 @@ class UserInformationController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'id' => 'required|unique:dti_id',
-            'email' => 'required|email|unique:users,email',
-            'office' => 'required',
-            'password' => 'required|min:6',
-        ]);
+        try {
+            $validated = $request->validate([
+                'email' => 'required|email|unique:users,email',
+                'office' => 'required',
+                'password' => 'required|min:6',
+            ]);
 
-        // Save user and link staff_id
-        $user = User::create([
-        'email' => $validated['email'],
-        'password' => Hash::make($validated['password']),
-        ]);
+            // Save user and link staff_id
+            $user = User::create([
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+            ]);
 
-        // Save to staff_id table
-        dti_id::create([
-            'staff_id' => $validated['id'],
-            'office' => $validated['office'],
-            'user_id' => $user->id,
-        ]);
+            // Save to staff_id table
+            dti_id::create([
+                'office' => $validated['office'],
+                'user_id' => $user->id,
+            ]);
 
-        return redirect()->back()->with('success', 'User added successfully!');
+            Swal::toastSuccess([
+                'title' => 'User created successfully!',
+                'position' => 'top-end',
+                'showConfirmButton' => false,
+                'timer' => 3000,
+            ]);
+
+            return redirect()->back()->with('success', 'User added successfully!');
+        } catch (\Exception $e) {
+
+            Swal::toastError([
+                'title' => 'An error occurred while creating the user!',
+                'position' => 'top-end',
+                'showConfirmButton' => false,
+                'timer' => 3000,
+            ]);
+
+            return redirect()->back()->with('error', 'Failed to add user. Please try again.');
+        }
     }
+
 
 
     /**

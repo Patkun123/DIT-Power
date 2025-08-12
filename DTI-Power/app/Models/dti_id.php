@@ -11,5 +11,7 @@ class dti_id extends Model
         'staff_id',
         'office',
         'user_id',
+        'department',
+        'posiotion',
     ];
 }

@@ -12,7 +12,7 @@
     <!-- hidden input so mood is included in form submission -->
     <input type="hidden" name="feeling" value="{{ $selectedMood }}">
 
-    <div class="flex items-center space-x-6">
+    <div class="flex items-center space-x-2.5 sm:space-x-6">
         @foreach ($moods as $mood)
             <button
                 type="button"

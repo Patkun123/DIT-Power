@@ -27,7 +27,7 @@
 
 
     </head>
-<body class="bg-gray-50 dark:bg-gray-900 min-h-screen w-fullw">
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen w-full">
         @include('partials.header')
         <section class="text-gray-600 body-font w-full overflow-x-auto">
             <div class="container mx-auto my-5 flex px-auto md:px-5 lg:px-25 overflow-auto py-25 md:flex-row flex-col items-center ">

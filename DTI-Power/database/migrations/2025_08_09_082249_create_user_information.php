@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->string('phone_number')->nullable();
             $table->string('gender')->nullable();
-            $table->date('birthday')->nullable(); // 🎉 Added birthday field
+            $table->date('birthday')->nullable();
             $table->string('height')->nullable();
             $table->string('weight')->nullable();
             $table->string('activity_level')->nullable();

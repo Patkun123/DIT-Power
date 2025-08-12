@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('dti_id', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('staff_id')->unique();
+            $table->foreignId('staff_id')->unique()->nullable();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('office');
+            $table->string('office')->nullable();
+            $table->string('department')->nullable();
+            $table->string('position')->nullable();
             $table->timestamps();
         });
     }

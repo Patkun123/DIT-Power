@@ -72,4 +72,8 @@ class User extends Authenticatable
     {
         return $this->hasOne(user_information::class);
     }
+    public function journals()
+    {
+        return $this->hasMany(journals::class);
+    }
 }

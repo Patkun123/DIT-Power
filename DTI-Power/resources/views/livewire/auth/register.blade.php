@@ -1,7 +1,7 @@
-<div class="flex flex-col md:flex-row min-h-screen bg-gray-900 text-white">
+<div class="flex flex-col md:flex-row min-h-screen bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-white">
     <!-- Left Sidebar -->
     <div class="w-full md:w-1/2 bg-blue-700 p-8  flex-col justify-center hidden md:flex lg:block">
-        <a href="#" class="text-white text-lg mb-4">&larr; Go back</a>
+        {{-- <a href="#" class="text-white text-lg mb-4">&larr; Go back</a>
             <h2 class="text-white text-xl font-semibold mb-2">Your selected plan</h2>
             <p class="text-blue-200 mb-4">30-day free trial</p>
             <ul class="text-sm space-y-2">
@@ -10,11 +10,11 @@
                 <li>✅ Team size: <span class="font-bold">1 developer</span></li>
                 <li>✅ Premium support: <span class="font-bold">6 months</span></li>
                 <li>✅ Free updates: <span class="font-bold">6 months</span></li>
-            </ul>
+            </ul> --}}
     </div>
 
     <!-- Right Form Section -->
-    <div class="w-full md:w-1/2 p-6 md:p-10 mt-15 md:mt-0 flex flex-col justify-center">
+    <div class="w-full md:w-1/2 p-6 md:p-10 sm:mt-15 md:mt-0 flex flex-col justify-center">
         <!-- Auth Header -->
         <x-auth-header
             :title="__('Fill up the Requirements')"
@@ -22,26 +22,40 @@
         />
 
         <!-- Step Progress Tracker -->
-        <div class="flex items-start space-x-4 mb-6 ml-5 md:ml-10 sm:ml-5 lg:ml-15 text-sm max-h-full font-normal">
-            @foreach ([1 => 'Account', 2 => 'Health Profile', 3 => 'Preferences', 4 => 'Password'] as $i => $label)
-                <div class="flex items-center space-x-2">
-                    <div class="w-8 h-8 flex items-center justify-center rounded-full font-bold
-                        @if($step === $i) bg-blue-500 text-white
-                        @elseif($step > $i) bg-blue-700 text-white
-                        @else bg-gray-600 text-gray-300
-                        @endif">
-                        {{ $i }}
-                    </div>
-                    <span class="@if($step === $i) text-white @else text-gray-400 @endif">{{ $label }}</span>
-                    @if($i < 4)
-                        <div class="w-6 h-px bg-gray-500 mx-2"></div>
+<ol class="grid grid-cols-2 sm:grid-cols-1 mt-8 ml-3 sm:mt-10 lg:grid-cols-4 gap-6 w-full">
+    @foreach ([1 => 'Account', 2 => 'Profile', 3 => 'Preferences', 4 => 'Password'] as $i => $label)
+        <li class="flex items-center space-x-2.5 rtl:space-x-reverse
+            @if($step === $i) text-primary-600 dark:text-primary-500
+            @elseif($step > $i) text-primary-700 dark:text-primary-400
+            @else text-gray-500 dark:text-gray-400 @endif">
+
+            {{-- Step Circle --}}
+            <span class="flex items-center justify-center w-8 h-8 rounded-full shrink-0 border
+                @if($step === $i) border-primary-600 text-primary-600 dark:border-primary-500 dark:text-primary-500
+                @elseif($step > $i) border-primary-700 text-primary-700 dark:border-primary-400 dark:text-primary-400
+                @else border-gray-500 text-gray-500 dark:border-gray-400 dark:text-gray-400 @endif">
+                {{ $i }}
+            </span>
+
+            {{-- Step Label --}}
+            <span>
+                <h3 class="font-medium leading-tight">{{ $label }}</h3>
+                <p class="text-sm">
+                    @if($i === 1) Start your account setup
+                    @elseif($i === 2) Complete your Health profile
+                    @elseif($i === 3) Choose your preferences
+                    @elseif($i === 4) Secure with a password
                     @endif
-                </div>
-            @endforeach
-        </div>
+                </p>
+            </span>
+        </li>
+    @endforeach
+</ol>
+
+
 
         <!-- Form Card -->
-        <div class="bg-gray-900 p-6 rounded-lg shadow space-y-10">
+        <div class="dark:bg-gray-900 bg-gray-100 p-6 rounded-lg shadow space-y-10">
             <x-auth-session-status class="text-center" :status="session('status')" />
 
             <form wire:submit.prevent="{{ $step === 4 ? 'register' : 'nextStep' }}" class="space-y-6">
@@ -49,7 +63,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <flux:input wire:model.defer="firstname" icon="user-circle" :label="__('First Name')" placeholder="First name" required />
                         <flux:input wire:model.defer="lastname" icon="user-circle" :label="__('Last Name')" placeholder="Last name" required />
-                        <flux:select wire:model="gender" placeholder="Select Gender" :label="_('Gender')">
+                        <flux:select wire:model.defer="gender" placeholder="Select Gender" :label="_('Gender')">
                             <flux:select.option>Male</flux:select.option>
                             <flux:select.option>Female</flux:select.option>
                         </flux:select>
@@ -112,6 +126,22 @@
 
                 @if ($step === 4)
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <flux:input
+                        type="number"
+                        wire:model.defer="staff_id"
+                        :label="__('DTI ID')"
+                        placeholder="Enter you DTI ID"
+                    />
+                    <flux:input wire:model.defer="position" icon="user-circle" :label="__('Position (Optional)')" placeholder="Enter your Position" required />
+                    <flux:input wire:model.defer="department" icon="user-circle" :label="__('Departmet (Optional)')" placeholder="Enter your Departmet" required />
+                    <flux:select wire:model.defer="office" :label="__('Choose Office')" placeholder="Choose Department...">
+                        <flux:select.option>General Santos City</flux:select.option>
+                        <flux:select.option>Sarangani Province</flux:select.option>
+                        <flux:select.option>South Cotabato</flux:select.option>
+                        <flux:select.option>Regional Office</flux:select.option>
+                        <flux:select.option>Sultan Kudarat</flux:select.option>
+                        <flux:select.option>Cotabato Province</flux:select.option>
+                    </flux:select>
                     <flux:input
                         type="password"
                         wire:model.defer="password"

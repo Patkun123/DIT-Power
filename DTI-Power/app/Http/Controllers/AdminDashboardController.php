@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Carbon\Carbon;
 
 class AdminDashboardController extends Controller
 {
@@ -14,8 +15,83 @@ class AdminDashboardController extends Controller
     {
         $totalUsers = User::count();
 
-        return view('Auth.Admin.view.dashboard', compact('totalUsers'));
+        // Generate last 7 days dates
+        $dates = collect();
+        for ($i = 6; $i >= 0; $i--) {
+            $dates->push(Carbon::today()->subDays($i)->format('Y-m-d'));
+        }
+
+        // Get counts for each day
+        $weeklyCounts = $dates->map(function ($date) {
+            return User::whereDate('created_at', $date)->count();
+        });
+
+        // Calculate percentage change from previous week
+        $lastWeekCount = User::whereBetween('created_at', [
+            Carbon::today()->subDays(14),
+            Carbon::today()->subDays(7)
+        ])->count();
+
+        $thisWeekCount = $weeklyCounts->sum();
+
+        $percentageChange = $lastWeekCount == 0
+            ? ($thisWeekCount > 0 ? 100 : 0)
+            : round((($thisWeekCount - $lastWeekCount) / $lastWeekCount) * 100, 2);
+
+        return view('auth.admin.view.dashboard', [
+            'totalUsers'       => $totalUsers,
+            'weeklyLabels'     => $dates->map(fn($d) => Carbon::parse($d)->format('d F')),
+            'weeklyData'       => $weeklyCounts,
+            'thisWeekCount'    => $thisWeekCount,
+            'percentageChange' => $percentageChange
+        ]);
     }
+    public function getUsersByRange(Request $request)
+    {
+        $range = $request->input('range', '7'); // default to last 7 days
+        $today = Carbon::today();
+
+        switch ($range) {
+            case 'today':
+                $dates = collect([$today->format('Y-m-d')]);
+                break;
+            case 'yesterday':
+                $dates = collect([$today->subDay()->format('Y-m-d')]);
+                break;
+            case '30':
+                $days = 30;
+                $dates = collect();
+                for ($i = $days - 1; $i >= 0; $i--) {
+                    $dates->push(Carbon::today()->subDays($i)->format('Y-m-d'));
+                }
+                break;
+            case '90':
+                $days = 90;
+                $dates = collect();
+                for ($i = $days - 1; $i >= 0; $i--) {
+                    $dates->push(Carbon::today()->subDays($i)->format('Y-m-d'));
+                }
+                break;
+            default: // last 7 days
+                $days = 7;
+                $dates = collect();
+                for ($i = $days - 1; $i >= 0; $i--) {
+                    $dates->push(Carbon::today()->subDays($i)->format('Y-m-d'));
+                }
+                break;
+        }
+
+        $data = $dates->map(function ($date) {
+            return User::whereDate('created_at', $date)->count();
+        });
+
+        return response()->json([
+            'labels' => $dates->map(fn($d) => Carbon::parse($d)->format('d F')),
+            'series' => $data,
+            'total' => $data->sum()
+        ]);
+    }
+
 
     /**
      * Show the form for creating a new resource.
