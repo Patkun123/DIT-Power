@@ -21,7 +21,8 @@
     <Body>
         @include('sweetalert2::index')
         @yield('content')
-        @include('auth.admin.partials.modals.user-add')
+        @include('Auth.Admin.partials.modals.user-add')
+        @livewire('admin.question-add')
     </Body>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
 </html>
