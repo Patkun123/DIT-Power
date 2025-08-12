@@ -22,7 +22,8 @@
     <Body>
         @include('sweetalert2::index')
         @yield('content')
-        @include('auth.admin.partials.modals.user-add')
+        @include('Auth.Admin.partials.modals.user-add')
+        @livewire('admin.question-add')
 
     </Body>
 
