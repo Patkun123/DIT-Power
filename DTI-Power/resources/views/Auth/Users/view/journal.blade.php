@@ -90,7 +90,7 @@
     </div>
 
     {{-- Entries --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
         @if(!$hasEntries)
             <div class="bg-yellow-100 text-yellow-800 p-4 rounded-lg col-span-full">
                 You don’t have any journal entries yet. Start by creating your first one!

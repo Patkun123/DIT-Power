@@ -1,5 +1,5 @@
 <div class="antialiased bg-gray-50 dark:bg-gray-900">
-    <nav class="shadow-xl px-4 py-2.5 bg-gradient-to-r from-emerald-400 via-emerald-600 to-emerald-950 dark:bg-gray-800 dark:border-gray-700 fixed left-0 right-0 top-0 z-50">
+    <nav class="shadow-xl px-4 py-2.5 bg-gradient-to-l from-lime-300 via-lime-600 to-lime-900 dark:bg-gray-800 dark:border-gray-700 fixed left-0 right-0 top-0 z-50">
       <div class="flex flex-wrap justify-between items-center">
         <div class="flex justify-start items-center">
           <button
@@ -587,11 +587,12 @@
             data-dropdown-toggle="dropdown"
           >
             <span class="sr-only">Open user menu</span>
-            <img
-              class="w-8 h-8 rounded-full"
-              src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/michael-gough.png"
-              alt="user photo"
-            />
+            <img src="{{ auth()->user()->profileimage
+            ? asset('storage/' . auth()->user()->profileimage)
+            : asset('images/default.png') }}"
+            alt="Profile Image"
+            class="w-8 h-8 rounded-full">
+
           </button>
           <!-- Dropdown menu -->
           <div

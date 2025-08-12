@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Auth;
 
+use App\Models\dti_id;
 use App\Models\User_Information;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +21,6 @@ class Register extends Component
     public string $password_confirmation = '';
     public string $role = 'user';
 
-    // Additional user information fields
     public ?string $phone_number = null;
     public ?string $gender = null;
     public ?string $birthday = null;
@@ -30,6 +30,14 @@ class Register extends Component
     public ?string $activity_level = null;
     public ?string $health_goals = null;
     public ?string $dietary_preferences = null;
+
+    public ?string $staff_id = null;
+
+    public ?string $office = null;
+
+    public ?string $position = null;
+
+    public ?string $department = null;
 
     public int $step = 1;
 
@@ -63,6 +71,11 @@ class Register extends Component
             'activity_level'        => ['nullable', 'string'],
             'health_goals'          => ['nullable', 'string'],
             'dietary_preferences'   => ['nullable', 'string'],
+            'staff_id'              => ['required', 'max:255'],
+            'office'                => ['nullable', 'string'],
+            'position'              => ['nullable', 'string'],
+            'department'            => ['nullable', 'string'],
+
         ]);
 
         // If password is filled in, hash it before saving
@@ -89,6 +102,19 @@ class Register extends Component
             'health_goals'        => $this->health_goals,
             'dietary_preferences' => $this->dietary_preferences,
         ]);
+
+        dti_id::updateOrCreate(
+        // Conditions to find the existing record
+        ['user_id'    => $user->id],
+
+        // Values to update if found, or insert if not found
+        [
+            'staff_id' => $this->staff_id,
+            'position'   => $this->position,
+            'department' => $this->department,
+        ]
+    );
+
 
     event(new Registered($user));
 

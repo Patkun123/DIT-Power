@@ -1,9 +1,12 @@
 <?php
 
+use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\ArticleandNewsController;
 use App\Http\Controllers\JournalsController;
 use App\Http\Controllers\NutritionController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\UserInformationController;
+use App\Http\Controllers\usertrackingController;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
@@ -15,14 +18,22 @@ Route::get('/', function () {
     'guest',        // Laravel's built-in authentication check
     'check_profile' // Your custom middleware to check if the user profile is complete
 ])->name('home');
-
+Route::get('about', function () {
+    return view('about');
+})->middleware(['guest'])->name('about');
 
 Route::middleware(['auth', 'is_admin:admin'])->group(function () {
-    Route::view('Dashboard', 'Auth.Admin.view.dashboard')->name('dashboard');
+    Route::get('Dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     //user managements
     Route::get('/Manage-users', [UserInformationController::class, 'index'])->name('manage.user');
     Route::post('/Manage-users', [UserInformationController::class, 'store'])->name('users.store');
+
+    //user tracking
+    Route::get('Users/Tracking', [usertrackingController::class, 'index'])->name('users.tracking');
+
+    //article and news
+    Route::get('article',[ArticleandNewsController::class, 'index'])->name('article');
 
 
     //Quiz
