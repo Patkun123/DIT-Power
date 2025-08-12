@@ -4,7 +4,7 @@
 @include('auth.admin.partials.layouts.side')
 @include('auth.admin.partials.layouts.header')
 @section('content')
-<div class="h-70 md:h-80 w-full bg-gradient-to-r from-emerald-400 via-emerald-600 to-emerald-950">
+<div class="h-70 md:h-80 w-full bg-gradient-to-l from-primary-400 via-primary-600 to-lime-700">
     <div class="container mx-auto flex items-start justify-start h-full px-2 md:px-70">
         <div class="flex flex-col mt-40 md:mt-40">
             <h1 class="text-2xl md:text-4xl text-white">Welcome, <b>{{ auth()->user()->lastname }}</b></h1>

@@ -23,5 +23,13 @@ class DatabaseSeeder extends Seeder
             'role' => "admin",
             'password' => Hash::make('admin123'),
         ]);
+
+        User::factory()->create([
+            'firstname' => '',
+            'lastname' => '',
+            'email' => 'Patrickfabular48@dti.gov.ph',
+            'role' => "user",
+            'password' => Hash::make('dti123456'),
+        ]);
     }
 }

@@ -4,7 +4,7 @@
 @include('auth.admin.partials.layouts.side')
 @include('auth.admin.partials.layouts.header')
 @section('content')
-<div class="h-70 md:h-80 w-full bg-gradient-to-r from-emerald-400 via-emerald-600 to-emerald-950">
+<div class="h-70 md:h-80 w-full bg-gradient-to-l from-primary-400 via-primary-600 to-lime-700">
     <div class="container mx-auto flex items-start justify-start h-full px-2 md:px-70">
         <div class="flex flex-col mt-40 md:mt-40">
             <h1 class="text-2xl md:text-4xl text-white">{{ auth()->user()->lastname }}, <b>User Management</b></h1>
@@ -24,8 +24,9 @@
         </div>
       </div>
       <div class="bg-white dark:bg-gray-800 relative sm:rounded-lg overflow-hidden rounded-lg transition-all hover:-translate-y-2 hover:shadow-emerald-500  shadow-md border-gray-300 dark:border-gray-600 h-96 mb-4">
-        @include('auth.admin.partials.layouts.app.tables.question-list')
+
       </div>
     </main>
-
+ {{-- @include('auth.admin.partials.layouts.app.tables.question-list') --}}
 @endsection
+

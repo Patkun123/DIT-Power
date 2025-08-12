@@ -1,7 +1,3 @@
 import "../../node_modules/flowbite/dist/flowbite.min.js";
-
-
-
-
-//line graph
-
+import "../../node_modules/apexcharts/dist/apexcharts.min.js";
+import ApexCharts from 'apexcharts'
