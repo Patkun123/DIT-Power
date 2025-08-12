@@ -90,7 +90,7 @@
                         </tr>
                     </thead>
                 <tbody>
-                    @forelse($$questions as $question)
+                    {{-- @forelse($$questions as $question)
                         <tr class="border-b dark:border-gray-700">
                             <td class="px-4 py-3">{{ $index + 1 }}</td>
                             <td class="px-4 py-3">{{ $question->id }}</td>
@@ -122,7 +122,7 @@
                         <tr>
                             <td colspan="6" class="text-center px-4 py-3 text-gray-500 dark:text-gray-400">No users found.</td>
                         </tr>
-                    @endforelse
+                    @endforelse --}}
                 </tbody>
 
                 </table>

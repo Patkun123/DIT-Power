@@ -34,6 +34,9 @@ Route::middleware(['auth', 'is_admin:admin'])->group(function () {
 
     //article and news
     Route::get('article',[ArticleandNewsController::class, 'index'])->name('article');
+    Route::post('article', [ArticleandNewsController::class, 'store'])->name('news-articles.store');
+    Route::put('article/{id}', [ArticleandNewsController::class, 'update'])->name('news.edit');
+    Route::delete('article/{id}', [ArticleandNewsController::class, 'destroy'])->name('news-articles.destroy');
 
 
     //Quiz
