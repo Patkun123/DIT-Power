@@ -31,5 +31,9 @@ class DatabaseSeeder extends Seeder
             'role' => "user",
             'password' => Hash::make('dti123456'),
         ]);
+
+        $this->call([
+            QuizSeeder::class
+        ]);
     }
 }
