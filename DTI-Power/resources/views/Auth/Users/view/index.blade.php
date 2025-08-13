@@ -7,40 +7,62 @@
     {{-- TOP QUIZ PERFORMERS & WELLNESS STATS --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Top Quiz Performers -->
-        <div class="bg-white h-100 dark:bg-gray-800 p-6 rounded-xl shadow">
-            <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center justify-between">
-                Top Quiz Performers
-                <svg class="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 15l-5.878 3.09L5.64 12.18.782 8.91l6.74-.979L10 2.5l2.478 5.43 6.74.98-4.857 3.268 1.518 5.91z" />
-                </svg>
+        <div class="bg-white h-110 dark:bg-gray-800 p-6 rounded-xl shadow">
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-white flex items-center justify-between">
+                Leaderboard Ranking
+                <div class="hover:bg-primary-500 transition-all hover:-translate-y-1 rounded-full">
+                    <img src="/images/crown.gif" class="w-15 h-15 relative" alt="">
+                </div>
+
             </h2>
             <div class="flex flex-row items-center gap-4 sm:gap-0 sm:justify-around">
                 <!-- 2nd -->
-                <div class="text-center bg-gray-100 h-60 mt-10 w-35 rounded-2xl">
+                <div class="text-center bg-gradient-to-b  from-silver-500 via-silver-700  to-silver-500 h-70 mt-10 w-45 rounded-2xl">
                     <div class="bg-gray-200 w-16 h-16 mt-5 rounded-full mx-auto mb-2 flex items-center justify-center">
                         <span class="text-lg font-bold">2</span>
                     </div>
                     <div class="font-semibold">Neil Morala</div>
                     <div class="text-sm text-gray-500">Chief Accountant</div>
-                    <div class="text-lg font-bold mt-1">82 pts</div>
+                    <div class="flex items-center justify-center mt-1" >
+                        <div class="bg-gray-400 rounded-2xl w-auto">
+                            <p class="text-lg font-bold pl-2 pr-2">14</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center mt-2">
+                        <img src="/images/rewards/silver_cup.png" class="w-20 h-20 relative" alt="">
+                    </div>
                 </div>
                 <!-- 1st -->
-                <div class="text-center bg-yellow-500 h-60 w-35 rounded-2xl">
+                <div class="text-center animate-bounce bg-gradient-to-b transition-all hover:-translate-y-1 shadow-lg shadow-gold-600 from-gold-500 via-gold-700 to-gold-400 h-70 w-45 rounded-2xl">
                     <div class="bg-yellow-400 w-16 h-16 mt-5 rounded-full mx-auto mb-2 flex items-center justify-center">
                         <span class="text-lg font-bold">1</span>
                     </div>
                     <div class="font-semibold">Hazel E. Hautea</div>
                     <div class="text-sm text-gray-500">Chief Admin Officer</div>
-                    <div class="text-lg font-bold mt-1">95 pts</div>
+                    <div class="flex items-center justify-center mt-1" >
+                        <div class="bg-gold-600 rounded-2xl w-auto">
+                            <p class="text-lg font-bold pl-2 pr-2">14</p>
+                        </div>
+                    </div>
+                     <div class="flex items-center justify-center mt-2">
+                        <img src="/images/rewards/gold_cup.png" class="w-20 h-20 relative" alt="">
+                    </div>
                 </div>
                 <!-- 3rd -->
-                <div class="text-center bg-orange-500 h-60 mt-10 w-35 rounded-2xl">
-                    <div class="bg-gray-200 w-16 h-16 mt-5 rounded-full mx-auto mb-2 flex items-center justify-center">
+                <div class="text-center bg-gradient-to-b from-bronze-400 via-bronze-500 to-bronze-400 h-70 mt-10 w-45 rounded-2xl">
+                    <div class="bg-orange-200 w-16 h-16 mt-5 rounded-full mx-auto mb-2 flex items-center justify-center">
                         <span class="text-lg font-bold">3</span>
                     </div>
                     <div class="font-semibold">Jinnard Lubaton</div>
                     <div class="text-sm text-gray-500">Bookkeeper</div>
-                    <div class="text-lg font-bold mt-1">78 pts</div>
+                                        <div class="flex items-center justify-center mt-1" >
+                        <div class="bg-bronze-600 rounded-2xl w-auto">
+                            <p class="text-lg font-bold pl-2 pr-2">14</p>
+                        </div>
+                    </div>
+                     <div class="flex items-center justify-center mt-2">
+                        <img src="/images/rewards/bronze_cup.png" class="w-20 h-20 relative" alt="">
+                    </div>
                 </div>
             </div>
             {{-- <div class="text-center mt-3">
@@ -54,18 +76,19 @@
             <div class="grid grid-cols-2 gap-4">
                 @php
                     $stats = [
-                        ['label' => 'Journal Entries', 'icon' => '📝'],
-                        ['label' => 'Relaxation Sessions', 'icon' => '🌿'],
-                        ['label' => 'Quiz Points', 'icon' => '💡'],
-                        ['label' => 'Nutrition Logs', 'icon' => '🍽️'],
+                        ['label' => 'Journal Entries', 'icon' => '📝', 'count' => $journalCount],
+                        ['label' => 'Relaxation Sessions', 'icon' => '🌿', 'count' => 0],
+                        ['label' => 'Quiz Points', 'icon' => '💡', 'count' => 0],
+                        ['label' => 'Nutrition Logs', 'icon' => '🍽️', 'count' => 0],
                     ];
                 @endphp
+
                 @foreach($stats as $stat)
-                    <div class="bg-gray-100 transition-all hover:-translate-y-2 dark:bg-gray-700 p-4 rounded-lg flex items-center gap-4">
-                        <div class="text-2xl">{{ $stat['icon'] }}</div>
+                    <div class="bg-gray-100 h-40 transition-all hover:-translate-y-2 dark:bg-gray-700 p-4 rounded-lg flex items-center gap-4">
+                        <div class="text-4xl">{{ $stat['icon'] }}</div>
                         <div>
-                            <div class="text-xl font-semibold">0</div>
-                            <div class="text-sm text-gray-500">{{ $stat['label'] }}</div>
+                            <div class="text-xl font-semibold">{{ $stat['count'] }}</div>
+                            <div class="text-md dark:text-gray-100 text-gray-500">{{ $stat['label'] }}</div>
                         </div>
                     </div>
                 @endforeach
@@ -73,32 +96,58 @@
         </div>
     </div>
 
-    {{-- UPCOMING EVENTS --}}
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
-        <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">Upcoming Events</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Event Card 1 -->
-            <div class="transition-all hover:-translate-y-2 rounded-lg overflow-hidden shadow-sm bg-white dark:bg-gray-900">
-                <img src="/images/pic/8.jpg" alt="Badminton" class="w-full h-48 object-cover">
-                <div class="p-4">
-                    <h3 class="font-semibold text-lg">MADZ Badminton Court</h3>
-                    <p class="text-sm text-gray-500">📍 Zone 3, Koronadal City, 9506 South Cotabato</p>
-                    <div class="text-sm mt-2 text-gray-400">May 6, 2025</div>
-                    <span class="text-green-600 text-sm font-medium">Wellness Day</span>
+    {{-- UPCOMING Announcement & NEWS --}}
+<div
+    x-data="{ showAll: false }"
+    class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow"
+>
+    <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">
+        News and Upcoming Events
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        @php $visibleCount = 0; @endphp
+        @foreach ($articles as $article)
+            @if ($article->status === 'published')
+                @php $visibleCount++; @endphp
+                <div
+                    class="transition-all hover:-translate-y-2 rounded-lg overflow-hidden shadow-sm bg-white dark:bg-gray-900"
+                    x-show="showAll || {{ $visibleCount }} <= 2"
+                    x-transition
+                >
+                    <img src="{{ asset('storage/' . $article->image_url) }}"
+                        alt="{{ $article->title }}"
+                        class="w-full h-50 object-cover">
+
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg">{{ $article->title }}</h3>
+                        <p class="text-sm text-gray-500">{{ $article->summary }}</p>
+                        <div class="text-sm mt-2 text-gray-400">
+                            {{ \Carbon\Carbon::parse($article->event_date)->format('F j, Y') }}
+                        </div>
+                        <span class="text-green-600 text-sm font-medium">
+                            {{ $article->category }}
+                        </span>
+                    </div>
                 </div>
-            </div>
-            <!-- Event Card 2 -->
-            <div class="rounded-lg shadow-gray-500 transition-all hover:-translate-y-2 overflow-hidden shadow-sm bg-white dark:bg-gray-900">
-                <img src="/images/pic/10.jpg" alt="Conference" class="w-full h-48 object-cover">
-                <div class="p-4">
-                    <h3 class="font-semibold text-lg">EMR Center</h3>
-                    <p class="text-sm text-gray-500">📍 QR5M+V76, Gensan Dr, Koronadal City, South Cotabato</p>
-                    <div class="text-sm mt-2 text-gray-400">May 6, 2025</div>
-                    <span class="text-green-600 text-sm font-medium">Wellness Day</span>
-                </div>
-            </div>
-        </div>
+            @endif
+        @endforeach
     </div>
+
+    @if ($articles->where('status', 'Publish')->count() > 2)
+        <div class="flex justify-center mt-4">
+            <button
+                @click="showAll = !showAll"
+                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
+            >
+                <span x-show="!showAll">See More</span>
+                <span x-show="showAll">See Less</span>
+            </button>
+        </div>
+    @endif
+</div>
+
+
 
     {{-- GOOGLE MAPS EMBED --}}
     <div class="rounded-xl overflow-hidden shadow-lg">

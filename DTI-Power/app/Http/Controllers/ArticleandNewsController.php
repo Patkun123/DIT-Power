@@ -20,16 +20,9 @@ class ArticleandNewsController extends Controller
         $inactive  = news_article::where('status', 'inactive')->count();
         $drafts    = news_article::where('status', 'draft')->count();
         $archived  = news_article::where('status', 'archived')->count();
-        $articles = news_article::latest()->get();
-        return view('auth.admin.view.article_news',compact('articles', 'total', 'active', 'inactive', 'drafts', 'archived'));
-    }
+        $articles  = news_article::latest()->get();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return view('auth.admin.view.article_news', compact('articles', 'total', 'active', 'inactive', 'drafts', 'archived'));
     }
 
     /**
@@ -37,7 +30,6 @@ class ArticleandNewsController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate incoming request
         $validated = $request->validate([
             'title'             => 'required|string|max:255',
             'content'           => 'nullable|string',
@@ -46,26 +38,21 @@ class ArticleandNewsController extends Controller
             'publication_date'  => 'required|date',
             'author'            => 'nullable|string|max:255',
             'summary'           => 'nullable|string|max:500',
-            'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB
+            'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
 
-        // Handle image upload if exists
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('news_images', 'public');
         }
 
-        // Create slug from title
         $slug = Str::slug($validated['title']);
-
-        // Ensure slug uniqueness
         $count = news_article::where('slug', 'like', "{$slug}%")->count();
         if ($count > 0) {
             $slug .= '-' . ($count + 1);
         }
 
-        // Store article
-        $article = news_article::create([
+        news_article::create([
             'title'            => $validated['title'],
             'content'          => $validated['content'] ?? null,
             'category'         => $validated['category'],
@@ -76,53 +63,58 @@ class ArticleandNewsController extends Controller
             'image_url'        => $imagePath,
             'slug'             => $slug,
         ]);
+
         Swal::toastSuccess([
-                'title' => 'News created successfully!',
-                'position' => 'top-end',
-                'showConfirmButton' => false,
-                'timer' => 3000,
-            ]);
-        return redirect()->back()->with('Success', 'Successs.');
-    }
+            'title' => 'News created successfully!',
+            'position' => 'top-end',
+            'showConfirmButton' => false,
+            'timer' => 3000,
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        return redirect()->back()->with('success', 'Article created successfully.');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, news_article  $news_article)
+    public function update(Request $request, news_article $news_article)
     {
         $validated = $request->validate([
             'title'            => 'required|string|max:255',
-            'summary'          => 'required|string|max:500',
+            'summary'          => 'nullable|string|max:500',
             'category'         => 'required|string|max:100',
             'status'           => 'required|in:published,draft,inactive,archived',
             'publication_date' => 'required|date',
-            'image'            => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'content'          => 'nullable|string',
+            'image'            => 'nullable|image|mimes:jpg,jpeg,png,gif|max:5120',
         ]);
 
         if ($request->hasFile('image')) {
-            if ($news_article->image_url) {
+            if ($news_article->image_url && Storage::disk('public')->exists($news_article->image_url)) {
                 Storage::disk('public')->delete($news_article->image_url);
             }
-            $validated['image_url'] = $request->file('image')->store('articles', 'public');
+            $validated['image_url'] = $request->file('image')->store('news_images', 'public');
+        }
+
+        if ($news_article->title !== $validated['title']) {
+            $slug = Str::slug($validated['title']);
+            $count = news_article::where('slug', 'like', "{$slug}%")
+                                ->where('id', '!=', $news_article->id)
+                                ->count();
+            if ($count > 0) {
+                $slug .= '-' . ($count + 1);
+            }
+            $validated['slug'] = $slug;
         }
 
         $news_article->update($validated);
+
+        Swal::toastSuccess([
+            'title' => 'Article updated successfully!',
+            'position' => 'top-end',
+            'showConfirmButton' => false,
+            'timer' => 3000,
+        ]);
 
         return redirect()->route('article')->with('success', 'Article updated successfully.');
     }
@@ -132,11 +124,18 @@ class ArticleandNewsController extends Controller
      */
     public function destroy(news_article $news_article)
     {
-        if ($news_article->image_url) {
+        if ($news_article->image_url && Storage::disk('public')->exists($news_article->image_url)) {
             Storage::disk('public')->delete($news_article->image_url);
         }
 
         $news_article->delete();
+
+        Swal::toastSuccess([
+            'title' => 'Article deleted successfully!',
+            'position' => 'top-end',
+            'showConfirmButton' => false,
+            'timer' => 3000,
+        ]);
 
         return redirect()->route('article')->with('success', 'Article deleted successfully.');
     }
