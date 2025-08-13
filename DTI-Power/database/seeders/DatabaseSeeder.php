@@ -32,8 +32,9 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('dti123456'),
         ]);
 
-        $this->call([
-            QuizSeeder::class
-        ]);
+        // uncomment kung gusto ka 50 random quiz questions
+        // $this->call([
+        //     QuizSeeder::class
+        // ]);
     }
 }
