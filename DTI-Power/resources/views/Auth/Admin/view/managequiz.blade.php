@@ -23,8 +23,8 @@
         <div class="bg-gray-300 rounded-lg transition-all hover:-translate-y-2 hover:shadow-emerald-500  shadow-md dark:border-gray-600 h-32 md:h-35 items-center flex justify-center">
         </div>
       </div>
-      <div class="bg-white dark:bg-gray-800 relative sm:rounded-lg overflow-hidden rounded-lg transition-all hover:-translate-y-2 hover:shadow-emerald-500  shadow-md border-gray-300 dark:border-gray-600 h-96 mb-4">
-
+      <div class="bg-white dark:bg-gray-800 relative sm:rounded-lg overflow-hidden rounded-lg transition-all hover:-translate-y-2 hover:shadow-emerald-500  shadow-md border-gray-300 dark:border-gray-600 h-[calc(42vh+1rem)] mb-4">
+        @include('auth.admin.partials.layouts.app.tables.question-list')
       </div>
     </main>
  {{-- @include('auth.admin.partials.layouts.app.tables.question-list') --}}
