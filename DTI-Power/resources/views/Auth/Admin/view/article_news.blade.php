@@ -59,7 +59,7 @@
 <div class="group relative dark:bg-gray-900 hover:shadow-2xl transition-all hover:-translate-y-1 hover:bg-primary-500 rounded-xl shadow-primary-500 overflow-hidden border-t-4 border-primary-500">
     <div class="relative">
         <span class="absolute top-2 left-2
-            {{ $article->status === 'published' ? 'bg-gdreen-500' : 'bg-yellow-500' }}
+            {{ $article->status === 'published' ? 'bg-green-500' : 'bg-yellow-500' }}
             text-white text-sm px-3 py-1 rounded-full">
             {{ ucfirst($article->status) }}
         </span>

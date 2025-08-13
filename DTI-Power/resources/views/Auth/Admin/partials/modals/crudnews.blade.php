@@ -32,10 +32,9 @@
             </div>
 
             <!-- Modal body -->
-            <form action="{{ route('news.edit', $article->id) }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-
+<form action="{{ route('news.update', $article->id) }}" method="POST" enctype="multipart/form-data">
+    @csrf
+    @method('PUT')
                 <div class="grid gap-4 mb-4 sm:grid-cols-5">
                     <!-- Title -->
                     <div class="sm:col-span-6">
@@ -52,9 +51,10 @@
                             <select name="category" id="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
                             focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5
                             dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
-                            <option selected>{{ $article->category }}</option>
-                            <option value="WorldNews">World News</option>
-                            <option value="LocalNews">Local News</option>
+                            <option value="Worldnews" {{ $article->category == 'Worldnews' ? 'selected' : '' }}>World News</option>
+                            <option value="Localnews" {{ $article->category == 'Localnews' ? 'selected' : '' }}>Local News</option>
+
+
                             </select>
                     </div>
 
@@ -75,8 +75,11 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
                             focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5
                             dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                            <option value="draft" {{ $article->status == 'draft' ? 'selected' : '' }}>Draft</option>
+                            <option value="inactive" {{ $article->status == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                            <option value="archived" {{ $article->status == 'archived' ? 'selected' : '' }}>Archived</option>
                             <option value="published" {{ $article->status == 'published' ? 'selected' : '' }}>Published</option>
+                            <option value="draft" {{ $article->status == 'draft' ? 'selected' : '' }}>Draft</option>
+
                         </select>
                     </div>
 
@@ -101,7 +104,7 @@
                     <!-- Image Upload -->
                     <div class="sm:col-span-6">
                         <label for="image_url" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Image</label>
-                        <input type="file" name="image_url" id="image_url"
+                        <input type="file" name="image" id="image"
                             class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer
                             bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600">
                         @if($article->image_url)
@@ -118,7 +121,7 @@
                         dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                         Update Article
                     </button>
-
+            </form>
                     <form action="{{ route('news-articles.destroy', $article->id) }}" method="POST" onsubmit="return confirm('Are you sure?');">
                         @csrf
                         @method('DELETE')
@@ -142,7 +145,7 @@
                         </button>
                     </form>
                 </div>
-            </form>
+
         </div>
     </div>
 </div>
