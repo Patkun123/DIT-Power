@@ -1,6 +1,7 @@
 <?php
 
 use function Livewire\Volt\{state};
+use App\Models\QuizQuestion;
 
 state([
     "content" => "",
@@ -12,6 +13,35 @@ state([
     ],
     "correct" =>  "A",
 ]);
+
+$submit = function () {
+    $this->validate([
+        'content' => 'required|string|max:255',
+        'choices.A' => 'required|string|max:255',
+        'choices.B' => 'required|string|max:255',
+        'choices.C' => 'required|string|max:255',
+        'choices.D' => 'required|string|max:255',
+        'correct' => 'required|string|in:A,B,C,D',
+    ]);
+
+    // Save the question to the database
+    $question = QuizQuestion::create([
+        'content' => $this->content,
+        'answer' => $this->correct,
+    ]);
+
+    foreach ($this->choices as $letter => $content) {
+        $question->choices()->create([
+            'letter' => $letter,
+            'content' => $content,
+        ]);
+    }
+
+    // Reset the form
+    // $this->redirect();
+    $this->js('window.location.reload()');
+    // return redirect($this->header('Referer'));
+}
 
 ?>
 
@@ -32,7 +62,7 @@ state([
                 </button>
             </div>
             <!-- Modal body -->
-            <form action="{{ route('users.store') }}" method="POST" class="space-y-6">
+            <div class="space-y-6">
                 @csrf
                 <!-- Question -->
                 <div>
@@ -90,14 +120,14 @@ state([
 
                 <!-- Submit Button -->
                 <div class="flex justify-end">
-                    <button type="submit" class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                    <button type="submit" wire:click='submit' class="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                         <svg class="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path>
                         </svg>
                         Add User
                     </button>
                 </div>
-            </form>
+            </div>
 
         </div>
     </div>
