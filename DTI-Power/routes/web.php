@@ -5,6 +5,7 @@ use App\Http\Controllers\ArticleandNewsController;
 use App\Http\Controllers\JournalsController;
 use App\Http\Controllers\NutritionController;
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\UserIndexController;
 use App\Http\Controllers\UserInformationController;
 use App\Http\Controllers\usertrackingController;
 use App\Livewire\Settings\Appearance;
@@ -35,8 +36,8 @@ Route::middleware(['auth', 'is_admin:admin'])->group(function () {
     //article and news
     Route::get('article',[ArticleandNewsController::class, 'index'])->name('article');
     Route::post('article', [ArticleandNewsController::class, 'store'])->name('news-articles.store');
-    Route::put('article/{id}', [ArticleandNewsController::class, 'update'])->name('news.edit');
-    Route::delete('article/{id}', [ArticleandNewsController::class, 'destroy'])->name('news-articles.destroy');
+    Route::put('article/{news_article}', [ArticleandNewsController::class, 'update'])->name('news.update');
+    Route::delete('article/{news_article}', [ArticleandNewsController::class, 'destroy'])->name('news-articles.destroy');
 
 
     //Quiz
@@ -50,7 +51,7 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::get('settings/password', Password::class)->name('settings.password');
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
 
-    Route::view('/index','Auth.Users.view.index')->name('index');
+    Route::get('/index',[UserIndexController::class, 'index'])->name('index');
 
     Route::get('Journal', [JournalsController::class, 'index'])->name('journal');
     Route::post('Journal', [JournalsController::class, 'store'])->name('journal.store');
