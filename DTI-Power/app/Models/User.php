@@ -72,6 +72,12 @@ class User extends Authenticatable
     {
         return $this->hasOne(user_information::class);
     }
+
+    public function quizAttempts()
+    {
+        return $this->hasMany(QuizAttempt::class, 'user_id', 'id');
+    }
+    
     public function journals()
     {
         return $this->hasMany(journals::class);

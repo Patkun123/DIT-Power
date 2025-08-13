@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class QuizAttemptAnswer extends Model
 {
+    protected $fillable = [
+        'question_id',
+        'choice_id',
+        'score',
+        'correct'
+    ];
+
     public function attempt()
     {
         return $this->belongsTo(QuizAttempt::class, 'attempt_id');
