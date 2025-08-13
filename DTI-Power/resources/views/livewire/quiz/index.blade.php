@@ -9,11 +9,11 @@ state([
     'answers' => [],
     'phase' => 'start',
     'index' => 0,
-    'attempt' => auth()->user()->quizAttempts->first(),
+    'attempt',
     'time' => 45,
     'bestScore' => auth()->user()->quizAttempts()
         ->orderBy('score', 'desc')
-        ->first()->score
+        ->first()?->score ?? 0
 ]);
 
 $startQuiz = fn() => $this->phase = 'quiz';
