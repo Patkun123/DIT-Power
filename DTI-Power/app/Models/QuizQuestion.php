@@ -10,6 +10,11 @@ class QuizQuestion extends Model
     /** @use HasFactory<\Database\Factories\QuizQuestionFactory> */
     use HasFactory;
 
+    protected $fillable = [
+        'content',
+        'answer',
+    ];
+
     public function choices()
     {
         return $this->hasMany(QuizChoice::class, 'question_id');
@@ -17,6 +22,6 @@ class QuizQuestion extends Model
 
     public function correctAnswer() {
         return $this->hasOne(QuizChoice::class, 'question_id')
-                    ->where('letter', $this->answer);
+                    ->where('letter', $this->answer)->first();
     }
 }
