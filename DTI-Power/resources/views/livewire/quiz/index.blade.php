@@ -3,17 +3,21 @@
 use function Livewire\Volt\{state};
 
 use App\Models\QuizQuestion;
+use App\Models\QuizAttempt;
+
+$existingAttempt = auth()->user()->quizAttempts()->first();
 
 state([
-    'questions' => QuizQuestion::with(['choices'])->inRandomOrder()->take(5)->get(),
+    'questions' =>$existingAttempt ? [] : QuizQuestion::with(['choices'])->inRandomOrder()->take(10)->get(),
     'answers' => [],
-    'phase' => 'start',
+    'phase' => $existingAttempt ? 'result' : 'start',
     'index' => 0,
-    'attempt',
+    'attempt' => $existingAttempt,
     'time' => 45,
-    'bestScore' => auth()->user()->quizAttempts()
-        ->orderBy('score', 'desc')
-        ->first()?->score ?? 0
+    'bestScore' => $existingAttempt->score ?? 0,
+    // 'bestScore' => auth()->user()->quizAttempts()
+    //     ->orderBy('score', 'desc')
+    //     ->first()?->score ?? 0
 ]);
 
 $startQuiz = fn() => $this->phase = 'quiz';
@@ -46,25 +50,43 @@ $saveAnswers = function () {
 
     $timeTaken = 0;
 
-    foreach($this->questions as $key => $question) {
-        $isCorrect = $question->correctAnswer()->id === ($this->answers[$key]['id'] ?? null);
-        $score = !is_null($this->answers[$key]) ? ($this->answers[$key]['remaining'] * 10 + ($isCorrect ? 150 : 0)) : 0;
+    foreach ($this->questions as $key => $question) {
+    $isCorrect = $question->correctAnswer()->id === ($this->answers[$key]['id'] ?? null);
 
-        $timeTaken += !is_null($this->answers[$key]) ? 15 - $this->answers[$key]['remaining'] : 15;
+    // Default score is 0
+    $score = 0;
 
-        $attempt->answers()->create([
-            'question_id' => $question->id,
-            'choice_id' => $this->answers[$key]['id'] ?? null,
-            'score' => $score,
-            'correct' => $isCorrect,
-        ]);
-
-        $totalScore += $score;
-
+    if (!is_null($this->answers[$key])) {
+        // If correct, add 10 points
         if ($isCorrect) {
-            $correctCount++;
+            $score += 10;
+
+            // Quick answer bonus: +2 if answered in 5 seconds or less
+            if ($this->answers[$key]['remaining'] >= 10) {
+                $score += 2;
+            }
         }
     }
+
+    // Calculate time taken for this question
+    $timeTaken += !is_null($this->answers[$key])
+        ? 15 - $this->answers[$key]['remaining']
+        : 15;
+
+    $attempt->answers()->create([
+        'question_id' => $question->id,
+        'choice_id'   => $this->answers[$key]['id'] ?? null,
+        'score'       => $score,
+        'correct'     => $isCorrect,
+    ]);
+
+    $totalScore += $score;
+
+    if ($isCorrect) {
+        $correctCount++;
+    }
+}
+
 
     $this->time = $timeTaken;
 
@@ -91,9 +113,9 @@ $saveAnswers = function () {
 
             <!-- Icon -->
             <div class="flex justify-center mb-4">
-                <div class="bg-green-100 p-3 rounded-full">
+                <div class="bg-primary-100 p-3 rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 text-green-500" fill="none"
+                        class="h-6 w-6 text-primary-500" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12l2 2l4-4m5 2a9 9 0 11-18 0a9 9 0 0118 0z" />
@@ -112,7 +134,7 @@ $saveAnswers = function () {
                 <!-- Time -->
                 <div class="bg-white dark:bg-gray-700 shadow rounded-lg p-3 flex flex-col items-center">
                     <svg xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 text-green-500 mb-1" fill="none"
+                        class="h-6 w-6 text-primary-500 mb-1" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 8v4l3 3m6-3a9 9 0 11-18 0a9 9 0 0118 0z" />
@@ -124,79 +146,90 @@ $saveAnswers = function () {
                 <!-- Questions -->
                 <div class="bg-white dark:bg-gray-700 shadow rounded-lg p-3 flex flex-col items-center">
                     <svg xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 text-green-500 mb-1" fill="none"
+                        class="h-6 w-6 text-primary-500 mb-1" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                     </svg>
-                    <p class="text-gray-800 dark:text-white text-sm font-semibold">5</p>
+                    <p class="text-gray-800 dark:text-white text-sm font-semibold">10</p>
                     <span class="text-gray-500 dark:text-gray-400 text-xs">questions</span>
                 </div>
 
                 <!-- Points -->
                 <div class="bg-white dark:bg-gray-700 shadow rounded-lg p-3 flex flex-col items-center">
                     <svg xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 text-green-500 mb-1" fill="none"
+                        class="h-6 w-6 text-primary-500 mb-1" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.98a1 1 0 00.95.69h4.184c.969 0 1.371 1.24.588 1.81l-3.39 2.462a1 1 0 00-.364 1.118l1.287 3.98c.3.921-.755 1.688-1.538 1.118l-3.39-2.462a1 1 0 00-1.175 0l-3.39 2.462c-.783.57-1.838-.197-1.538-1.118l1.287-3.98a1 1 0 00-.364-1.118L2.02 9.407c-.783-.57-.38-1.81.588-1.81h4.184a1 1 0 00.95-.69l1.286-3.98z" />
                     </svg>
-                    <p class="text-gray-800 dark:text-white text-sm font-semibold">1500</p>
+                    <p class="text-gray-800 dark:text-white text-sm font-semibold">60</p>
                     <span class="text-gray-500 dark:text-gray-400 text-xs">total points</span>
                 </div>
             </div>
 
             <!-- Button -->
-            <button wire:click='startQuiz' class="mt-6 w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-full">
+            <button wire:click='startQuiz' class="mt-6 w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 rounded-full">
                 Start Assessment
             </button>
         </div>
-    @elseif ($phase === 'quiz')
-        <div x-data="{ 
-            seconds: 15,
-            selectAnswer(id, letter) {
-                $wire.selectAnswer(id, letter, this.seconds);
-                this.seconds = 15;
-            } 
-        }" x-init="$nextTick(() => { 
-            setInterval(() => { 
-                if (seconds <= 0) {
-                    $wire.skipQuestion();
-                    seconds = 15;
-                } else {
-                    seconds--;
-                }
-            }, 1000)
-        })" class="select-none bg-white dark:bg-gray-800 rounded-2xl shadow p-8 max-w-4xl w-full text-center">
+@elseif ($phase === 'quiz')
+    <div x-data="{
+        seconds: 15,
+        selectAnswer(id, letter) {
+            $wire.selectAnswer(id, letter, this.seconds);
+            this.seconds = 15;
+        }
+    }" x-init="$nextTick(() => {
+        setInterval(() => {
+            if (seconds <= 0) {
+                $wire.skipQuestion();
+                seconds = 15;
+            } else {
+                seconds--;
+            }
+        }, 1000)
+    })" class="select-none bg-white dark:bg-gray-800 rounded-2xl shadow p-8 max-w-4xl w-full text-center">
 
-            <!-- Timer -->
-            <div class="flex justify-end mb-4">
-                <div class="bg-green-100 h-14 w-14 flex flex-col justify-center rounded-full">
-                    <div x-text="seconds" class="text-green-500 font-bold text-2xl"></div>
-                </div>
+        <!-- Timer -->
+        <div class="flex justify-end mb-4">
+            <div class="bg-primary-100 h-14 w-14 flex flex-col justify-center rounded-full">
+                <div x-text="seconds" class="text-primary-500 font-bold text-2xl"></div>
             </div>
+        </div>
 
-            @foreach ($questions as $question)
-                @if($loop->index == $this->index)
-                    <div class="">
-                        <!-- Title -->
-                        <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-20">
-                            {{ $question->content }}
-                        </h2>
-                        <!-- Choices -->
-                        <div class="grid grid-cols-2 gap-3 mt-6">
-                            @foreach($question->choices()->inRandomOrder()->get() as $choice)
-                                <div x-on:click="selectAnswer({{ $choice->id }}, '{{ $choice->letter }}')" class="bg-white dark:bg-gray-700 shadow rounded-lg p-3 flex items-center border-2 border-transparent hover:border-green-500 transition cursor-pointer">
-                                    <p class="flex-1 text-gray-800 dark:text-white text-lg font-semibold">{{ $choice->content }}</p>
-                                </div>
-                            @endforeach
-                        </div>
+        @foreach ($questions as $question)
+            @if($loop->index == $this->index)
+                <div class="">
+                    <div class="mb-4 text-gray-600 dark:text-gray-300 font-medium">
+                        Question {{ $this->index + 1 }} of {{ count($this->questions) }}
                     </div>
-                @endif
-            @endforeach
+                    <!-- Title -->
+                    <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-20">
+                        {{ $question->content }}
+                    </h2>
+                    <!-- Choices with A, B, C, D -->
+                    @php
+                        $letters = ['A', 'B', 'C', 'D'];
+                        $shuffledChoices = $question->choices()->inRandomOrder()->get();
+                    @endphp
+                    <div class="grid grid-cols-2 gap-3 mt-6">
+                        @foreach($shuffledChoices as $key => $choice)
+                            <div
+                                x-on:click="selectAnswer({{ $choice->id }}, '{{ $letters[$key] }}')"
+                                class="bg-white dark:bg-gray-700 shadow rounded-lg p-3 flex items-center border-2 border-transparent hover:border-primary-500 transition cursor-pointer"
+                            >
+                                <span class="mr-2 font-bold text-primary-500">{{ $letters[$key] }}.</span>
+                                <p class="flex-1 text-gray-800 dark:text-white text-lg font-semibold">{{ $choice->content }}</p>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+        @endforeach
 
             <!-- Button -->
-            {{-- <button class="mt-6 w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-full">
+            {{-- <button class="mt-6 w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 rounded-full">
                 Next
             </button> --}}
         </div>
@@ -205,10 +238,10 @@ $saveAnswers = function () {
 
             <!-- Icon -->
             <div class="flex justify-center mb-4">
-                <div class="bg-green-100 h-32 w-32 flex flex-col justify-center rounded-full">
-                    <div class="text-green-700 font-black text-3xl">{{ $attempt->score }}</div>
-                    {{-- <hr class="border-green-500 bold mx-4 border-1"> --}}
-                    <div class="text-green-500 font-bold">of 1500</div>
+                <div class="bg-primary-100 h-32 w-32 flex flex-col justify-center rounded-full">
+                    <div class="text-primary-700 font-black text-3xl">{{ $attempt->score }}</div>
+                    {{-- <hr class="border-primary-500 bold mx-4 border-1"> --}}
+                    <div class="text-primary-500 font-bold">of 60</div>
                 </div>
             </div>
 
@@ -219,30 +252,30 @@ $saveAnswers = function () {
             </p>
 
             <!-- Info boxes -->
-            <div class="grid grid-cols-3 gap-3 mt-6">                
+            <div class="grid grid-cols-3 gap-3 mt-6">
 
                 <!-- Questions -->
                 <div class="bg-white dark:bg-gray-700 shadow rounded-lg p-3 flex flex-col items-center">
                     {{-- <svg xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 text-green-500 mb-1" fill="none"
+                        class="h-6 w-6 text-primary-500 mb-1" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                     </svg> --}}
                     <svg xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 text-green-500 mb-1" fill="none"
+                        class="h-6 w-6 text-primary-500 mb-1" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12l2 2l4-4m5 2a9 9 0 11-18 0a9 9 0 0118 0z" />
                     </svg>
                     <p class="text-gray-800 dark:text-white text-sm font-semibold">{{ $attempt->correct }}</p>
-                    <span class="text-gray-500 dark:text-gray-400 text-xs">correct of 5</span>
+                    <span class="text-gray-500 dark:text-gray-400 text-xs">correct of 10</span>
                 </div>
 
                 <!-- Time -->
                 <div class="bg-white dark:bg-gray-700 shadow rounded-lg p-3 flex flex-col items-center">
                     <svg xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 text-green-500 mb-1" fill="none"
+                        class="h-6 w-6 text-primary-500 mb-1" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 8v4l3 3m6-3a9 9 0 11-18 0a9 9 0 0118 0z" />
@@ -254,7 +287,7 @@ $saveAnswers = function () {
                 <!-- Points -->
                 <div class="bg-white dark:bg-gray-700 shadow rounded-lg p-3 flex flex-col items-center">
                     <svg xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 text-green-500 mb-1" fill="none"
+                        class="h-6 w-6 text-primary-500 mb-1" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.98a1 1 0 00.95.69h4.184c.969 0 1.371 1.24.588 1.81l-3.39 2.462a1 1 0 00-.364 1.118l1.287 3.98c.3.921-.755 1.688-1.538 1.118l-3.39-2.462a1 1 0 00-1.175 0l-3.39 2.462c-.783.57-1.838-.197-1.538-1.118l1.287-3.98a1 1 0 00-.364-1.118L2.02 9.407c-.783-.57-.38-1.81.588-1.81h4.184a1 1 0 00.95-.69l1.286-3.98z" />
@@ -265,7 +298,7 @@ $saveAnswers = function () {
             </div>
 
             {{-- <!-- Button -->
-            <button class="mt-6 w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-full">
+            <button class="mt-6 w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 rounded-full">
                 Start Assessment
             </button> --}}
         </div>

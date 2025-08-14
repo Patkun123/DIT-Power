@@ -17,6 +17,13 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @fluxAppearance
         @fluxScripts
+                <style>
+            html, body {
+                max-width: 100%;
+                overflow-x: hidden;
+                scroll-behavior: smooth;
+            }
+        </style>
     </head>
     <body>
         @include('auth.users.partials.header')

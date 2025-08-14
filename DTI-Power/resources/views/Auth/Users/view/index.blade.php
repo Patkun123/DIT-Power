@@ -7,64 +7,100 @@
     {{-- TOP QUIZ PERFORMERS & WELLNESS STATS --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Top Quiz Performers -->
-        <div class="bg-white h-110 dark:bg-gray-800 p-6 rounded-xl shadow">
-            <h2 class="text-xl font-semibold text-gray-800 dark:text-white flex items-center justify-between">
+        <div class="bg-white 2xl:h-110 dark:bg-gray-800 p-6 rounded-xl shadow">
+            <h2 class="2xl:text-xl text-md font-semibold text-gray-800 dark:text-white flex items-center justify-between">
                 Leaderboard Ranking
                 <div class="hover:bg-primary-500 transition-all hover:-translate-y-1 rounded-full">
                     <img src="/images/crown.gif" class="w-15 h-15 relative" alt="">
                 </div>
 
             </h2>
-            <div class="flex flex-row items-center gap-4 sm:gap-0 sm:justify-around">
-                <!-- 2nd -->
-                <div class="text-center bg-gradient-to-b  from-silver-500 via-silver-700  to-silver-500 h-70 mt-10 w-45 rounded-2xl">
-                    <div class="bg-gray-200 w-16 h-16 mt-5 rounded-full mx-auto mb-2 flex items-center justify-center">
-                        <span class="text-lg font-bold">2</span>
-                    </div>
-                    <div class="font-semibold">Neil Morala</div>
-                    <div class="text-sm text-gray-500">Chief Accountant</div>
-                    <div class="flex items-center justify-center mt-1" >
-                        <div class="bg-gray-400 rounded-2xl w-auto">
-                            <p class="text-lg font-bold pl-2 pr-2">14</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-center mt-2">
-                        <img src="/images/rewards/silver_cup.png" class="w-20 h-20 relative" alt="">
-                    </div>
-                </div>
-                <!-- 1st -->
-                <div class="text-center animate-bounce bg-gradient-to-b transition-all hover:-translate-y-1 shadow-lg shadow-gold-600 from-gold-500 via-gold-700 to-gold-400 h-70 w-45 rounded-2xl">
-                    <div class="bg-yellow-400 w-16 h-16 mt-5 rounded-full mx-auto mb-2 flex items-center justify-center">
-                        <span class="text-lg font-bold">1</span>
-                    </div>
-                    <div class="font-semibold">Hazel E. Hautea</div>
-                    <div class="text-sm text-gray-500">Chief Admin Officer</div>
-                    <div class="flex items-center justify-center mt-1" >
-                        <div class="bg-gold-600 rounded-2xl w-auto">
-                            <p class="text-lg font-bold pl-2 pr-2">14</p>
-                        </div>
-                    </div>
-                     <div class="flex items-center justify-center mt-2">
-                        <img src="/images/rewards/gold_cup.png" class="w-20 h-20 relative" alt="">
-                    </div>
-                </div>
-                <!-- 3rd -->
-                <div class="text-center bg-gradient-to-b from-bronze-400 via-bronze-500 to-bronze-400 h-70 mt-10 w-45 rounded-2xl">
-                    <div class="bg-orange-200 w-16 h-16 mt-5 rounded-full mx-auto mb-2 flex items-center justify-center">
-                        <span class="text-lg font-bold">3</span>
-                    </div>
-                    <div class="font-semibold">Jinnard Lubaton</div>
-                    <div class="text-sm text-gray-500">Bookkeeper</div>
-                                        <div class="flex items-center justify-center mt-1" >
-                        <div class="bg-bronze-600 rounded-2xl w-auto">
-                            <p class="text-lg font-bold pl-2 pr-2">14</p>
-                        </div>
-                    </div>
-                     <div class="flex items-center justify-center mt-2">
-                        <img src="/images/rewards/bronze_cup.png" class="w-20 h-20 relative" alt="">
-                    </div>
-                </div>
+            @php
+    // Prepare default empty players if not enough data
+    $players = [
+        $topPlayers[0] ?? (object)['user' => (object)['firstname' => '---','lastname' => '---', 'office' => ''], 'best_score' => 0],
+        $topPlayers[1] ?? (object)['user' => (object)['firstname' => '---','lastname' => '---', 'office' => ''], 'best_score' => 0],
+        $topPlayers[2] ?? (object)['user' => (object)['firstname' => '---','lastname' => '---', 'office' => ''], 'best_score' => 0],
+    ];
+@endphp
+
+<div class="flex flex-row items-center gap-4 2xl:mt-0 mt-10 sm:gap-0 sm:justify-around">
+    <!-- 2nd Place -->
+    <div class="text-center bg-gradient-to-b from-silver-500 via-silver-700 to-silver-500 h-50 w-50 2xl:h-70 2xl:mt-10 2xl:w-45 rounded-2xl">
+        <div class="bg-gray-200 w-10 h-10 2xl:w-16 2xl:h-16 mt-5 rounded-full mx-auto mb-2 flex items-center justify-center">
+            @if (auth()->user()->profileimage)
+                        <img
+                            src="{{ asset('storage/' . auth()->user()->profileimage) }}"
+                            alt="Current Profile"
+                            class="w-[36px] h-[36px] rounded-full object-cover border border-gray-300 dark:border-gray-700"
+                        >
+                    @else
+                        <img
+                            src="{{ asset('images/default.png') }}"
+                            alt="Default Profile"
+                            class="w-[36px] 2xl:w-[55px] 2xl:h-[55px] h-[36px] rounded-full object-cover border border-gray-300 dark:border-gray-700"
+                        >
+                    @endif
+        </div>
+        <div class="font-semibold 2xl:text-md text-sm">{{ $players[1]->user->firstname }} <span class="hidden lg:block">{{ $players[1]->user->lastname }}</span></div>
+        <div class="text-[10px] 2xl:text-sm text-gray-500">{{ $players[1]->user->office }}</div>
+        <div class="flex items-center justify-center mt-1">
+            <div class="bg-gray-400 rounded-2xl w-auto">
+                <p class="text-sm font-bold pl-2 pr-2 2xl:text-lg">{{ $players[1]->best_score }}</p>
             </div>
+        </div>
+        <div class="flex items-center justify-center mt-2">
+            <img src="/images/rewards/silver_cup.png" class="w-10 h-10 2xl:h-20 2xl:w-20 relative" alt="">
+        </div>
+    </div>
+
+    <!-- 1st Place -->
+    <div class="text-center animate-bounce bg-gradient-to-b transition-all hover:-translate-y-1 shadow-lg shadow-gold-600 from-gold-500 via-gold-700 to-gold-400 h-50 w-50 2xl:h-70 2xl:mt-10 2xl:w-45 rounded-2xl">
+        <div class="bg-yellow-400 w-10 h-10 2xl:w-16 2xl:h-16 mt-5 rounded-full mx-auto mb-2 flex items-center justify-center">
+            @if (auth()->user()->profileimage)
+                        <img
+                            src="{{ asset('storage/' . auth()->user()->profileimage) }}"
+                            alt="Current Profile"
+                            class="w-[36px] h-[36px] rounded-full object-cover border border-gray-300 dark:border-gray-700"
+                        >
+                    @else
+                        <img
+                            src="{{ asset('images/default.png') }}"
+                            alt="Default Profile"
+                            class="w-[36px] 2xl:w-[55px] 2xl:h-[55px] h-[36px] rounded-full object-cover border border-gray-300 dark:border-gray-700"
+                        >
+                @endif
+        </div>
+        <div class="font-semibold 2xl:text-md text-sm">{{ $players[0]->user->firstname }} <span class="hidden lg:block">{{ $players[0]->user->lastname }}</span></div>
+        <div class="text-sm text-gray-500">{{ $players[0]->user->office }}</div>
+        <div class="flex items-center justify-center mt-1">
+            <div class="bg-gold-600 rounded-2xl w-auto">
+                <p class="text-sm font-bold pl-2 pr-2 2xl:text-lg">{{ $players[0]->best_score }}</p>
+            </div>
+        </div>
+        <div class="flex items-center justify-center mt-2">
+            <img src="/images/rewards/gold_cup.png" class="w-10 h-10 2xl:h-20 2xl:w-20 relative" alt="">
+        </div>
+    </div>
+
+    <!-- 3rd Place -->
+    <div class="text-center bg-gradient-to-b from-bronze-400 via-bronze-500 to-bronze-400 h-50 w-50 2xl:h-70 2xl:mt-10 2xl:w-45 rounded-2xl">
+        <div class="bg-orange-200 w-10 h-10 2xl:w-16 2xl:h-16 mt-5 rounded-full mx-auto mb-2 flex items-center justify-center">
+            <span class="text-lg font-bold">3</span>
+        </div>
+        <div class="font-semibold 2xl:text-md text-sm">{{ $players[2]->user->firstname }} <span class=" hidden lg:block">{{ $players[2]->user->lastname }}</span></div>
+        <div class="text-[10px] 2xl:text-sm text-gray-500">{{ $players[2]->user->office }}</div>
+        <div class="flex items-center justify-center mt-1">
+            <div class="bg-bronze-600 rounded-2xl w-auto">
+                <p class="text-lg font-bold pl-2 pr-2">{{ $players[2]->best_score }}</p>
+            </div>
+        </div>
+        <div class="flex items-center justify-center mt-2">
+            <img src="/images/rewards/bronze_cup.png" class="w-10 h-10 2xl:h-20 2xl:w-20 relative" alt="">
+        </div>
+    </div>
+</div>
+
             {{-- <div class="text-center mt-3">
                 <a href="#" class="px-6 py-2 bg-emerald-500 text-white rounded-full hover:bg-emerald-600 transition">Start Quiz</a>
             </div> --}}
@@ -78,17 +114,17 @@
                     $stats = [
                         ['label' => 'Journal Entries', 'icon' => '📝', 'count' => $journalCount],
                         ['label' => 'Relaxation Sessions', 'icon' => '🌿', 'count' => 0],
-                        ['label' => 'Quiz Points', 'icon' => '💡', 'count' => 0],
+                        ['label' => 'Quiz Points', 'icon' => '💡', 'count' => $quizCount],
                         ['label' => 'Nutrition Logs', 'icon' => '🍽️', 'count' => 0],
                     ];
                 @endphp
 
                 @foreach($stats as $stat)
-                    <div class="bg-gray-100 h-40 transition-all hover:-translate-y-2 dark:bg-gray-700 p-4 rounded-lg flex items-center gap-4">
-                        <div class="text-4xl">{{ $stat['icon'] }}</div>
+                    <div class="bg-gray-100 h-40 transition-all hover:-translate-y-2 dark:bg-gray-700 p-4 rounded-lg flex items-center gap-2 2xl:gap-4">
+                        <div class="text-2xl">{{ $stat['icon'] }}</div>
                         <div>
-                            <div class="text-xl font-semibold">{{ $stat['count'] }}</div>
-                            <div class="text-md dark:text-gray-100 text-gray-500">{{ $stat['label'] }}</div>
+                            <div class="2xl:text-xl text-lg font-semibold">{{ $stat['count'] }}</div>
+                            <div class="text-sm 2xl:text-md dark:text-gray-100 text-gray-500">{{ $stat['label'] }}</div>
                         </div>
                     </div>
                 @endforeach

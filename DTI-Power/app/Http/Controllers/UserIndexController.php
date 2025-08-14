@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\news_article;
+use App\Models\QuizAttempt;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserIndexController extends Controller
@@ -12,13 +14,25 @@ class UserIndexController extends Controller
      */
     public function index()
     {
+        $user = auth()->user();
+
+        $topPlayers = QuizAttempt::select('user_id')
+            ->selectRaw('MAX(score) as best_score')
+            ->with('user') // Assuming relationship to User model
+            ->groupBy('user_id')
+            ->orderByDesc('best_score')
+            ->take(3)
+            ->get();
+        $quizCount = $user->quizAttempts()->sum('score');
         $journalCount = auth()->user()
-        ->journals() // relationship in User model
+        ->journals()
         ->count();
         $articles = news_article::where('status', 'Published')
         ->latest()
         ->get();
-        return view('Auth.Users.view.index', compact('articles','journalCount'));
+        return view('Auth.Users.view.index', compact('articles','journalCount','topPlayers'
+        ,'quizCount'
+        ));
     }
 
     /**
