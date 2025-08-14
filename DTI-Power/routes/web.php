@@ -5,6 +5,7 @@ use App\Http\Controllers\ArticleandNewsController;
 use App\Http\Controllers\JournalsController;
 use App\Http\Controllers\NutritionController;
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\ToolsController;
 use App\Http\Controllers\UserIndexController;
 use App\Http\Controllers\UserInformationController;
 use App\Http\Controllers\usertrackingController;
@@ -58,6 +59,11 @@ Route::middleware(['auth','check_profile'])->group(function () {
 
     Route::get('Nutrition', [NutritionController::class, 'index'])->name('nutrition');
     Route::get('quiz', [QuizController::class, 'index'])->name('quiz');
+
+    Route::get('Physical-tools', [ToolsController::class, 'index'])->name('physical.tools');
+    Route::post('physical-tools', [ToolsController::class, 'calculate'])->name('calculate.bmi');
+    Route::post('physical-tools/meditation', [ToolsController::class, 'start'])->name('meditation.start');
+    Route::post('/meditation/stop', [ToolsController::class, 'stop'])->name('meditation.stop');
 
 });
 

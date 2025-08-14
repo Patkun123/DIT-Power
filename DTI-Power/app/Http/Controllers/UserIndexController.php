@@ -17,12 +17,13 @@ class UserIndexController extends Controller
         $user = auth()->user();
 
         $topPlayers = QuizAttempt::select('user_id')
-            ->selectRaw('MAX(score) as best_score')
+            ->selectRaw('SUM(score) as best_score')
             ->with('user') // Assuming relationship to User model
             ->groupBy('user_id')
             ->orderByDesc('best_score')
             ->take(3)
             ->get();
+
         $quizCount = $user->quizAttempts()->sum('score');
         $journalCount = auth()->user()
         ->journals()
