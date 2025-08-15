@@ -51,7 +51,7 @@
             </div>
         </div>
         <div class="flex items-center justify-center mt-2">
-            <img src="/images/rewards/silver_cup.png" class="w-10 h-10 2xl:h-20 2xl:w-20 relative" alt="">
+            <img src="/images/rewards/silver_cup.png" class="w-10 h-10 2xl:h-20 2xl:w-22 relative" alt="">
         </div>
     </div>
 
@@ -149,18 +149,22 @@
     </div>
 
     {{-- UPCOMING Announcement & NEWS --}}
-<div
-    x-data="{ showAll: false }"
-    class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow"
->
+<div x-data="{ showAll: false }" class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
     <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">
         News and Upcoming Events
     </h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        @php $visibleCount = 0; @endphp
-        @foreach ($articles as $article)
-            @if ($article->status === 'published')
+    @php
+        // Get published articles
+        $publishedArticles = $articles->where('status', 'published');
+    @endphp
+
+    @if($publishedArticles->isEmpty())
+        <p class="text-center text-gray-500 dark:text-gray-400">No Events Published</p>
+    @else
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            @php $visibleCount = 0; @endphp
+            @foreach ($publishedArticles as $article)
                 @php $visibleCount++; @endphp
                 <div
                     class="transition-all hover:-translate-y-2 rounded-lg overflow-hidden shadow-sm bg-white dark:bg-gray-900"
@@ -182,22 +186,23 @@
                         </span>
                     </div>
                 </div>
-            @endif
-        @endforeach
-    </div>
-
-    @if ($articles->where('status', 'Publish')->count() > 2)
-        <div class="flex justify-center mt-4">
-            <button
-                @click="showAll = !showAll"
-                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
-            >
-                <span x-show="!showAll">See More</span>
-                <span x-show="showAll">See Less</span>
-            </button>
+            @endforeach
         </div>
+
+        @if ($publishedArticles->count() > 2)
+            <div class="flex justify-center mt-4">
+                <button
+                    @click="showAll = !showAll"
+                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
+                >
+                    <span x-show="!showAll">See More</span>
+                    <span x-show="showAll">See Less</span>
+                </button>
+            </div>
+        @endif
     @endif
 </div>
+
 
 
 
