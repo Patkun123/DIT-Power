@@ -24,9 +24,13 @@
                 scroll-behavior: smooth;
             }
         </style>
+        @livewireStyles
     </head>
     <body>
+
         @include('auth.users.partials.header')
        @yield('content')
+       @livewireScripts
+
     </body>
 </html>
