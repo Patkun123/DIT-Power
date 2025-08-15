@@ -1,0 +1,1 @@
+<?php /**PATH C:\xampp\htdocs\systems\DIT-Power\DTI-Power\resources\views/Auth/Users/view/policies.blade.php ENDPATH**/ ?>
