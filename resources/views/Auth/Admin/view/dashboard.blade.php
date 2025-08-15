@@ -49,7 +49,7 @@
       <div
         class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"
       ></div> --}}
-      <div class="grid grid-cols-2 gap-4">
+      {{-- <div class="grid grid-cols-2 gap-4">
             <div class=" p-4 md:p-6 bg-white dark:bg-gray-800 rounded-lg transition-all hover:-translate-y-2 hover:shadow-emerald-500  shadow-md dark:shadow-gray-700  h-auto md:h-auto">
 
             </div>
@@ -62,7 +62,7 @@
         <div
           class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
         ></div>
-      </div>
+      </div> --}}
     </main>
   </div>
 

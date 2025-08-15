@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\QuizAttempt;
 use Illuminate\Http\Request;
 
 class QuizController extends Controller
@@ -11,7 +12,13 @@ class QuizController extends Controller
      */
     public function index()
     {
-        return view('Auth.Users.view.quiz');
+        $topPlayers = QuizAttempt::select('user_id')
+            ->selectRaw('sum(score) as best_score')
+            ->with('user') // Assuming relationship to User model
+            ->groupBy('user_id')
+            ->orderByDesc('best_score')
+            ->get();
+        return view('Auth.Users.view.quiz', compact('topPlayers'));
     }
 
     /**

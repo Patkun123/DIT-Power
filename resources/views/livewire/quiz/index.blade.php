@@ -71,7 +71,7 @@ $startQuiz = function () {
     $now = Carbon::now('Asia/Manila');
 
     // Slots in the day
-    $allowedTimes = ['10:00', '12:00', '14:00'];
+    $allowedTimes = ['09:00', '12:00', '14:00'];
     $slots = collect($allowedTimes)->map(function ($time) {
         return Carbon::today('Asia/Manila')->setTimeFromTimeString($time);
     });
@@ -203,7 +203,7 @@ $saveAnswers = function () {
 
 ?>
 
-<div class="flex justify-center items-center h-[calc(100vh-5rem)] bg-gray-100 dark:bg-gray-900">
+<div class="flex justify-center items-center h-[calc(100vh-5rem)] shadow shadow-gray-950 bg-gray-100 dark:bg-gray-900">
     {{-- Start Quiz State --}}
     @if ($phase === 'start')
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow p-8 max-w-md w-full text-center">
@@ -214,9 +214,9 @@ $saveAnswers = function () {
             @endif
             <!-- Icon -->
             <div class="flex justify-center mb-4">
-                <div class="bg-green-100 p-3 rounded-full">
+                <div class="bg-primary-100 p-3 rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 text-green-500" fill="none"
+                        class="h-6 w-6 text-primary-500" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12l2 2l4-4m5 2a9 9 0 11-18 0a9 9 0 0118 0z" />
@@ -235,7 +235,7 @@ $saveAnswers = function () {
                 <!-- Time -->
                 <div class="bg-white dark:bg-gray-700 shadow rounded-lg p-3 flex flex-col items-center">
                     <svg xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 text-green-500 mb-1" fill="none"
+                        class="h-6 w-6 text-primary-500 mb-1" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 8v4l3 3m6-3a9 9 0 11-18 0a9 9 0 0118 0z" />
@@ -247,7 +247,7 @@ $saveAnswers = function () {
                 <!-- Questions -->
                 <div class="bg-white dark:bg-gray-700 shadow rounded-lg p-3 flex flex-col items-center">
                     <svg xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 text-green-500 mb-1" fill="none"
+                        class="h-6 w-6 text-primary-500 mb-1" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 6h16M4 10h16M4 14h16M4 18h16" />
@@ -259,7 +259,7 @@ $saveAnswers = function () {
                 <!-- Points -->
                 <div class="bg-white dark:bg-gray-700 shadow rounded-lg p-3 flex flex-col items-center">
                     <svg xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 text-green-500 mb-1" fill="none"
+                        class="h-6 w-6 text-primary-500 mb-1" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.98a1 1 0 00.95.69h4.184c.969 0 1.371 1.24.588 1.81l-3.39 2.462a1 1 0 00-.364 1.118l1.287 3.98c.3.921-.755 1.688-1.538 1.118l-3.39-2.462a1 1 0 00-1.175 0l-3.39 2.462c-.783.57-1.838-.197-1.538-1.118l1.287-3.98a1 1 0 00-.364-1.118L2.02 9.407c-.783-.57-.38-1.81.588-1.81h4.184a1 1 0 00.95-.69l1.286-3.98z" />
@@ -273,7 +273,7 @@ $saveAnswers = function () {
             <button
                 wire:click='startQuiz'
                 @if(session('error')) disabled @endif
-                class="mt-6 w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-full disabled:opacity-50"
+                class="mt-6 w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 rounded-full disabled:opacity-50"
             >
                 Start Assessment
             </button>
@@ -299,8 +299,8 @@ $saveAnswers = function () {
 
             <!-- Timer -->
             <div class="flex justify-end mb-4">
-                <div class="bg-green-100 h-14 w-14 flex flex-col justify-center rounded-full">
-                    <div x-text="seconds" class="text-green-500 font-bold text-2xl"></div>
+                <div class="bg-primary-100 h-14 w-14 flex flex-col justify-center rounded-full">
+                    <div x-text="seconds" class="text-primary-500 font-bold text-2xl"></div>
                 </div>
             </div>
 
@@ -314,7 +314,7 @@ $saveAnswers = function () {
                         <!-- Choices -->
                         <div class="grid grid-cols-2 gap-3 mt-6">
                             @foreach($question->choices()->inRandomOrder()->get() as $choice)
-                                <div x-on:click="selectAnswer({{ $choice->id }}, '{{ $choice->letter }}')" class="bg-white dark:bg-gray-700 shadow rounded-lg p-3 flex items-center border-2 border-transparent hover:border-green-500 transition cursor-pointer">
+                                <div x-on:click="selectAnswer({{ $choice->id }}, '{{ $choice->letter }}')" class="bg-white dark:bg-gray-700 shadow rounded-lg p-3 flex items-center border-2 border-transparent hover:border-primary-500 transition cursor-pointer">
                                     <p class="flex-1 text-gray-800 dark:text-white text-lg font-semibold">{{ $choice->content }}</p>
                                 </div>
                             @endforeach
@@ -324,7 +324,7 @@ $saveAnswers = function () {
             @endforeach
 
             <!-- Button -->
-            {{-- <button class="mt-6 w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-full">
+            {{-- <button class="mt-6 w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 rounded-full">
                 Next
             </button> --}}
         </div>
@@ -333,10 +333,10 @@ $saveAnswers = function () {
 
             <!-- Icon -->
             <div class="flex justify-center mb-4">
-                <div class="bg-green-100 h-32 w-32 flex flex-col justify-center rounded-full">
-                    <div class="text-green-700 font-black text-3xl">{{ $attempt->score }}</div>
-                    {{-- <hr class="border-green-500 bold mx-4 border-1"> --}}
-                    <div class="text-green-500 font-bold">of 1500</div>
+                <div class="bg-primary-100 h-32 w-32 flex flex-col justify-center rounded-full">
+                    <div class="text-primary-700 font-black text-3xl">{{ $attempt->score }}</div>
+                    {{-- <hr class="border-primary-500 bold mx-4 border-1"> --}}
+                    <div class="text-primary-500 font-bold">of 1500</div>
                 </div>
             </div>
 
@@ -352,13 +352,13 @@ $saveAnswers = function () {
                 <!-- Questions -->
                 <div class="bg-white dark:bg-gray-700 shadow rounded-lg p-3 flex flex-col items-center">
                     {{-- <svg xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 text-green-500 mb-1" fill="none"
+                        class="h-6 w-6 text-primary-500 mb-1" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                     </svg> --}}
                     <svg xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 text-green-500 mb-1" fill="none"
+                        class="h-6 w-6 text-primary-500 mb-1" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12l2 2l4-4m5 2a9 9 0 11-18 0a9 9 0 0118 0z" />
@@ -370,7 +370,7 @@ $saveAnswers = function () {
                 <!-- Time -->
                 <div class="bg-white dark:bg-gray-700 shadow rounded-lg p-3 flex flex-col items-center">
                     <svg xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 text-green-500 mb-1" fill="none"
+                        class="h-6 w-6 text-primary-500 mb-1" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 8v4l3 3m6-3a9 9 0 11-18 0a9 9 0 0118 0z" />
@@ -382,7 +382,7 @@ $saveAnswers = function () {
                 <!-- Points -->
                 <div class="bg-white dark:bg-gray-700 shadow rounded-lg p-3 flex flex-col items-center">
                     <svg xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 text-green-500 mb-1" fill="none"
+                        class="h-6 w-6 text-primary-500 mb-1" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.98a1 1 0 00.95.69h4.184c.969 0 1.371 1.24.588 1.81l-3.39 2.462a1 1 0 00-.364 1.118l1.287 3.98c.3.921-.755 1.688-1.538 1.118l-3.39-2.462a1 1 0 00-1.175 0l-3.39 2.462c-.783.57-1.838-.197-1.538-1.118l1.287-3.98a1 1 0 00-.364-1.118L2.02 9.407c-.783-.57-.38-1.81.588-1.81h4.184a1 1 0 00.95-.69l1.286-3.98z" />
@@ -393,7 +393,7 @@ $saveAnswers = function () {
             </div>
 
             {{-- <!-- Button -->
-            <button class="mt-6 w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-full">
+            <button class="mt-6 w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 rounded-full">
                 Start Assessment
             </button> --}}
         </div>

@@ -71,7 +71,7 @@
                 </button>
             </div>
             <div class="hidden  justify-between items-center w-full bg-gray-50 dark:bg-gray-800 shadow-2xl shadow-accent-foreground rounded-2xl lg:flex lg:w-auto lg:order-1" id="mobile-menu-2">
-                <ul class="flex flex-col mt-4 font-medium lg:flex-row bg-white dark:bg-gray-800 lg:space-x-10 lg:mt-0">
+                <ul class="flex flex-col mt-4 font-medium lg:flex-row bg-white dark:bg-gray-800 lg:space-x-7 lg:mt-0">
                     <li>
                             <a href="{{ route('index') }}"
                             class="@if(request()->routeIs('index'))
@@ -155,6 +155,23 @@
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                             </svg>
                         </button>
+                        <li>
+                            <a href="{{ route('policies') }}"
+                            class="@if(request()->routeIs('policies'))
+                                flex items-center gap-2 text-primary-700 font-semibold dark:text-lime-500 bg-primary-200 p-2 lg:bg-white lg:dark:bg-gray-800 lg:p-0
+                            @else
+                                flex items-center gap-2 text-gray-800 lg:bg-white dark:text-white lg:text-primary-700 dark:text-white dark:text-lime-500 p-2 lg:bg-white lg:dark:bg-gray-800 lg:p-0
+                            @endif">
+                                <!-- policies Quiz Icon -->
+                                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 4h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3m0 3h6m-3 5h3m-6 0h.01M12 16h3m-6 0h.01M10 3v4h4V3h-4Z"/>
+                                    </svg>
+                                <span class="relative group text-sm">
+                                            Policies
+                                    <span class="absolute left-0 -bottom-1 w-0 h-[2px] bg-current transition-all duration-300 group-hover:w-full"></span>
+                                </span>
+                            </a>
+                        </li>
 
                 <!-- Dropdown menu -->
                         <div id="dropdownNavbar" class="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">

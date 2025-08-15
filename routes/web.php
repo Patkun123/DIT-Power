@@ -31,6 +31,7 @@ Route::middleware(['auth', 'is_admin:admin'])->group(function () {
     Route::get('/Manage-users', [UserInformationController::class, 'index'])->name('manage.user');
     Route::post('/Manage-users', [UserInformationController::class, 'store'])->name('users.store');
 
+
     //user tracking
     Route::get('Users/Tracking', [usertrackingController::class, 'index'])->name('users.tracking');
 
@@ -64,6 +65,8 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::post('physical-tools', [ToolsController::class, 'calculate'])->name('calculate.bmi');
     Route::post('physical-tools/meditation', [ToolsController::class, 'start'])->name('meditation.start');
     Route::post('/meditation/stop', [ToolsController::class, 'stop'])->name('meditation.stop');
+
+    Route::view('Policies', 'Auth.user.view.policies')->name('policies');
 
 });
 

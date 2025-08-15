@@ -4,7 +4,7 @@
         <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <title>{{ $title ?? config('app.name') }}</title>
+        <title>{{ $title ?? config('app.name') }} Personalized Online Wellness Resource HUB</title>
 
         <link rel="icon" href="/logo.ico" sizes="any">
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
