@@ -156,8 +156,8 @@
                             </svg>
                         </button>
                         <li>
-                            <a href="{{ route('quiz') }}"
-                            class="@if(request()->routeIs('quiz'))
+                            <a href="{{ route('policies') }}"
+                            class="@if(request()->routeIs('policies'))
                                 flex items-center gap-2 text-primary-700 font-semibold dark:text-lime-500 bg-primary-200 p-2 lg:bg-white lg:dark:bg-gray-800 lg:p-0
                             @else
                                 flex items-center gap-2 text-gray-800 lg:bg-white dark:text-white lg:text-primary-700 dark:text-white dark:text-lime-500 p-2 lg:bg-white lg:dark:bg-gray-800 lg:p-0

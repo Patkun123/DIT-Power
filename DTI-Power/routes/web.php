@@ -66,6 +66,9 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::post('physical-tools/meditation', [ToolsController::class, 'start'])->name('meditation.start');
     Route::post('/meditation/stop', [ToolsController::class, 'stop'])->name('meditation.stop');
 
-});
+    Route::view('Policies','Auth.Users.view.policies')->name('policies');
+
+    });
+
 
 require __DIR__.'/auth.php';
