@@ -24,7 +24,7 @@
         </div>
       </div>
       <div class="bg-white dark:bg-gray-800 relative sm:rounded-lg overflow-hidden rounded-lg transition-all hover:-translate-y-2 hover:shadow-emerald-500  shadow-md border-gray-300 dark:border-gray-600 h-96 mb-4">
-        @include('auth.admin.partials.layouts.app.tables.user-table')
+        @include('auth.admin.partials.layouts.app.tables.user-table', ['users' => $users])
       </div>
     </main>
 

@@ -14,11 +14,28 @@ class UserInformationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with(['staff', 'information'])
-                ->where('role', '!=', 'admin') // Exclude admins
-                ->paginate(4);
+            $query = User::with(['staff', 'information'])
+                ->where('role', '!=', 'admin');
+
+
+                if ($request->filled('search')) {
+        $search = $request->input('search');
+        $query->where(function ($q) use ($search) {
+            $q->where('firstname', 'like', "%{$search}%")
+              ->orWhere('lastname', 'like', "%{$search}%")
+              ->orWhere('email', 'like', "%{$search}%");
+        });
+    }
+        if ($request->filled('departments')) {
+            $query->whereHas('staff', function ($q) use ($request) {
+                $q->whereIn('office', $request->input('departments'));
+            });
+        }
+
+
+        $users = $query->get(); // or paginate(x)
 
         return view('Auth.Admin.view.manage-user', compact('users'));
     }

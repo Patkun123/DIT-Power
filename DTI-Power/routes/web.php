@@ -31,6 +31,7 @@ Route::middleware(['auth', 'is_admin:admin'])->group(function () {
     Route::get('/Manage-users', [UserInformationController::class, 'index'])->name('manage.user');
     Route::post('/Manage-users', [UserInformationController::class, 'store'])->name('users.store');
 
+
     //user tracking
     Route::get('Users/Tracking', [usertrackingController::class, 'index'])->name('users.tracking');
 

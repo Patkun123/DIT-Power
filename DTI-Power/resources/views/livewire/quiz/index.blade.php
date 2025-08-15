@@ -71,7 +71,7 @@ $startQuiz = function () {
     $now = Carbon::now('Asia/Manila');
 
     // Slots in the day
-    $allowedTimes = ['10:00', '12:00', '14:00'];
+    $allowedTimes = ['09:00', '12:00', '14:00'];
     $slots = collect($allowedTimes)->map(function ($time) {
         return Carbon::today('Asia/Manila')->setTimeFromTimeString($time);
     });
@@ -165,25 +165,42 @@ $saveAnswers = function () {
 
     $timeTaken = 0;
 
-    foreach($this->questions as $key => $question) {
-        $isCorrect = $question->correctAnswer()->id === ($this->answers[$key]['id'] ?? null);
-        $score = !is_null($this->answers[$key]) ? ($this->answers[$key]['remaining'] - 13 + ($isCorrect ? 10 : 0)) : 0;
+        foreach ($this->questions as $key => $question) {
+            $isCorrect = $question->correctAnswer()->id === ($this->answers[$key]['id'] ?? null);
 
-        $timeTaken += !is_null($this->answers[$key]) ? 15 - $this->answers[$key]['remaining'] : 15;
+            // Default score is 0
+            $score = 0;
 
-        $attempt->answers()->create([
-            'question_id' => $question->id,
-            'choice_id' => $this->answers[$key]['id'] ?? null,
-            'score' => $score,
-            'correct' => $isCorrect,
-        ]);
+            if (!is_null($this->answers[$key])) {
+                // If correct, add 10 points
+                if ($isCorrect) {
+                    $score += 10;
 
-        $totalScore += $score;
+                    // Quick answer bonus: +2 if answered in 5 seconds or less
+                    if ($this->answers[$key]['remaining'] >= 10) {
+                        $score += 2;
+                    }
+                }
+            }
 
-        if ($isCorrect) {
-            $correctCount++;
+            // Calculate time taken for this question
+            $timeTaken += !is_null($this->answers[$key])
+                ? 15 - $this->answers[$key]['remaining']
+                : 15;
+
+            $attempt->answers()->create([
+                'question_id' => $question->id,
+                'choice_id'   => $this->answers[$key]['id'] ?? null,
+                'score'       => $score,
+                'correct'     => $isCorrect,
+            ]);
+
+            $totalScore += $score;
+
+            if ($isCorrect) {
+                $correctCount++;
+            }
         }
-    }
 
     $this->time = $timeTaken;
 
@@ -264,8 +281,6 @@ $saveAnswers = function () {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.98a1 1 0 00.95.69h4.184c.969 0 1.371 1.24.588 1.81l-3.39 2.462a1 1 0 00-.364 1.118l1.287 3.98c.3.921-.755 1.688-1.538 1.118l-3.39-2.462a1 1 0 00-1.175 0l-3.39 2.462c-.783.57-1.838-.197-1.538-1.118l1.287-3.98a1 1 0 00-.364-1.118L2.02 9.407c-.783-.57-.38-1.81.588-1.81h4.184a1 1 0 00.95-.69l1.286-3.98z" />
                     </svg>
-                    <p class="text-gray-800 dark:text-white text-sm font-semibold">1500</p>
-                    <span class="text-gray-500 dark:text-gray-400 text-xs">total points</span>
                 </div>
             </div>
 
@@ -336,15 +351,19 @@ $saveAnswers = function () {
                 <div class="bg-green-100 h-32 w-32 flex flex-col justify-center rounded-full">
                     <div class="text-green-700 font-black text-3xl">{{ $attempt->score }}</div>
                     {{-- <hr class="border-green-500 bold mx-4 border-1"> --}}
-                    <div class="text-green-500 font-bold">of 1500</div>
+                    <div class="text-green-500 font-bold">of 100</div>
                 </div>
             </div>
 
             <!-- Title -->
             <h2 class="text-xl font-bold text-gray-800 dark:text-white">Results</h2>
             <p class="text-gray-500 dark:text-gray-400 mt-1">
-                Refresh to try again.
+                <a href="{{route('index')}}"></a>
             </p>
+
+                <button data-modal-target="leaderboardModal" data-modal-toggle="leaderboardModal" class="mt-4 mb-2 inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full">
+                    View Leaderboard
+                </button>
 
             <!-- Info boxes -->
             <div class="grid grid-cols-3 gap-3 mt-6">
@@ -398,5 +417,6 @@ $saveAnswers = function () {
             </button> --}}
         </div>
     @endif
-
+@include('Auth.Users.partials.leaderboards')
 </div>
+

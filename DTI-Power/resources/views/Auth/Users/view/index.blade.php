@@ -10,9 +10,9 @@
         <div class="bg-white 2xl:h-110 dark:bg-gray-800 p-6 rounded-xl shadow">
             <h2 class="2xl:text-xl text-md font-semibold text-gray-800 dark:text-white flex items-center justify-between">
                 Leaderboard Ranking
-                <div class="hover:bg-primary-500 transition-all hover:-translate-y-1 rounded-full">
+                <button id="readProductButton" data-modal-target="leaderboardModal" data-modal-toggle="leaderboardModal" class="hover:bg-primary-500 cursor-pointer transition-all hover:-translate-y-1 rounded-full">
                     <img src="/images/crown.gif" class="w-15 h-15 relative" alt="">
-                </div>
+                </button>
 
             </h2>
             @php
@@ -26,21 +26,22 @@
 
 <div class="flex flex-row items-center gap-4 2xl:mt-0 mt-10 sm:gap-0 sm:justify-around">
     <!-- 2nd Place -->
-    <div class="text-center bg-gradient-to-b from-silver-500 via-silver-700 to-silver-500 h-50 w-50 2xl:h-70 2xl:mt-10 2xl:w-45 rounded-2xl">
+    <div class="text-center bg-gradient-to-b from-silver-500 shadow-2xl shadow-silver-500 via-silver-700 to-silver-500 h-50 w-50 2xl:h-70 2xl:mt-10 2xl:w-45 rounded-2xl">
         <div class="bg-gray-200 w-10 h-10 2xl:w-16 2xl:h-16 mt-5 rounded-full mx-auto mb-2 flex items-center justify-center">
-            @if (auth()->user()->profileimage)
-                        <img
-                            src="{{ asset('storage/' . auth()->user()->profileimage) }}"
-                            alt="Current Profile"
-                            class="w-[36px] h-[36px] rounded-full object-cover border border-gray-300 dark:border-gray-700"
-                        >
-                    @else
-                        <img
-                            src="{{ asset('images/default.png') }}"
-                            alt="Default Profile"
-                            class="w-[36px] 2xl:w-[55px] 2xl:h-[55px] h-[36px] rounded-full object-cover border border-gray-300 dark:border-gray-700"
-                        >
-                    @endif
+        @if ($players[1]->user->profileimage)
+            <img
+                src="{{ asset('storage/' . $players[1]->user->profileimage) }}"
+                alt="{{ $players[1]->user->firstname }}'s Profile"
+                class="w-[36px] h-[36px] 2xl:w-[55px] 2xl:h-[55px] rounded-full object-cover border border-gray-300 dark:border-gray-700"
+            >
+        @else
+            <img
+                src="{{ asset('images/default.png') }}"
+                alt="Default Profile"
+                class="w-[36px] h-[36px] 2xl:w-[55px] 2xl:h-[55px] rounded-full object-cover border border-gray-300 dark:border-gray-700"
+            >
+        @endif
+
         </div>
         <div class="font-semibold 2xl:text-md text-sm">{{ $players[1]->user->firstname }} <span class="hidden lg:block">{{ $players[1]->user->lastname }}</span></div>
         <div class="text-[10px] 2xl:text-sm text-gray-500">{{ $players[1]->user->office }}</div>
@@ -57,19 +58,21 @@
     <!-- 1st Place -->
     <div class="text-center animate-bounce bg-gradient-to-b transition-all hover:-translate-y-1 shadow-lg shadow-gold-600 from-gold-500 via-gold-700 to-gold-400 h-50 w-50 2xl:h-70 2xl:mt-10 2xl:w-45 rounded-2xl">
         <div class="bg-yellow-400 w-10 h-10 2xl:w-16 2xl:h-16 mt-5 rounded-full mx-auto mb-2 flex items-center justify-center">
-            @if (auth()->user()->profileimage)
-                        <img
-                            src="{{ asset('storage/' . auth()->user()->profileimage) }}"
-                            alt="Current Profile"
-                            class="w-[36px] h-[36px] rounded-full object-cover border border-gray-300 dark:border-gray-700"
-                        >
-                    @else
-                        <img
-                            src="{{ asset('images/default.png') }}"
-                            alt="Default Profile"
-                            class="w-[36px] 2xl:w-[55px] 2xl:h-[55px] h-[36px] rounded-full object-cover border border-gray-300 dark:border-gray-700"
-                        >
-                @endif
+            @if ($players[0]->user->profileimage)
+                <img
+                    src="{{ asset('storage/' . $players[0]->user->profileimage) }}"
+                    alt="{{ $players[2]->user->firstname }}'s Profile"
+                    class="w-[36px] h-[36px] 2xl:w-[55px] 2xl:h-[55px] rounded-full object-cover border border-gray-300 dark:border-gray-700"
+                >
+            @else
+                <img
+                    src="{{ asset('images/default.png') }}"
+                    alt="Default Profile"
+                    class="w-[36px] h-[36px] 2xl:w-[55px] 2xl:h-[55px] rounded-full object-cover border border-gray-300 dark:border-gray-700"
+                >
+            @endif
+
+
         </div>
         <div class="font-semibold 2xl:text-md text-sm">{{ $players[0]->user->firstname }} <span class="hidden lg:block">{{ $players[0]->user->lastname }}</span></div>
         <div class="text-sm text-gray-500">{{ $players[0]->user->office }}</div>
@@ -84,9 +87,22 @@
     </div>
 
     <!-- 3rd Place -->
-    <div class="text-center bg-gradient-to-b from-bronze-400 via-bronze-500 to-bronze-400 h-50 w-50 2xl:h-70 2xl:mt-10 2xl:w-45 rounded-2xl">
+    <div class="text-center bg-gradient-to-b shadow-2xl shadow-bronze-500 from-bronze-400 via-bronze-500 to-bronze-400 h-50 w-50 2xl:h-70 2xl:mt-10 2xl:w-45 rounded-2xl">
         <div class="bg-orange-200 w-10 h-10 2xl:w-16 2xl:h-16 mt-5 rounded-full mx-auto mb-2 flex items-center justify-center">
-            <span class="text-lg font-bold">3</span>
+            @if ($players[2]->user->profileimage)
+            <img
+                src="{{ asset('storage/' . $players[2]->user->profileimage) }}"
+                alt="{{ $players[2]->user->firstname }}'s Profile"
+                class="w-[36px] h-[36px] 2xl:w-[55px] 2xl:h-[55px] rounded-full object-cover border border-gray-300 dark:border-gray-700"
+            >
+        @else
+            <img
+                src="{{ asset('images/default.png') }}"
+                alt="Default Profile"
+                class="w-[36px] h-[36px] 2xl:w-[55px] 2xl:h-[55px] rounded-full object-cover border border-gray-300 dark:border-gray-700"
+            >
+@endif
+
         </div>
         <div class="font-semibold 2xl:text-md text-sm">{{ $players[2]->user->firstname }} <span class=" hidden lg:block">{{ $players[2]->user->lastname }}</span></div>
         <div class="text-[10px] 2xl:text-sm text-gray-500">{{ $players[2]->user->office }}</div>
@@ -194,4 +210,5 @@
     </div>
 
 </div>
+@include('Auth.Users.partials.leaderboards')
 @endsection

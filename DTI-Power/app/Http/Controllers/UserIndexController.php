@@ -21,7 +21,6 @@ class UserIndexController extends Controller
             ->with('user') // Assuming relationship to User model
             ->groupBy('user_id')
             ->orderByDesc('best_score')
-            ->take(3)
             ->get();
 
         $quizCount = $user->quizAttempts()->sum('score');

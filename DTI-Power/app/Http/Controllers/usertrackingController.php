@@ -13,7 +13,9 @@ class usertrackingController extends Controller
      */
     public function index()
     {
-        $users = User::withCount(['journals'])->get();
+        $users = User::withCount(['journals', 'quizAttempts'])
+            ->withSum('quizAttempts', 'score')
+            ->get();
 
         return view('auth.admin.view.user-tracking', compact('users'));
 
