@@ -18,13 +18,14 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @fluxAppearance
         @fluxScripts
+        @livewireStyles()
     </head>
     <Body>
         @include('sweetalert2::index')
         @yield('content')
         @include('Auth.Admin.partials.modals.user-add')
         @livewire('admin.question-add')
-
+        @livewireScripts()
     </Body>
 
 </html>

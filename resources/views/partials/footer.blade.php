@@ -1,9 +1,9 @@
-<footer class="p-4 bg-white sm:p-6 dark:bg-gray-900">
+<footer class="p-4 bg-white sm:p-6 dark:bg-gray-800 shadow-lg shadow-gray-950">
     <div class="mx-auto max-w-screen-xl">
         <div class="md:flex md:justify-between">
             <div class="mb-6 md:mb-0">
                 <a href="https://flowbite.com" class="flex items-center">
-                    <img src="/images/DTI_w12.png" class="mr-3 h-8" alt="FlowBite Logo" />
+                    <img src="/images/ARIIMOAY.gif" class="mr-3 h-8" alt="FlowBite Logo" />
                     <span class="self-center lg:text-2xl font-semibold whitespace-nowrap sm:text-xl dark:text-white">Personalized Online Wellness Resource</span>
                 </a>
             </div>

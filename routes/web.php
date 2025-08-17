@@ -13,6 +13,7 @@ use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use Illuminate\Support\Facades\Route;
+use App\Http\Livewire\FinanceDashboard;
 
 Route::get('/', function () {
     return view('home');
@@ -67,6 +68,10 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::post('/meditation/stop', [ToolsController::class, 'stop'])->name('meditation.stop');
 
     Route::view('Policies', 'Auth.user.view.policies')->name('policies');
+    Route::view('Feedbacks', 'Auth.user.view.policies')->name('policies');
+
+    Route::view('Financial-tools','Auth.users.view.financial')->name('financial.tools');
+
 
 });
 
