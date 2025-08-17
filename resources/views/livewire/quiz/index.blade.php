@@ -4,10 +4,30 @@ use function Livewire\Volt\{state};
 use App\Models\QuizQuestion;
 use Carbon\Carbon;
 
+$set = null;
+$determineSet = function () {
+    $now = Carbon::now('Asia/Manila');
+
+    if ($now->between($now->copy()->setTime(1,0), $now->copy()->setTime(10,0))) {
+        return 1; // Set 1: 9am–10am
+    } elseif ($now->between($now->copy()->setTime(12,0), $now->copy()->setTime(13,0))) {
+        return 2; // Set 2: 12nn–1pm
+    } elseif ($now->between($now->copy()->setTime(15,0), $now->copy()->setTime(16,0))) {
+        return 3; // Set 3: 3pm–4pm
+    }
+
+    return null; // Not quiz time
+};
+
+$set = $determineSet();
+
 state([
-    'questions' => QuizQuestion::with(['choices'])->inRandomOrder()->take(10)->get(),
+    'set' => $set,
+    'questions' => $set
+        ? QuizQuestion::where('set', $set)->with(['choices'])->inRandomOrder()->take(5)->get()
+        : collect(), // empty if outside time
     'answers' => [],
-    'phase' => 'start',
+    'phase' => $set ? 'start' : 'start', // stays "start" but shows error if null
     'index' => 0,
     'attempt' => auth()->user()->quizAttempts->first(),
     'time' => 45,
@@ -18,6 +38,7 @@ state([
     )->score ?? 0,
     'isSubmitted' => false
 ]);
+
 $saveAnswers = function () {
     if ($this->isSubmitted) {
         return; // Prevent multiple submissions
@@ -67,16 +88,97 @@ $saveAnswers = function () {
     $this->phase = 'result';
 };
 
+// $startQuiz = function () {
+//     $now = Carbon::now('Asia/Manila');
+
+//     // Slots in the day
+//     $allowedTimes = ['09:00', '12:00', '14:00'];
+//     $slots = collect($allowedTimes)->map(function ($time) {
+//         return Carbon::today('Asia/Manila')->setTimeFromTimeString($time);
+//     });
+
+//     // Find next slot after a given time
+//     $findNextSlot = function ($time) use ($slots) {
+//         foreach ($slots as $slot) {
+//             if ($time->lt($slot)) {
+//                 return $slot;
+//             }
+//         }
+//         // If none left today, first slot tomorrow
+//         return $slots->first()->addDay();
+//     };
+
+//     // Last attempt
+//     $lastAttempt = auth()->user()->quizAttempts()->latest('created_at')->first();
+
+//     if ($lastAttempt) {
+//         $lastTime = Carbon::parse($lastAttempt->created_at)->timezone('Asia/Manila');
+//         $nextSlot = $findNextSlot($lastTime);
+
+//         if ($now->lt($nextSlot)) {
+//             session()->flash(
+//                 'error',
+//                 'You have already taken the quiz. Next available slot: ' . $nextSlot->format('F j, Y g:i A')
+//             );
+//             return;
+//         }
+//     }
+
+//     // Check if current time is inside a slot
+//     $inSlot = false;
+//     foreach ($slots as $slot) {
+//         $end = (clone $slot)->addHour();
+//         if ($now->between($slot, $end)) {
+//             $inSlot = true;
+//             break;
+//         }
+//     }
+
+//     if (!$inSlot) {
+//         session()->flash('error', 'Not in quiz time.');
+//         return;
+//     }
+
+//     // Start quiz
+//     $this->phase = 'quiz';
+// };
+
+
 $startQuiz = function () {
     $now = Carbon::now('Asia/Manila');
 
-    // Slots in the day
-    $allowedTimes = ['09:00', '12:00', '14:00'];
-    $slots = collect($allowedTimes)->map(function ($time) {
-        return Carbon::today('Asia/Manila')->setTimeFromTimeString($time);
-    });
+    // Define quiz slots
+    $slots = collect([
+        Carbon::today('Asia/Manila')->setTime(9, 0),  // 9:00 AM
+        Carbon::today('Asia/Manila')->setTime(12, 0), // 12:00 PM
+        Carbon::today('Asia/Manila')->setTime(15, 0), // 3:00 PM
+    ]);
 
-    // Find next slot after a given time
+    // Match set to time
+    if ($now->between($slots[0], $slots[0]->copy()->addHour())) {
+        $this->set = 1;
+    } elseif ($now->between($slots[1], $slots[1]->copy()->addHour())) {
+        $this->set = 2;
+    } elseif ($now->between($slots[2], $slots[2]->copy()->addHour())) {
+        $this->set = 3;
+    } else {
+        session()->flash('error', 'Not in quiz time. Try 9AM, 12NN, or 3PM.');
+        return;
+    }
+
+    // Load questions for this set
+    $this->questions = QuizQuestion::where('set', $this->set)
+        ->with('choices')
+        ->inRandomOrder()
+        ->take(5)
+        ->get();
+
+    if ($this->questions->isEmpty()) {
+        session()->flash('error', 'No questions available for this set.');
+        return;
+    }
+
+    // Find next available slot
     $findNextSlot = function ($time) use ($slots) {
         foreach ($slots as $slot) {
             if ($time->lt($slot)) {
@@ -84,12 +186,11 @@ $startQuiz = function () {
             }
         }
         // If none left today, first slot tomorrow
-        return $slots->first()->addDay();
+        return $slots->first()->copy()->addDay();
     };
 
-    // Last attempt
+    // Prevent multiple attempts
     $lastAttempt = auth()->user()->quizAttempts()->latest('created_at')->first();
-
     if ($lastAttempt) {
         $lastTime = Carbon::parse($lastAttempt->created_at)->timezone('Asia/Manila');
         $nextSlot = $findNextSlot($lastTime);
@@ -103,25 +204,8 @@ $startQuiz = function () {
         }
     }
 
-    // Check if current time is inside a slot
-    $inSlot = false;
-    foreach ($slots as $slot) {
-        $end = (clone $slot)->addHour();
-        if ($now->between($slot, $end)) {
-            $inSlot = true;
-            break;
-        }
-    }
-
-    if (!$inSlot) {
-        session()->flash('error', 'Not in quiz time.');
-        return;
-    }
-
-    // Start quiz
     $this->phase = 'quiz';
 };
-
 
 
 
@@ -252,7 +336,7 @@ $saveAnswers = function () {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                     </svg>
-                    <p class="text-gray-800 dark:text-white text-sm font-semibold">5</p>
+                    <p class="text-gray-800 dark:text-white text-sm font-semibold">10</p>
                     <span class="text-gray-500 dark:text-gray-400 text-xs">questions</span>
                 </div>
 
@@ -264,7 +348,7 @@ $saveAnswers = function () {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.98a1 1 0 00.95.69h4.184c.969 0 1.371 1.24.588 1.81l-3.39 2.462a1 1 0 00-.364 1.118l1.287 3.98c.3.921-.755 1.688-1.538 1.118l-3.39-2.462a1 1 0 00-1.175 0l-3.39 2.462c-.783.57-1.838-.197-1.538-1.118l1.287-3.98a1 1 0 00-.364-1.118L2.02 9.407c-.783-.57-.38-1.81.588-1.81h4.184a1 1 0 00.95-.69l1.286-3.98z" />
                     </svg>
-                    <p class="text-gray-800 dark:text-white text-sm font-semibold">1500</p>
+                    <p class="text-gray-800 dark:text-white text-sm font-semibold">120</p>
                     <span class="text-gray-500 dark:text-gray-400 text-xs">total points</span>
                 </div>
             </div>
@@ -336,14 +420,13 @@ $saveAnswers = function () {
                 <div class="bg-primary-100 h-32 w-32 flex flex-col justify-center rounded-full">
                     <div class="text-primary-700 font-black text-3xl">{{ $attempt->score }}</div>
                     {{-- <hr class="border-primary-500 bold mx-4 border-1"> --}}
-                    <div class="text-primary-500 font-bold">of 1500</div>
                 </div>
             </div>
 
             <!-- Title -->
             <h2 class="text-xl font-bold text-gray-800 dark:text-white">Results</h2>
             <p class="text-gray-500 dark:text-gray-400 mt-1">
-                Refresh to try again.
+                 try again later.
             </p>
 
             <!-- Info boxes -->

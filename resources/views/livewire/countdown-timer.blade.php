@@ -19,32 +19,14 @@
 
     {{-- Start / Reset Buttons --}}
     <div class="space-x-2">
-        <button wire:click="start" class="px-4 py-2 bg-primary-500 text-gray-800 rounded">Start</button>
-        <button wire:click="resets" class="px-4 py-2 bg-red-500 text-gray-800 rounded">Reset</button>
+        <button wire:click="start" onclick="document.getElementById('timer-audio').play()" class="px-4 py-2 bg-primary-500 text-gray-800 rounded">Start</button>
+        <button wire:click="resets" onclick="document.getElementById('timer-audio').pause()" class="px-4 py-2 bg-red-500 text-gray-800 rounded">Reset</button>
     </div>
 
-    <audio id="timer-audio" src="{{ asset('sounds/start.mp3') }}" preload="auto"></audio>
+
+    <audio id="timer-audio" loop>
+        <source src="{{ asset('sounds/start.mp3') }}" type="audio/mpeg">
+    </audio>
 </div>
 {{-- Script to Play Audio on Start --}}
-<script>
-document.addEventListener('livewire:load', function () {
-    Livewire.on('playAudioAndDarken', function () {
-        // Play music
-        const audio = document.getElementById('timer-audio');
-        audio.currentTime = 0;
-        audio.play();
 
-        // Fade page to dark
-        document.body.style.transition = 'background-color 3s ease, color 3s ease';
-        document.body.style.backgroundColor = '#1a1a1a';
-        document.body.style.color = 'gray-800';
-    });
-
-    Livewire.on('resetBg', function () {
-        // Fade page to light
-        document.body.style.transition = 'background-color 3s ease, color 3s ease';
-        document.body.style.backgroundColor = 'gray-800';
-        document.body.style.color = 'black';
-    });
-});
-</script>

@@ -10,6 +10,7 @@ class QuizAttempt extends Model
         'user_id',
         'score',
         'correct',
+        'set',
     ];
 
     public function user()

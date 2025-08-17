@@ -31,6 +31,6 @@
         @include('auth.users.partials.header')
        @yield('content')
        @livewireScripts
-
+        @stack('scripts')
     </body>
 </html>

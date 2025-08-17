@@ -19,7 +19,7 @@ class CountdownTimer extends Component
     public function start(): void
     {
         $this->running = true;
-        $this->dispatch('play-audio');
+        $this->dispatch('playAudioAndDarken');
     }
 
     public function resets(): void

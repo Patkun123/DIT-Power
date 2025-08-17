@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string("content");
             $table->string("answer");
+            $table->string("sets");
             $table->timestamps();
         });
     }

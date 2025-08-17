@@ -5,6 +5,7 @@ use App\Models\QuizQuestion;
 
 state([
     "content" => "",
+    "set" => "",
     "choices" => [
         "A" =>  "",
         "B" =>  "",
@@ -17,6 +18,7 @@ state([
 $submit = function () {
     $this->validate([
         'content' => 'required|string|max:255',
+        'set' => 'required|string|max:255',
         'choices.A' => 'required|string|max:255',
         'choices.B' => 'required|string|max:255',
         'choices.C' => 'required|string|max:255',
@@ -27,6 +29,7 @@ $submit = function () {
     $question = QuizQuestion::create([
         'content' => $this->content,
         'answer' => $this->correct,
+        'set'     => $this->set,
     ]);
 
     foreach ($this->choices as $letter => $content) {
@@ -35,14 +38,14 @@ $submit = function () {
             'content' => $content,
         ]);
     }
-
+    $this->reset();
     $this->js('window.location.reload()');
 }
 
 ?>
 
 
-    
+
 <div id="questionadd" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
     <div class="relative p-4 w-full max-w-2xl h-full md:h-auto">
         <!-- Modal content -->
@@ -63,19 +66,27 @@ $submit = function () {
                 <!-- Question -->
                 <div>
                     <label for="id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Question</label>
-                    
+
                     <textarea wire:model='content' class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Enter Your Question Here"></textarea>
                 </div>
-                
+                <div>
+                    <label for="set" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Sets Schedule (1= 9am, 2=12nn, 3=3pm)</label>
+                    <select id="set" wire:model="set" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option selected>Select Set</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
                 <div class="grid gap-4 mb-4 sm:grid-cols-2">
-                    
-                    
+
+
                     <!-- A -->
                     <div>
                         <div class="flex gap-2">
                             <input wire:model='correct' name="correct" type="radio" value="A" class="w-4 h-4 bg-gray-100 border-gray-300 rounded-full text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                             <label for="answerA" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">A</label>
-                            
+
                         </div>
                         <input wire:model='choices.A' type="text" name="answerA" id="answerA" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Answer Letter A" required>
                     </div>
@@ -85,20 +96,20 @@ $submit = function () {
                         <div class="flex gap-2">
                             <input wire:model='correct' type="radio" value="B" class="w-4 h-4 bg-gray-100 border-gray-300 rounded-full text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                             <label for="answerB" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">B</label>
-                            
+
                         </div>
                         <input wire:model='choices.B' type="text" name="answerB" id="answerB" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Answer Letter B" required>
                     </div>
                 </div>
                 <div class="grid gap-4 mb-4 sm:grid-cols-2">
-                    
-                    
+
+
                     <!-- C -->
                     <div>
                         <div class="flex gap-2">
                             <input wire:model='correct' name="correct" type="radio" value="C" class="w-4 h-4 bg-gray-100 border-gray-300 rounded-full text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                             <label for="answerC" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">C</label>
-                            
+
                         </div>
                         <input wire:model='choices.C' type="text" name="answerC" id="answerC" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Answer Letter C" required>
                     </div>

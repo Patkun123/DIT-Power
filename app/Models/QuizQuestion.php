@@ -13,6 +13,7 @@ class QuizQuestion extends Model
     protected $fillable = [
         'content',
         'answer',
+        'set',
     ];
 
     public function choices()
