@@ -3,7 +3,7 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite --host 10.20.19.168"
     },
     "dependencies": {
         "apexcharts": "^3.54.1",

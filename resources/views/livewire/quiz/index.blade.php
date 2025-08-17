@@ -57,8 +57,8 @@ $saveAnswers = function () {
             : 0;
 
         $timeTaken += !is_null($this->answers[$key])
-            ? 15 - $this->answers[$key]['remaining']
-            : 15;
+            ? 20 - $this->answers[$key]['remaining']
+            : 20;
 
         $attempt->answers()->create([
             'question_id' => $question->id,
@@ -151,7 +151,7 @@ $startQuiz = function () {
     $slots = collect([
         Carbon::today('Asia/Manila')->setTime(9, 0),  // 9:00 AM
         Carbon::today('Asia/Manila')->setTime(12, 0), // 12:00 PM
-        Carbon::today('Asia/Manila')->setTime(15, 0), // 3:00 PM
+        Carbon::today('Asia/Manila')->setTime(22, 0), // 3:00 PM
     ]);
 
     // Match set to time
@@ -253,7 +253,7 @@ $saveAnswers = function () {
         $isCorrect = $question->correctAnswer()->id === ($this->answers[$key]['id'] ?? null);
         $score = !is_null($this->answers[$key]) ? ($this->answers[$key]['remaining'] - 13 + ($isCorrect ? 10 : 0)) : 0;
 
-        $timeTaken += !is_null($this->answers[$key]) ? 15 - $this->answers[$key]['remaining'] : 15;
+        $timeTaken += !is_null($this->answers[$key]) ? 20 - $this->answers[$key]['remaining'] : 20;
 
         $attempt->answers()->create([
             'question_id' => $question->id,
@@ -324,7 +324,7 @@ $saveAnswers = function () {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 8v4l3 3m6-3a9 9 0 11-18 0a9 9 0 0118 0z" />
                     </svg>
-                    <p class="text-gray-800 dark:text-white text-sm font-semibold">15s</p>
+                    <p class="text-gray-800 dark:text-white text-sm font-semibold">20s</p>
                     <span class="text-gray-500 dark:text-gray-400 text-xs">per question</span>
                 </div>
 
@@ -359,22 +359,22 @@ $saveAnswers = function () {
                 @if(session('error')) disabled @endif
                 class="mt-6 w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 rounded-full disabled:opacity-50"
             >
-                Start Assessment
+                Start
             </button>
 
         </div>
     @elseif ($phase === 'quiz')
         <div x-data="{
-            seconds: 15,
+            seconds: 20,
             selectAnswer(id, letter) {
                 $wire.selectAnswer(id, letter, this.seconds);
-                this.seconds = 15;
+                this.seconds = 20;
             }
         }" x-init="$nextTick(() => {
             setInterval(() => {
                 if (seconds <= 0) {
                     $wire.skipQuestion();
-                    seconds = 15;
+                    seconds = 20;
                 } else {
                     seconds--;
                 }
