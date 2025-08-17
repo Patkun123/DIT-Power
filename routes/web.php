@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\ArticleandNewsController;
 use App\Http\Controllers\JournalsController;
 use App\Http\Controllers\NutritionController;
+use App\Http\Controllers\PdfController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\ToolsController;
 use App\Http\Controllers\UserIndexController;
@@ -67,8 +68,9 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::post('physical-tools/meditation', [ToolsController::class, 'start'])->name('meditation.start');
     Route::post('/meditation/stop', [ToolsController::class, 'stop'])->name('meditation.stop');
 
-    Route::view('Policies', 'Auth.user.view.policies')->name('policies');
-    Route::view('Feedbacks', 'Auth.user.view.policies')->name('policies');
+    Route::get('Policies', [PdfController::class, 'index'])->name('policies');
+    // Route::view('Policies', 'Auth.users.view.policies')->name('policies');
+    // Route::view('Feedbacks', 'Auth.user.view.policies')->name('policies');
 
     Route::view('Financial-tools','Auth.users.view.financial')->name('financial.tools');
 

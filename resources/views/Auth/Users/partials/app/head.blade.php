@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth md:scroll-auto">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -26,10 +26,11 @@
         </style>
         @livewireStyles
     </head>
-    <body>
-
+    <body class="dark:bg-gray-900 bg-gray-100">
         @include('auth.users.partials.header')
+        <section class="mt-20">
        @yield('content')
+       </section>
        @livewireScripts
         @stack('scripts')
     </body>
