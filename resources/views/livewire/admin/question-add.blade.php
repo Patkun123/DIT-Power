@@ -17,7 +17,7 @@ state([
 
 $submit = function () {
     $this->validate([
-        'content' => 'required|string|max:255',
+        'content' => 'required|string|max:2000',
         'set' => 'required|string|max:255',
         'choices.A' => 'required|string|max:255',
         'choices.B' => 'required|string|max:255',

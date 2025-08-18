@@ -74,40 +74,68 @@
                 </th>
             </tr>
         </thead>
-        <tbody>
-            @forelse(\App\Models\QuizQuestion::with(['choices'])->get() as $question)
-                <tr class="border-b dark:border-gray-700">
-                    <td class="px-4 py-3">{{ $question->id }}</td>
-                    <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ $question->content }}</th>
-                    <td class="px-4 py-3">{{ $question->correctAnswer()->content }}</td>
-                    <td class="px-4 py-3">{{ $question->set }}</td>
-                    <td class="px-4 py-3 flex items-center justify-end">
-                        <button id="dropdown-button-{{ $question->id }}" data-dropdown-toggle="dropdown-{{ $question->id }}" class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100" type="button">
-                            <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                            </svg>
+<tbody>
+    @forelse(\App\Models\QuizQuestion::with(['choices'])->get() as $question)
+        <tr class="border-b dark:border-gray-700">
+            <td class="px-4 py-3">{{ $loop->iteration }}</td>
+
+            <!-- Question -->
+            <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                {{ Str::limit($question->content, 50, '...') }}
+            </th>
+
+            <!-- Correct Answer -->
+            <td class="px-4 py-3">{{ $question->correctAnswer()->content ?? 'N/A' }}</td>
+
+            <!-- Set -->
+            <td class="px-4 py-3">{{ $question->set }}</td>
+
+            <!-- Dropdown -->
+            <td class="px-4 py-3 flex items-center justify-end">
+                <button id="dropdown-button-{{ $question->id }}"
+                        data-dropdown-toggle="dropdown-{{ $question->id }}"
+                        class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
+                        type="button">
+                    <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                    </svg>
+                </button>
+
+                <div id="dropdown-{{ $question->id }}"
+                     class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
+
+                    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
+                        <li>
+                            <!-- Edit Question -->
+                        <button
+                            id="defaultModalButton-{{ $question->id }}"
+                            data-modal-target="questionedit-{{ $question->id }}"
+                            data-modal-toggle="questionedit-{{ $question->id }}"
+                            wire:click="$call('edit', {{ $question->id }})"
+                            class="w-full text-left block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                            Edit
                         </button>
-                        <div id="dropdown-{{ $question->id }}" class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
-                            <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
-                                <li>
-                                    <a href="#" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Show</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
-                                </li>
-                            </ul>
-                            <div class="py-1">
-                                <a href="#" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="6" class="text-center px-4 py-3 text-gray-500 dark:text-gray-400">No Questions Found.</td>
-                </tr>
-            @endforelse
-        </tbody>
+                    </ul>
+                    <div class="py-1">
+                        <!-- Delete Question -->
+                        <button wire:click="delete({{ $question->id }})"
+                            class="w-full text-left block py-2 px-4 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-red-400">
+                            Delete
+                        </button>
+                    </div>
+
+                </div>
+            </td>
+        </tr>
+    @empty
+        <tr>
+            <td colspan="6" class="text-center px-4 py-3 text-gray-500 dark:text-gray-400">
+                No Questions Found.
+            </td>
+        </tr>
+    @endforelse
+</tbody>
+
     </table>
 </div>
 

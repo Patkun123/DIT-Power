@@ -29,23 +29,23 @@
 
     <!-- Stats -->
     <div class="grid grid-cols-1 dark:bg-gray-800 p-5 rounded-2xl sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-    <div class="bg-gray-900 transition-all hover:bg-primary-300 hover:shadow-lg shadow-lg shadow-lime-600 hover:-translate-y-2 rounded-xl p-10 text-center">
+    <div class="dark:bg-gray-900 bg-gray-50 transition-all hover:bg-primary-300 hover:shadow-lg shadow-lg shadow-lime-600 hover:-translate-y-2 rounded-xl p-10 text-center">
         <p class="text-2xl font-bold">{{ $total }}</p>
         <p class="text-gray-500">Total Articles</p>
     </div>
-    <div class="bg-gray-900 transition-all hover:bg-primary-300 hover:shadow-lg shadow-lg shadow-lime-600 hover:-translate-y-2 rounded-xl p-10 text-center">
+    <div class="dark:bg-gray-900 bg-gray-50 transition-all hover:bg-primary-300 hover:shadow-lg shadow-lg shadow-lime-600 hover:-translate-y-2 rounded-xl p-10 text-center">
         <p class="text-2xl font-bold">{{ $active }}</p>
         <p class="text-gray-500">Active</p>
     </div>
-    <div class="bg-gray-900 transition-all hover:bg-primary-300 hover:shadow-lg shadow-lg shadow-lime-600 hover:-translate-y-2 rounded-xl p-10 text-center">
+    <div class="dark:bg-gray-900 bg-gray-50 transition-all hover:bg-primary-300 hover:shadow-lg shadow-lg shadow-lime-600 hover:-translate-y-2 rounded-xl p-10 text-center">
         <p class="text-2xl font-bold">{{ $inactive }}</p>
         <p class="text-gray-500">Inactive</p>
     </div>
-    <div class="bg-gray-900 transition-all hover:bg-primary-300 hover:shadow-lg shadow-lg shadow-lime-600 hover:-translate-y-2 rounded-xl p-10 text-center">
+    <div class="dark:bg-gray-900 bg-gray-50 transition-all hover:bg-primary-300 hover:shadow-lg shadow-lg shadow-lime-600 hover:-translate-y-2 rounded-xl p-10 text-center">
         <p class="text-2xl font-bold">{{ $drafts }}</p>
         <p class="text-gray-500">Drafts</p>
     </div>
-    <div class="bg-gray-900 transition-all hover:bg-primary-300 hover:shadow-lg shadow-lg shadow-lime-600 hover:-translate-y-2 rounded-xl p-10 text-center">
+    <div class="dark:bg-gray-900 bg-gray-50 transition-all hover:bg-primary-300 hover:shadow-lg shadow-lg shadow-lime-600 hover:-translate-y-2 rounded-xl p-10 text-center">
         <p class="text-2xl font-bold">{{ $archived }}</p>
         <p class="text-gray-500">Archived</p>
     </div>

@@ -46,7 +46,7 @@
 
         <!-- Desktop Logo -->
         <img
-            src="/images/logo2.png"
+            src="/images/lightmode.png"
             class="hidden md:block h-10 md:mr-5"
             alt="DTI Wellness Desktop Logo"
         />

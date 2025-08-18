@@ -14,7 +14,7 @@
 </div>
 <main class="p-4 md:ml-64 h-auto pt-5 bg-gray-100 dark:bg-gray-900">
     <!-- Header -->
-    <div class="bg-gray-800 rounded-3xl">
+    <div class="bg-gray-50 dark:bg-gray-800 rounded-3xl">
     <div class="flex items-center justify-between mb-6 p-4 bg-gradient-to-l from-primary-400 via-primary-600 to-lime-700 rounded-t-lg text-white">
         <h1 class="text-xl font-semibold flex items-center">
             📈 User Progress Tracking
@@ -59,7 +59,7 @@
         </div>
         </div>
     <!-- User Card -->
-<div class="grid grid-cols-1 bg-gray-800 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+<div class="grid grid-cols-1 bg-gray-50 dark:bg-gray-800 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
     @foreach ($users as $user)
         <div class="bg-gray-100 dark:bg-gray-900 shadow-md shadow-lime-600 rounded-lg p-5">
             <div class="flex items-center justify-between">

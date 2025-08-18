@@ -77,9 +77,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(QuizAttempt::class, 'user_id', 'id');
     }
-    
+
     public function journals()
     {
         return $this->hasMany(journals::class);
+    }
+    public function getProfileImageUrlAttribute()
+    {
+        return $this->profile_image
+            ? asset('storage/' . $this->profileimage)
+            : asset('images/default.png'); // fallback avatar
     }
 }

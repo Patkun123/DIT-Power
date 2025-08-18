@@ -24,8 +24,8 @@ $set = $determineSet();
 state([
     'set' => $set,
     'questions' => $set
-        ? QuizQuestion::where('set', $set)->with(['choices'])->inRandomOrder()->take(5)->get()
-        : collect(), // empty if outside time
+        ? QuizQuestion::where('set', $set)->with(['choices'])->inRandomOrder()->take(15)->get()
+        : collect(),
     'answers' => [],
     'phase' => $set ? 'start' : 'start', // stays "start" but shows error if null
     'index' => 0,
@@ -149,9 +149,9 @@ $startQuiz = function () {
 
     // Define quiz slots
     $slots = collect([
-        Carbon::today('Asia/Manila')->setTime(9, 0),  // 9:00 AM
-        Carbon::today('Asia/Manila')->setTime(12, 0), // 12:00 PM
-        Carbon::today('Asia/Manila')->setTime(22, 0), // 3:00 PM
+        Carbon::today('Asia/Manila')->setTime(9, 50),  // 9:50 AM
+        Carbon::today('Asia/Manila')->setTime(12, 45), // 12:45 PM
+        Carbon::today('Asia/Manila')->setTime(21, 5),  // 4:05 PM
     ]);
 
     // Match set to time
@@ -162,7 +162,7 @@ $startQuiz = function () {
     } elseif ($now->between($slots[2], $slots[2]->copy()->addHour())) {
         $this->set = 3;
     } else {
-        session()->flash('error', 'Not in quiz time. Try 9AM, 12NN, or 3PM.');
+        session()->flash('error', 'Not in quiz time. Try 9:50 AM, 12:45 PM, or 4:05 PM.');
         return;
     }
 

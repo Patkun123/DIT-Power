@@ -37,7 +37,7 @@ class ArticleandNewsController extends Controller
             'status'            => 'nullable|string|max:50',
             'publication_date'  => 'required|date',
             'author'            => 'nullable|string|max:255',
-            'summary'           => 'nullable|string|max:500',
+            'summary'           => 'nullable|string',
             'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
 

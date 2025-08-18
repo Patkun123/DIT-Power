@@ -1,9 +1,24 @@
 <header class="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-300 dark:border-gray-700 shadow-md">
-    <nav class="bg-white border-gray-200 px-1 lg:px-6 py-2.5 dark:bg-gray-800">
+    <nav class="bg-white border-gray-200 px-1 lg:px-6  dark:bg-gray-800">
         <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
             <a href="#" class="flex items-center">
-                <img src="/images/DTI_w12.png" class="mr-3 h-6 sm:h-10" alt="DTI Wellness" />
-                <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white lg:block md:block sm:block hidden">Wellness Portal</span>
+                <!-- Light mode logo -->
+                <img src="images/DTI_w12.png"
+                    class="h-14 sm:h-12 block dark:hidden"
+                    alt="DTI Wellness (Light)" />
+                <img src="/images/lightmode.png"
+                    class="mr-3 h-17 sm:h-16 block dark:hidden"
+                    alt="DTI Wellness (Light)" />
+
+
+                <!-- Dark mode logo -->
+                <img src="/images/DTI_w12.png"
+                    class="h-14 sm:h-12 hidden dark:block"
+                    alt="DTI Wellness (Dark)" />
+                <img src="/images/final.png"
+                    class="mr-3 h-17 sm:h-16 hidden dark:block"
+                    alt="DTI Wellness (Dark)" />
+
             </a>
             <div class="flex items-center lg:order-2">
                 {{-- <button data-modal-target="default-modal" data-modal-toggle="default-modal"  class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">Log in</button> --}}

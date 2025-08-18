@@ -48,20 +48,20 @@ class UserIndexController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'rating' => 'required|integer|min:1|max:5',
-            'message' => 'nullable|string|max:1000',
-        ]);
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        'rating' => 'required|integer|min:1|max:5',
+        'message' => 'nullable|string|max:1000',
+    ]);
 
-        // Attach email from authenticated user
-        $validated['email'] = auth()->user()->email;
+    $validated['email'] = auth()->user()->email;
 
-        Feedbacks::create($validated);
+    Feedbacks::create($validated);
 
-        return redirect()->back()->with('success', 'Thank you for your feedback!');
-    }
+    return redirect()->back()->with('success', 'Thank you for your feedback!');
+}
+
 
     /**
      * Display the specified resource.

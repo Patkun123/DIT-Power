@@ -27,6 +27,5 @@
         @include('auth.admin.partials.layouts.app.tables.question-list')
       </div>
     </main>
- {{-- @include('auth.admin.partials.layouts.app.tables.question-list') --}}
 @endsection
 

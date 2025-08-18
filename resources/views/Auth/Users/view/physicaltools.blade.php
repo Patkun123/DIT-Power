@@ -2,11 +2,16 @@
 
 @section('title', 'Tools')
 @section('content')
-<div class="bg-gray-50 dark:bg-gray-900 min-h-screen flex flex-col items-center py-10">
+<div class="bg-gray-50 text-center px-4 dark:bg-gray-900 min-h-screen flex flex-col items-center py-10">
     <h1 class="text-4xl font-bold dark:text-gray-50 text-gray-900 mb-2">Physical Wellness Tools</h1>
     <div class="w-50 h-1 bg-primary-500 rounded mb-5"></div>
-    <div class="w-200 mb-10 text-center">
-        <span>Physical well-being" refers to the overall condition and functioning of your body. It’s about more than just not being sick — it includes how well your body operates, how energized you feel, and how capable you are of doing daily activities. </span></div>
+    <div class="max-w-2xl mx-auto mb-10">
+        <p class="text-sm sm:text-base text-gray-700 dark:text-gray-300">
+        "Physical well-being" refers to the overall condition and functioning of your body.
+        It’s about more than just not being sick — it includes how well your body operates,
+        how energized you feel, and how capable you are of doing daily activities.
+        </p>
+    </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 mb-5 gap-8 max-w-6xl w-full px-4">
         <!-- BMI Calculator -->
