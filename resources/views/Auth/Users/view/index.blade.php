@@ -225,7 +225,7 @@
 
 <div class="container px-5 py-24 mx-auto bg-gray-800 w-full rounded-4xl flex sm:flex-nowrap flex-wrap">
   <!-- LEFT SIDE (Map + Info) -->
-  <div class="lg:w-2/3 md:w-1/2 bg-gray-300 rounded-lg overflow-hidden sm:mr-10 p-10 flex items-end justify-start relative">
+  <div class="lg:w-2/3 md:w-1/2 h-150 bg-gray-300 rounded-lg overflow-hidden sm:mr-10 p-10 flex items-end justify-start relative">
     <iframe width="100%" height="100%" class="absolute inset-0" frameborder="0" title="map" marginheight="0" marginwidth="0" scrolling="no"
       src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15934.604498153018!2d124.84789529567742!3d6.497323265799879!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x32f7fbb52b5b1461%3A0x2e59c8ed6e547f76!2sKoronadal%20City%2C%20South%20Cotabato!5e0!3m2!1sen!2sph!4v1691488144480!5m2!1sen!2sph"></iframe>
     <div class="bg-white dark:bg-gray-800 relative flex flex-wrap py-6 rounded shadow-md">

@@ -31,7 +31,7 @@
         <section class="mt-20">
        @yield('content')
        </section>
-       @livewireScripts
         @stack('scripts')
+        @livewireScripts
     </body>
 </html>

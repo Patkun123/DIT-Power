@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\ArticleandNewsController;
+use App\Http\Controllers\emotional;
 use App\Http\Controllers\JournalsController;
 use App\Http\Controllers\NutritionController;
 use App\Http\Controllers\PdfController;
@@ -70,13 +71,14 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::post('/meditation/stop', [ToolsController::class, 'stop'])->name('meditation.stop');
 
     Route::get('Policies', [PdfController::class, 'index'])->name('policies');
-<<<<<<< HEAD
+
     // Route::view('Policies', 'Auth.users.view.policies')->name('policies');
     // Route::view('Feedbacks', 'Auth.user.view.policies')->name('policies');
-=======
->>>>>>> ef54cdad6b51cde10af7eb83bf573147f8892502
 
     Route::view('Financial-tools','Auth.users.view.financial')->name('financial.tools');
+    Route::view('mental-tools','Auth.users.view.mental')->name('mental.tools');
+    Route::get('emotional-tools',[emotional::class, 'index'])->name('emotional.tools');
+    Route::view('social-tools','Auth.users.view.social')->name('social.tools');
 
 
 });
