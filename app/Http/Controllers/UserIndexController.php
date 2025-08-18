@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Feedbacks;
 use App\Models\news_article;
 use App\Models\QuizAttempt;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserIndexController extends Controller
 {
@@ -24,7 +26,7 @@ class UserIndexController extends Controller
             ->get();
 
         $quizCount = $user->quizAttempts()->sum('score');
-        $journalCount = auth()->user()
+        $journalCount = $user
         ->journals()
         ->count();
         $articles = news_article::where('status', 'Published')
@@ -48,7 +50,17 @@ class UserIndexController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'message' => 'nullable|string|max:1000',
+        ]);
+
+        // Attach email from authenticated user
+        $validated['email'] = auth()->user()->email;
+
+        Feedbacks::create($validated);
+
+        return redirect()->back()->with('success', 'Thank you for your feedback!');
     }
 
     /**

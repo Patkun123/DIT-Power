@@ -56,6 +56,7 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
 
     Route::get('/index',[UserIndexController::class, 'index'])->name('index');
+    Route::post('/index/feed',[UserIndexController::class, 'store'])->name('feedback.store');
 
     Route::get('Journal', [JournalsController::class, 'index'])->name('journal');
     Route::post('Journal', [JournalsController::class, 'store'])->name('journal.store');
@@ -69,8 +70,6 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::post('/meditation/stop', [ToolsController::class, 'stop'])->name('meditation.stop');
 
     Route::get('Policies', [PdfController::class, 'index'])->name('policies');
-    // Route::view('Policies', 'Auth.users.view.policies')->name('policies');
-    // Route::view('Feedbacks', 'Auth.user.view.policies')->name('policies');
 
     Route::view('Financial-tools','Auth.users.view.financial')->name('financial.tools');
 
