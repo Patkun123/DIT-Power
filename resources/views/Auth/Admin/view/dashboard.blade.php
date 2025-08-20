@@ -14,32 +14,41 @@
 </div>
 
     <main class="p-4 md:ml-64 h-auto pt-5 bg-gray-200 dark:bg-gray-900">
-      <div class="grid grid-cols-1 sm:grid-cols-2 transition-all hover:-translate-y-2 hover:shadow-emerald-500  shadow-md dark:bg-gray-800 border-2 dark:border-gray-800 bg-white p-3 rounded-xl lg:grid-cols-4 gap-4 mb-4">
-        <div class="bg-gray-300 rounded-lg transition-all hover:-translate-y-2 hover:shadow-emerald-500 shadow-md dark:border-gray-600 h-32 md:h-35 flex items-center justify-center space-x-4 p-4">
-            <flux:button icon="user-group" class="shadow-xl shadow-gray-500 hover:bg-gray-200 hover:dark:bg-gray-700" />
-            <div>
-                <h2 class="text-gray-950 dark:text-white text-lg font-semibold">Total Users</h2>
-                <span class="text-gray-950 dark:text-gray-950 text-xl font-bold">{{ $totalUsers ?? 0}}</span>
+      <div class="grid grid-cols-1 sm:grid-cols-2 transition-all hover:shadow-lg shadow-lg hover:-translate-y-2 hover:shadow-primary-500 dark:bg-gray-800 border-2 dark:border-gray-800 bg-white p-3 rounded-xl lg:grid-cols-4 gap-4 mb-4">
+        <div class="dark:bg-gray-900 hover:dark:text-gray-950 text-lg font-semibold bg-gray-50 rounded-lg transition-all hover:-translate-y-2 hover:bg-primary-400 shadow-primary-500 shadow-md dark:border-gray-600 h-32 md:h-35 flex items-center justify-center space-x-4 p-4">
+            <flux:button icon="user-group" variant="primary" color="lime" class="" />
+            <div class="">
+                <h2 class="font-semibold">Total Users</h2>
+                <span class="font-bold text-3xl">{{ $totalUsers ?? 0}}</span>
             </div>
         </div>
-        <div class="bg-gray-300 rounded-lg transition-all hover:-translate-y-2 hover:shadow-emerald-500  shadow-md border-gray-300 dark:border-gray-600 h-32 md:h-35 items-center flex justify-center">
-            <flux:button icon="clipboard" class="shadow-xl shadow-gray-500 hover:bg-gray-200 hover:dark:bg-gray-700">
-            </flux:button>
+        <div class="dark:bg-gray-900 hover:dark:text-gray-950 text-lg font-semibold bg-gray-50 rounded-lg transition-all hover:-translate-y-2 hover:bg-primary-400 shadow-primary-500 shadow-md dark:border-gray-600 h-32 md:h-35 flex items-center justify-center space-x-4 p-4">
+            <flux:button icon="clipboard" variant="primary" color="lime" />
+            <div class="">
+                <h2 class="font-semibold">Total Users</h2>
+                <span class="font-bold text-3xl">{{ $totalUsers ?? 0}}</span>
+            </div>
         </div>
-        <div class="bg-gray-300 rounded-lg transition-all hover:-translate-y-2 hover:shadow-emerald-500  shadow-md border-gray-300 dark:border-gray-600 h-32 md:h-35 items-center flex justify-center">
-            <flux:button icon="megaphone" class="shadow-xl shadow-gray-500 hover:bg-gray-200 hover:dark:bg-gray-700">
-            </flux:button>
+        <div class="dark:bg-gray-900 hover:dark:text-gray-950 text-lg font-semibold bg-gray-50 rounded-lg transition-all hover:-translate-y-2 hover:bg-primary-400 shadow-primary-500 shadow-md dark:border-gray-600 h-32 md:h-35 flex items-center justify-center space-x-4 p-4">
+            <flux:button icon="megaphone" variant="primary" color="lime" />
+                <div class="">
+                    <h2 class="font-semibold">Total Users</h2>
+                    <span class="font-bold text-3xl">{{ $totalUsers ?? 0}}</span>
+                </div>
         </div>
-        <div class="bg-gray-300 rounded-lg transition-all hover:-translate-y-2 hover:shadow-emerald-500  shadow-md border-gray-300 dark:border-gray-600 h-32 md:h-35 items-center flex justify-center">
-            <flux:button icon="newspaper" class="shadow-xl shadow-gray-500 hover:bg-gray-200 hover:dark:bg-gray-700">
-            </flux:button>
+        <div class="dark:bg-gray-900 hover:dark:text-gray-950 text-lg font-semibold bg-gray-50 rounded-lg transition-all hover:-translate-y-2 hover:bg-primary-400 shadow-primary-500 shadow-md dark:border-gray-600 h-32 md:h-35 flex items-center justify-center space-x-4 p-4">
+            <flux:button icon="newspaper"  variant="primary" color="lime" />
+            <div class="">
+                <h2 class="font-semibold">Total News</h2>
+                <span class="font-bold text-3xl">{{ $news_articleCount ?? 0}}</span>
+            </div>
         </div>
       </div>
       <div class="grid grid-cols-2 gap-4 mb-4 ">
-        <div class=" p-4 md:p-6 bg-white dark:bg-gray-800 rounded-lg transition-all hover:-translate-y-2 hover:shadow-emerald-500  shadow-md dark:shadow-gray-700  h-100 md:h-auto">
+        <div class=" p-4 md:p-6 bg-white dark:bg-gray-800 rounded-lg transition-all hover:-translate-y-2 hover:shadow-primary-500  shadow-md dark:shadow-gray-700  h-100 md:h-auto">
             @include('auth.admin.partials.layouts.app.graph')
         </div>
-        <div class=" p-10 md:p-4 bg-white dark:bg-gray-800 rounded-lg transition-all hover:-translate-y-2 hover:shadow-emerald-500  shadow-md dark:shadow-gray-700  h-auto md:h-auto">
+        <div class=" p-10 md:p-4 bg-white dark:bg-gray-800 rounded-lg transition-all hover:-translate-y-2 hover:shadow-primary-500  shadow-md dark:shadow-gray-700  h-auto md:h-auto">
             @include('auth.admin.partials.layouts.app.bargraph')
         </div>
       </div>
@@ -50,7 +59,7 @@
         class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"
       ></div> --}}
       {{-- <div class="grid grid-cols-2 gap-4">
-            <div class=" p-4 md:p-6 bg-white dark:bg-gray-800 rounded-lg transition-all hover:-translate-y-2 hover:shadow-emerald-500  shadow-md dark:shadow-gray-700  h-auto md:h-auto">
+            <div class=" p-4 md:p-6 bg-white dark:bg-gray-800 rounded-lg transition-all hover:-translate-y-2 hover:shadow-primary-500  shadow-md dark:shadow-gray-700  h-auto md:h-auto">
 
             </div>
         <div

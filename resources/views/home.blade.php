@@ -6,15 +6,12 @@
 
         <title>{{ $title ?? config('app.name') }} Personalized Online Wellness Resource HUB</title>
 
-        <link rel="icon" href="/logo.ico" sizes="any">
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-
+        <link rel="icon" href="/images/favicon.ico" sizes="any">
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
         <!-- Lucide Icons -->
         @vite(['resources/css/app.css','resources/js/app.js'])
-
         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
         @fluxAppearance
         @fluxScripts
@@ -25,15 +22,13 @@
                 scroll-behavior: smooth;
             }
         </style>
-
-
     </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen w-full">
         @include('partials.header')
         <section class="text-gray-600 body-font w-full overflow-x-auto">
             <div class="container mx-auto my-5 flex px-auto md:px-5 lg:px-25 overflow-auto py-25 md:flex-row flex-col items-center ">
                 <div class="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col lg:items-start md:items-end md:text-left mb-16 md:mb-0 items-center text-center">
-                    <h1 class="title-font sm:text-5xl 2xl:text-5xl text-4xl md:text-3xl lg:text-6xl mb-4 font-extrablack tracking-wider dark:text-primary-50 text-gray-900 -translate-y-1"><b>DTI REGION 12
+                    <h1 class="title-font sm:text-5xl 2xl:text-5xl text-4xl md:text-3xl lg:text-6xl xl:text-4xl mb-4 font-extrablack tracking-wider dark:text-primary-50 text-gray-900 -translate-y-1"><b>DTI REGION 12
                         <br class="hidden lg:inline-block">Personalized Online Wellness Resource</b></h1>
                     </h1>
                     <p class="mb-8 leading-relaxed xl:text-lg dark:text-gray-400">Empowering Wellness, Anytime, Anywhere.</p>
@@ -44,19 +39,12 @@
                             <span class="absolute left-0 -bottom-0.5 w-0 h-0.5 dark:bg-primary-400 bg-primary-500 transition-all duration-300 group-hover:w-full"></span>
                         </span>
                         </a>
-                        <button class="group relative inline-flex items-center px-6 hover:text-primary-500 py-2 ml-4 text-lg dark:text-gray-100 text-gray-800 rounded border-0 transition-all duration-300 hover:-translate-x-1 cursor-pointer">
-                        <span class="relative inline-block  ">
-                            Learn More
-                            <span class="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary-500  transition-all duration-300 group-hover:w-full"></span>
-                        </span>
-                        </button>
-
                     </div>
                 </div>
                 <div
                     x-data="{
                         slides: [
-                            { type: 'video', src: '/images/video/DTISportfest.mp4' },
+                            { type: 'video', src: '/videos/vid.mp4' },
                             { type: 'image', src: '/images/pic/1.jpg' },
                             { type: 'image', src: '/images/pic/2.jpg' },
                             { type: 'image', src: '/images/pic/3.jpg' },
@@ -103,7 +91,7 @@
                         }
                     }"
                     x-init="init"
-                    class="relative w-full md:w-190 2xl:w-200 2xl:p-15 lg:px-4 md:px-10 max-w-full px-4 sm:px-6 py-6 overflow-hidden flex items-center justify-center"
+                    class="relative w-full md:w-190 2xl:w-200 2xl:p-15 lg:p-10 md:px-10 max-w-full px-4 sm:px-6 py-6 overflow-hidden flex items-center justify-center"
                 >
 
                     <!-- Slides -->
@@ -168,9 +156,6 @@
         </section>
         @include('partials.features')
 
-        @if (Route::has('login'))
-            <div class="h-14.5 hidden lg:block"></div>
-        @endif
         @include('partials.footer')
         <script>
             document.addEventListener('DOMContentLoaded', () => {

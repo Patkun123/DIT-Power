@@ -5,7 +5,7 @@
         <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
           Get help for the following topics
         </h2>
-        <span class="absolute left-20 -bottom-1 h-1 w-90 bg-primary-500 dark:bg-primary-400 rounded"></span>
+        <span class="absolute -bottom-1 h-1 w-90 bg-primary-500 dark:bg-primary-400 rounded"></span>
       </div>
       <p class="text-gray-500 sm:text-xl dark:text-gray-400">
         Comprehensive care tailored to your individual needs

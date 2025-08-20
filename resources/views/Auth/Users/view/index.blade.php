@@ -50,7 +50,7 @@
 
             <div class="flex flex-row items-center gap-4 2xl:mt-0 mt-10 sm:gap-0 sm:justify-around">
                 <!-- 2nd Place -->
-                <div class="text-center bg-gradient-to-b from-silver-500 shadow-2xl shadow-silver-500 via-silver-700 to-silver-500 h-50 w-50 2xl:h-70 2xl:mt-10 2xl:w-45 rounded-2xl">
+                <div class="text-center bg-gradient-to-b from-silver-500 shadow-2xl shadow-silver-500 via-silver-700 to-silver-500 h-50 w-50 lg:w-35 2xl:h-70 2xl:mt-10 2xl:w-45 rounded-2xl">
                     <div class="bg-gray-200 w-10 h-10 2xl:w-16 2xl:h-16 mt-5 rounded-full mx-auto mb-2 flex items-center justify-center">
                     @if ($players[1]->user->profileimage)
                         <img
@@ -80,7 +80,7 @@
                 </div>
 
                 <!-- 1st Place -->
-                <div class="text-center animate-bounce bg-gradient-to-b transition-all hover:-translate-y-1 shadow-lg shadow-gold-600 from-gold-500 via-gold-700 to-gold-400 h-50 w-50 2xl:h-70 2xl:mt-10 2xl:w-45 rounded-2xl">
+                <div class="text-center animate-bounce bg-gradient-to-b transition-all hover:-translate-y-1 shadow-lg shadow-gold-600 from-gold-500 via-gold-700 to-gold-400 h-50 w-50 lg:w-35 2xl:h-70 2xl:mt-10 2xl:w-45 rounded-2xl">
                     <div class="bg-yellow-400 w-10 h-10 2xl:w-16 2xl:h-16 mt-5 rounded-full mx-auto mb-2 flex items-center justify-center">
                         @if ($players[0]->user->profileimage)
                             <img
@@ -111,7 +111,7 @@
                 </div>
 
                 <!-- 3rd Place -->
-                <div class="text-center bg-gradient-to-b shadow-2xl shadow-bronze-500 from-bronze-400 via-bronze-500 to-bronze-400 h-50 w-50 2xl:h-70 2xl:mt-10 2xl:w-45 rounded-2xl">
+                <div class="text-center bg-gradient-to-b shadow-2xl shadow-bronze-500 from-bronze-400 via-bronze-500 to-bronze-400 h-50 w-50 2xl:h-70 lg:w-35 2xl:mt-10 2xl:w-45 rounded-2xl">
                     <div class="bg-orange-200 w-10 h-10 2xl:w-16 2xl:h-16 mt-5 rounded-full mx-auto mb-2 flex items-center justify-center">
                         @if ($players[2]->user->profileimage)
                         <img
@@ -197,13 +197,14 @@
                         <h3 class="font-semibold text-lg">{{ $article->title }}</h3>
                         <p class="text-sm text-gray-500">{{ $article->summary }}</p>
                         <div class="text-sm mt-2 text-gray-400">
-                            {{ \Carbon\Carbon::parse($article->event_date)->format('F j, Y') }}
+                            {{ \Carbon\Carbon::parse($article->publication_date)->format('M d, Y') }}
                         </div>
+                        <br>
                         <p class="text-primary-600 text-sm font-medium">
                             {{ $article->category }}
                         </p>
                         <span class="text-primary-600 text-sm font-medium">
-                            Author {{ $article->author }}
+                            Author: {{ $article->author }}
                         </span>
 
                         <!-- Learn More Button -->
@@ -223,7 +224,7 @@
             <div class="flex justify-center mt-4">
                 <button
                     @click="showAll = !showAll"
-                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
+                    class="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg"
                 >
                     <span x-show="!showAll">See More</span>
                     <span x-show="showAll">See Less</span>

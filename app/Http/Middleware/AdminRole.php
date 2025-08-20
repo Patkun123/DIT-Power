@@ -22,7 +22,7 @@ class AdminRole
                 return $next($request);
             }
             // User is authenticated but does not have the required role
-            return redirect()->route('home');
+            return redirect()->route('index');
         }
 
         // User is not authenticated

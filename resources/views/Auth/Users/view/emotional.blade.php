@@ -20,7 +20,7 @@
         <div class="w-full aspect-video">
             <iframe
                 class="w-full h-full rounded-lg"
-                src="https://www.youtube.com/embed/blnbxbftme0?start=1"
+                src="https://www.youtube.com/embed/SmbIcdJ0Zx8?start=1"
                 title="YouTube video player"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -61,7 +61,7 @@
             </iframe>
         </div>
     </div>
-    <div class="m-5">
+    <div class="mt-10 w-full max-w-screen-md text-center bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
         @livewire('quote-generator')
     </div>
 

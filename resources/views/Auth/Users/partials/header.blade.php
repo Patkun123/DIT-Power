@@ -1,29 +1,30 @@
 <header class="fixed w-full shadow-md top-0 z-50 dark:bg-gray-800 bg-white">
-    <nav class=" h-20 px-4 lg:px-10 dark:bg-gray-800">
-        <div class="flex flex-wrap justify-between mt-1 lg:py-0 py-3 items-center mx-auto max-w-screen-1xl">
-            <a href="#" class="flex mt-2 relative items-center">
+    <nav class=" h-20 px-0 lg:px-10 dark:bg-gray-800">
+        <div class="flex flex-wrap  justify-between mt-1 lg:py-2 py-2 items-center mx-auto max-w-screen-1xl">
+            <a href="{{route('index')}}" class="flex relative items-center">
                 <!-- Light mode logo -->
                 <img src="images/DTI_w12.png"
-                    class="mr-3 h-17 sm:h-12 block dark:hidden"
+                    class="h-10 xl:h-12 sm:h-12 block dark:hidden"
                     alt="DTI Wellness (Light)" />
                 <img src="/images/lightmode.png"
                     class="mr-3 h-17 sm:h-16 block dark:hidden"
                     alt="DTI Wellness (Light)" />
                 <!-- Dark mode logo -->
                 <img src="/images/DTI_w12.png"
-                    class="mr-3 h-17 sm:h-12 hidden dark:block"
+                    class="h-10 xl:h-12 hidden dark:block"
                     alt="DTI Wellness (Dark)" />
                 <img src="/images/final.png"
                     class="mr-3 h-17 sm:h-16 hidden dark:block"
                     alt="DTI Wellness (Dark)" />
             </a>
             <div class="flex items-center lg:order-2">
-                @if (Auth::check())
+                {{-- <button data-modal-target="default-modal" data-modal-toggle="default-modal"  class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">Log in</button> --}}
+            @if (Auth::check())
                 @if (Auth::user()->role == 'admin')
                     <a href="{{route('dashboard')}}" class="text-white bg-primary-700 hover:bg-white hover:text-primary-500 transition-all duration-300 hover:shadow-lg shadow-primary-500/50 hover:-translate-y-0.5 focus:ring-4 hover:ring-1 hover:ring-primary-500 focus:ring-primary-600 font-medium rounded-full text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-gray-800 focus:outline-none dark:focus:ring-primary-800">Dashboard</a>
                 @elseif (Auth::User()->role == 'user')
                 <div class="relative inline-block text-left">
-                    <!-- Trigger Button -->
+    <!-- Trigger Button -->
                 <button id="userMenuButton" data-dropdown-toggle="userDropdown" class="flex items-center cursor-pointer space-x-2 focus:outline-none">
 
                     @if (auth()->user()->profileimage)
@@ -82,7 +83,7 @@
                 </button>
             </div>
             <div class="hidden  justify-between items-center w-full bg-gray-50 dark:bg-gray-800 shadow-2xl shadow-accent-foreground rounded-2xl lg:flex lg:w-auto lg:order-1" id="mobile-menu-2">
-                <ul class="flex flex-col font-medium lg:flex-row bg-white dark:bg-gray-800 lg:space-x-7 lg:mt-0">
+                <ul class="flex flex-col mt-4 font-medium lg:flex-row bg-white dark:bg-gray-800 lg:space-x-7 lg:mt-0">
                     <li>
                             <a href="{{ route('index') }}"
                             class="@if(request()->routeIs('index'))
@@ -203,7 +204,7 @@
                                     <a href="{{route('social.tools')}}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Social Well-being</a>
                                 </li>
                                 <li>
-                                    <a href="" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Feedbacks</a>
+                                    <a href="{{route('index')}}#Feedbacks" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Feedbacks</a>
                                 </li>
                                 </ul>
                         </div>

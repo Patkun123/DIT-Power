@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\news_article;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
@@ -26,6 +27,8 @@ class AdminDashboardController extends Controller
             return User::whereDate('created_at', $date)->count();
         });
 
+        $news_articleCount = news_article::count();
+
         // Calculate percentage change from previous week
         $lastWeekCount = User::whereBetween('created_at', [
             Carbon::today()->subDays(14),
@@ -43,7 +46,8 @@ class AdminDashboardController extends Controller
             'weeklyLabels'     => $dates->map(fn($d) => Carbon::parse($d)->format('d F')),
             'weeklyData'       => $weeklyCounts,
             'thisWeekCount'    => $thisWeekCount,
-            'percentageChange' => $percentageChange
+            'percentageChange' => $percentageChange,
+            'news_articleCount' => $news_articleCount,
         ]);
     }
     public function getUsersByRange(Request $request)

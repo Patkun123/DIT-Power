@@ -37,7 +37,7 @@ class Profile extends Component
             'firstname'    => ['nullable', 'string', 'max:255'],
             'lastname'     => ['nullable', 'string', 'max:255'],
             'bio'          => ['nullable', 'string', 'max:500'],
-            'profileImage' => ['nullable', 'image', 'max:8120'],
+            'profileImage' => ['nullable', 'image'],
             'email'        => [
                 'required',
                 'string',

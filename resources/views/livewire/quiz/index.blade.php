@@ -8,11 +8,11 @@ $set = null;
 $determineSet = function () {
     $now = Carbon::now('Asia/Manila');
 
-    if ($now->between($now->copy()->setTime(1,0), $now->copy()->setTime(10,0))) {
+    if ($now->between($now->copy()->setTime(1,0), $now->copy()->setTime(10,10))) {
         return 1; // Set 1: 9am–10am
-    } elseif ($now->between($now->copy()->setTime(12,0), $now->copy()->setTime(13,0))) {
+    } elseif ($now->between($now->copy()->setTime(12,0), $now->copy()->setTime(12,45))) {
         return 2; // Set 2: 12nn–1pm
-    } elseif ($now->between($now->copy()->setTime(15,0), $now->copy()->setTime(16,0))) {
+    } elseif ($now->between($now->copy()->setTime(15,0), $now->copy()->setTime(15,30))) {
         return 3; // Set 3: 3pm–4pm
     }
 
@@ -149,9 +149,9 @@ $startQuiz = function () {
 
     // Define quiz slots
     $slots = collect([
-        Carbon::today('Asia/Manila')->setTime(9, 50),  // 9:50 AM
+        Carbon::today('Asia/Manila')->setTime(10, 10),  // 9:50 AM
         Carbon::today('Asia/Manila')->setTime(12, 45), // 12:45 PM
-        Carbon::today('Asia/Manila')->setTime(21, 5),  // 4:05 PM
+        Carbon::today('Asia/Manila')->setTime(15, 30),  // 4:05 PM
     ]);
 
     // Match set to time
@@ -162,7 +162,7 @@ $startQuiz = function () {
     } elseif ($now->between($slots[2], $slots[2]->copy()->addHour())) {
         $this->set = 3;
     } else {
-        session()->flash('error', 'Not in quiz time. Try 9:50 AM, 12:45 PM, or 4:05 PM.');
+        session()->flash('error', 'Not in quiz time. Try 10:10 AM, 12:45 PM, or 3:30 PM.');
         return;
     }
 
@@ -170,7 +170,7 @@ $startQuiz = function () {
     $this->questions = QuizQuestion::where('set', $this->set)
         ->with('choices')
         ->inRandomOrder()
-        ->take(5)
+        ->take(15)
         ->get();
 
     if ($this->questions->isEmpty()) {
@@ -249,25 +249,40 @@ $saveAnswers = function () {
 
     $timeTaken = 0;
 
-    foreach($this->questions as $key => $question) {
-        $isCorrect = $question->correctAnswer()->id === ($this->answers[$key]['id'] ?? null);
-        $score = !is_null($this->answers[$key]) ? ($this->answers[$key]['remaining'] - 13 + ($isCorrect ? 10 : 0)) : 0;
+foreach($this->questions as $key => $question) {
+    $isCorrect = $question->correctAnswer()->id === ($this->answers[$key]['id'] ?? null);
 
-        $timeTaken += !is_null($this->answers[$key]) ? 20 - $this->answers[$key]['remaining'] : 20;
+    if (!is_null($this->answers[$key])) {
+        // Base points for correct answer
+        $score = $isCorrect ? 10 : 0;
 
-        $attempt->answers()->create([
-            'question_id' => $question->id,
-            'choice_id' => $this->answers[$key]['id'] ?? null,
-            'score' => $score,
-            'correct' => $isCorrect,
-        ]);
-
-        $totalScore += $score;
-
-        if ($isCorrect) {
-            $correctCount++;
+        // Bonus: +2 points only if correct AND remaining >= 18 seconds
+        if ($isCorrect && $this->answers[$key]['remaining'] >= 15) {
+            $score += 2;
         }
+    } else {
+        $score = 0;
     }
+
+    // Ignore timeTaken
+    $timeTaken = 0;
+
+    // Save answer
+    $attempt->answers()->create([
+        'question_id' => $question->id,
+        'choice_id' => $this->answers[$key]['id'] ?? null,
+        'score' => $score,
+        'correct' => $isCorrect,
+    ]);
+
+    $totalScore += $score;
+
+    if ($isCorrect) {
+        $correctCount++;
+    }
+}
+
+
 
     $this->time = $timeTaken;
 
@@ -348,8 +363,8 @@ $saveAnswers = function () {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.98a1 1 0 00.95.69h4.184c.969 0 1.371 1.24.588 1.81l-3.39 2.462a1 1 0 00-.364 1.118l1.287 3.98c.3.921-.755 1.688-1.538 1.118l-3.39-2.462a1 1 0 00-1.175 0l-3.39 2.462c-.783.57-1.838-.197-1.538-1.118l1.287-3.98a1 1 0 00-.364-1.118L2.02 9.407c-.783-.57-.38-1.81.588-1.81h4.184a1 1 0 00.95-.69l1.286-3.98z" />
                     </svg>
-                    <p class="text-gray-800 dark:text-white text-sm font-semibold">120</p>
-                    <span class="text-gray-500 dark:text-gray-400 text-xs">total points</span>
+                    <p class="text-gray-800 dark:text-white text-sm font-semibold">10</p>
+                    <span class="text-gray-500 dark:text-gray-400 text-xs">points per Correct</span>
                 </div>
             </div>
 
@@ -425,10 +440,9 @@ $saveAnswers = function () {
 
             <!-- Title -->
             <h2 class="text-xl font-bold text-gray-800 dark:text-white">Results</h2>
-            <p class="text-gray-500 dark:text-gray-400 mt-1">
-                 try again later.
-            </p>
-
+                 <a href="{{route('index')}}" class="bg-primary-300 hover:bg-primary-500 cursor-pointer transition-all hover:-translate-y-1 rounded-full">
+                    Home
+                </a>
             <!-- Info boxes -->
             <div class="grid grid-cols-3 gap-3 mt-6">
 
@@ -447,7 +461,7 @@ $saveAnswers = function () {
                             d="M9 12l2 2l4-4m5 2a9 9 0 11-18 0a9 9 0 0118 0z" />
                     </svg>
                     <p class="text-gray-800 dark:text-white text-sm font-semibold">{{ $attempt->correct }}</p>
-                    <span class="text-gray-500 dark:text-gray-400 text-xs">correct of 5</span>
+                    <span class="text-gray-500 dark:text-gray-400 text-xs">Secrets</span>
                 </div>
 
                 <!-- Time -->
@@ -474,11 +488,6 @@ $saveAnswers = function () {
                     <span class="text-gray-500 dark:text-gray-400 text-xs">best score</span>
                 </div>
             </div>
-
-            {{-- <!-- Button -->
-            <button class="mt-6 w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 rounded-full">
-                Start Assessment
-            </button> --}}
         </div>
     @endif
 
