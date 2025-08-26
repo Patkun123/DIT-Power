@@ -18,7 +18,7 @@ class UserInformationController extends Controller
     {
         $users = User::with(['staff', 'information'])
                 ->where('role', '!=', 'admin') // Exclude admins
-                ->paginate(4);
+                ->get();
 
         return view('Auth.Admin.view.manage-user', compact('users'));
     }

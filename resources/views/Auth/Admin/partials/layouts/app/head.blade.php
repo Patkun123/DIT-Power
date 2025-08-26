@@ -32,6 +32,7 @@
         @yield('content')
         @include('Auth.Admin.partials.modals.user-add')
         @livewire('admin.question-add')
+        @livewire('admin.adduser')
         @livewireScripts()
 
 

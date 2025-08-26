@@ -13,17 +13,17 @@
     </div>
 </div>
  <main class="p-4 md:ml-64 h-auto pt-4">
-    <div class="grid grid-cols-1 sm:grid-cols-2 transition-all hover:-translate-y-2 hover:shadow-emerald-500  shadow-md dark:bg-gray-800 border-2 dark:border-gray-800 bg-white p-3 rounded-xl lg:grid-cols-4 gap-4 mb-4">
-        <div class="bg-gray-300 rounded-lg transition-all hover:-translate-y-2 hover:shadow-emerald-500  shadow-md dark:border-gray-600 h-32 md:h-35 items-center flex justify-center">
+    <div class="grid grid-cols-1 sm:grid-cols-2 transition-all hover:-translate-y-2 hover:shadow-primary-500  shadow-md dark:bg-gray-800 border-2 dark:border-gray-800 bg-white p-3 rounded-xl lg:grid-cols-4 gap-4 mb-4">
+        <div class="bg-gray-300 rounded-lg transition-all hover:-translate-y-2 hover:shadow-primary-500  shadow-md dark:border-gray-600 h-32 md:h-35 items-center flex justify-center">
         </div>
-        <div class="bg-gray-300 rounded-lg transition-all hover:-translate-y-2 hover:shadow-emerald-500  shadow-md dark:border-gray-600 h-32 md:h-35 items-center flex justify-center">
+        <div class="bg-gray-300 rounded-lg transition-all hover:-translate-y-2 hover:shadow-primary-500  shadow-md dark:border-gray-600 h-32 md:h-35 items-center flex justify-center">
         </div>
-        <div class="bg-gray-300 rounded-lg transition-all hover:-translate-y-2 hover:shadow-emerald-500  shadow-md dark:border-gray-600 h-32 md:h-35 items-center flex justify-center">
+        <div class="bg-gray-300 rounded-lg transition-all hover:-translate-y-2 hover:shadow-primary-500  shadow-md dark:border-gray-600 h-32 md:h-35 items-center flex justify-center">
         </div>
-        <div class="bg-gray-300 rounded-lg transition-all hover:-translate-y-2 hover:shadow-emerald-500  shadow-md dark:border-gray-600 h-32 md:h-35 items-center flex justify-center">
+        <div class="bg-gray-300 rounded-lg transition-all hover:-translate-y-2 hover:shadow-primary-500  shadow-md dark:border-gray-600 h-32 md:h-35 items-center flex justify-center">
         </div>
       </div>
-      <div class="bg-white dark:bg-gray-800 relative sm:rounded-lg overflow-hidden rounded-lg transition-all hover:-translate-y-2 hover:shadow-emerald-500  shadow-md border-gray-300 dark:border-gray-600 h-[calc(42vh+1rem)] mb-4">
+      <div class="bg-white dark:bg-gray-800 relative sm:rounded-lg overflow-hidden rounded-lg transition-all hover:-translate-y-2 hover:shadow-primary-500  shadow-md border-gray-300 dark:border-gray-600 h-[calc(42vh+1rem)] mb-4">
         @include('auth.admin.partials.layouts.app.tables.question-list')
       </div>
     </main>
