@@ -8,7 +8,7 @@ $set = null;
 $determineSet = function () {
     $now = Carbon::now('Asia/Manila');
 
-    if ($now->between($now->copy()->setTime(1,0), $now->copy()->setTime(10,10))) {
+    if ($now->between($now->copy()->setTime(1,0), $now->copy()->setTime(10,30))) {
         return 1; // Set 1: 9am–10am
     } elseif ($now->between($now->copy()->setTime(12,0), $now->copy()->setTime(12,45))) {
         return 2; // Set 2: 12nn–1pm
@@ -149,7 +149,7 @@ $startQuiz = function () {
 
     // Define quiz slots
     $slots = collect([
-        Carbon::today('Asia/Manila')->setTime(10, 10),  // 9:50 AM
+        Carbon::today('Asia/Manila')->setTime(10, 30),  // 9:50 AM
         Carbon::today('Asia/Manila')->setTime(12, 45), // 12:45 PM
         Carbon::today('Asia/Manila')->setTime(15, 30),  // 4:05 PM
     ]);

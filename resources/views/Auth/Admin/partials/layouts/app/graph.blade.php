@@ -5,7 +5,7 @@
       <p class="text-base font-normal text-gray-500 dark:text-gray-400">Users this week</p>
     </div>
     <div class="flex items-center px-2.5 py-0.5 text-base font-semibold
-    {{ $percentageChange >= 0 ? 'text-green-500' : 'text-red-500' }} dark:text-green-500 text-center">
+    {{ $percentageChange >= 0 ? 'text-primary-500 dark:text-primary-500' : 'text-red-500 dark:text-red-500' }} text-center">
     {{ $percentageChange }}%
     <svg class="w-3 h-3 ms-1" ...></svg>
 </div>
