@@ -4,6 +4,8 @@
         @include('partials.head')
     </head>
     <body class="bg-white dark:bg-gray-800">
+        <!-- Loading Screen -->
+        
         {{ $slot }}
         @fluxScripts
     </body>

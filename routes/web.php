@@ -17,6 +17,7 @@ use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use Illuminate\Support\Facades\Route;
+use App\Notifications\RealtimeTestNotification;
 use App\Http\Livewire\FinanceDashboard;
 
 Route::get('/', function () {
@@ -29,12 +30,18 @@ Route::get('about', function () {
     return view('about');
 })->middleware(['guest'])->name('about');
 
+Route::get('loading-demo', function () {
+    return view('loading-demo');
+})->name('loading.demo');
+
 Route::middleware(['auth', 'is_admin:admin'])->group(function () {
     Route::get('Dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     //user managements
     Route::get('/Manage-users', [UserInformationController::class, 'index'])->name('manage.user');
     Route::post('/Manage-users', [UserInformationController::class, 'store'])->name('users.store');
+    Route::put('/Manage-users/{user}', [UserInformationController::class, 'update'])->name('users.update');
+    Route::delete('/Manage-users/{user}', [UserInformationController::class, 'destroy'])->name('users.destroy');
 
 
     //user tracking
@@ -93,6 +100,15 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::view('social-tools','Auth.users.view.social')->name('social.tools');
     Route::get('leaderboard', [leaderboards::class, 'index'])->name('leaderboards');
 
+    // Quick test route to trigger a realtime broadcast notification for the current user
+    Route::get('notify-test', function() {
+        $user = auth()->user();
+        if (!$user) {
+            abort(403);
+        }
+        $user->notify(new RealtimeTestNotification());
+        return back()->with('status', 'Notification sent');
+    })->name('notify.test');
 
 });
 

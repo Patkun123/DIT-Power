@@ -1,6 +1,6 @@
-<div class="relative notification-bell-container" x-data="{ open: @entangle('showDropdown') }">
+<div class="relative notification-bell-container" x-data="{ open: @entangle('showDropdown') }" wire:poll.3s="loadNotifications">
     <!-- Notification Bell Button - Mobile optimized -->
-    <button
+    <butt
         wire:click="toggleDropdown"
         class="relative p-1.5 sm:p-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white 
                transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 
@@ -75,6 +75,12 @@
                                 <div class="w-6 h-6 sm:w-8 sm:h-8 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center">
                                     <svg class="w-3 h-3 sm:w-4 sm:h-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                            @elseif($notification->type === 'chat_message')
+                                <div class="w-6 h-6 sm:w-8 sm:h-8 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+                                    <svg class="w-3 h-3 sm:w-4 sm:h-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                                     </svg>
                                 </div>
                             @else

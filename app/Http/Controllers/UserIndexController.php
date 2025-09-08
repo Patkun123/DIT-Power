@@ -6,6 +6,7 @@ use App\Models\Feedbacks;
 use App\Models\news_article;
 use App\Models\QuizAttempt;
 use App\Models\User;
+use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -114,6 +115,13 @@ public function store(Request $request)
     $validated['email'] = auth()->user()->email;
 
     Feedbacks::create($validated);
+
+    // Log feedback activity
+    ActivityService::logFeedbackSent(
+        auth()->id(),
+        $validated['rating'],
+        $validated['email']
+    );
 
     return redirect()->back()->with('success', 'Thank you for your feedback!');
 }

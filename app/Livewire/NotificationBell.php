@@ -57,8 +57,11 @@ class NotificationBell extends Component
 
     public function getListeners()
     {
+        $userId = auth()->id();
         return [
             'echo:quiz-notifications,QuizStarted' => 'loadNotifications',
+            'chat-message-sent' => 'loadNotifications',
+            "echo-private:notifications.{$userId},notification.sent" => 'loadNotifications',
         ];
     }
 

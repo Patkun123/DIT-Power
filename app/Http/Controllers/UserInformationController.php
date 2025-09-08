@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\user_information;
+use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\dti_id;
@@ -55,6 +56,12 @@ class UserInformationController extends Controller
                 'user_id' => $user->id,
             ]);
 
+            // Log user added activity
+            ActivityService::logUserAdded(
+                auth()->id(),
+                $user->email
+            );
+
             Swal::toastSuccess([
                 'title' => 'User created successfully!',
                 'position' => 'top-end',
@@ -97,16 +104,67 @@ class UserInformationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, user_information $user_information)
+    public function update(Request $request, User $user)
     {
-        //
+        $validated = $request->validate([
+            'firstname' => 'nullable|string|max:255',
+            'lastname' => 'nullable|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'office' => 'nullable|string|max:255',
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        // Update basic user fields
+        $user->email = $validated['email'];
+        if (!empty($validated['firstname'])) {
+            $user->firstname = $validated['firstname'];
+        }
+        if (!empty($validated['lastname'])) {
+            $user->lastname = $validated['lastname'];
+        }
+        if (!empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+        }
+        $user->save();
+
+        // Update office in related dti_id record if provided
+        if (!empty($validated['office'])) {
+            $staff = dti_id::firstOrNew(['user_id' => $user->id]);
+            $staff->office = $validated['office'];
+            $staff->save();
+        }
+
+        Swal::toastSuccess([
+            'title' => 'User updated successfully!',
+            'position' => 'top-end',
+            'showConfirmButton' => false,
+            'timer' => 3000,
+        ]);
+
+        return back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(user_information $user_information)
+    public function destroy(User $user)
     {
-        //
+        // Optionally delete related records
+        dti_id::where('user_id', $user->id)->delete();
+        user_information::where('user_id', $user->id)->delete();
+
+        $email = $user->email;
+        $user->delete();
+
+        ActivityService::logUserRemoved(auth()->id(), $email ?? '');
+
+        Swal::toastSuccess([
+            'title' => 'User deleted successfully!',
+            'position' => 'top-end',
+            'showConfirmButton' => false,
+            'timer' => 3000,
+        ]);
+
+        return back();
     }
 }

@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Message;
+use App\Services\ChatNotificationService;
 use Illuminate\Support\Facades\Auth;
 
 class Chat extends Component
@@ -15,16 +16,23 @@ class Chat extends Component
     ];
 
     public function sendMessage()
-{
-    $this->validate();
+    {
+        $this->validate();
 
-    Message::create([
-        'user_id' => Auth::id(),
-        'message' => $this->messageText,
-    ]);
+        Message::create([
+            'user_id' => Auth::id(),
+            'message' => $this->messageText,
+        ]);
 
-    $this->messageText = '';
-}
+        // Send notifications to other users
+        $chatNotificationService = new ChatNotificationService();
+        $chatNotificationService->sendChatNotification($this->messageText, Auth::id());
+
+        // Emit event to refresh notification bell
+        $this->dispatch('chat-message-sent');
+
+        $this->messageText = '';
+    }
 
     public function getMessagesProperty()
     {

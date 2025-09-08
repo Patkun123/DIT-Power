@@ -86,6 +86,14 @@ $saveAnswers = function () {
         'correct' => $correctCount,
     ]);
 
+    // Log quiz activity
+    \App\Services\ActivityService::logQuizTaken(
+        auth()->id(),
+        $totalScore,
+        $correctCount,
+        (string)$this->set
+    );
+
     if ($totalScore > $this->bestScore) {
         $this->bestScore = $totalScore;
     }

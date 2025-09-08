@@ -24,6 +24,7 @@
         @livewireStyles
     </head>
     <body class="dark:bg-gray-900 bg-gray-100">
+        @include('components.loading-screen')
         @include('auth.users.partials.header')
         <section class="mt-20">
        @yield('content')

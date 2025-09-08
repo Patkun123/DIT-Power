@@ -147,6 +147,58 @@
                             </a>
                         </li>
                         <li>
+                            <button id="dropdownNavbarLink" data-dropdown-toggle="games" class="flex cursor-pointer items-center gap-1 py-2 pr-4 pl-3 text-gray-900 rounded dark:bg-gray-800 lg:text-primary-700 lg:p-0 dark:text-white">
+                                <svg class="w-[30px] h-[30px] text-current" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm9.008-3.018a1.502 1.502 0 0 1 2.522 1.159v.024a1.44 1.44 0 0 1-1.493 1.418 1 1 0 0 0-1.037.999V14a1 1 0 1 0 2 0v-.539a3.44 3.44 0 0 0 2.529-3.256 3.502 3.502 0 0 0-7-.255 1 1 0 0 0 2 .076c.014-.398.187-.774.48-1.044Zm.982 7.026a1 1 0 1 0 0 2H12a1 1 0 1 0 0-2h-.01Z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-xs font-sm">Games & Quizzes</span>
+
+                                <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                </svg>
+                            </button>
+
+                        <div id="games" class="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-800 dark:divide-gray-600">
+                            <ul class="py-2 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdownLargeButton">
+                                <li>
+                                    <a href="{{ route('quiz') }}"
+                                    class="@if(request()->routeIs('quiz'))
+                                        block px-4 py-2 items-center text-primary-700 font-semibold dark:text-lime-500 bg-primary-200 lg:bg-white lg:dark:bg-gray-900
+                                    @else
+                                        block px-4 py-2 items-center text-gray-800 lg:bg-white dark:text-white lg:text-primary-700 dark:text-white dark:text-lime-500 lg:bg-white lg:dark:bg-gray-800
+                                    @endif">
+                                        <span class="relative group text-xs">
+                                                    Quizzes
+                                            <span class="absolute left-0 -bottom-1 w-0 h-[2px] bg-current transition-all duration-300 group-hover:w-full"></span>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{route('index')}}"
+                                    class="@if(request()->routeIs('scramble.words'))
+                                        block px-4 py-2 items-center text-primary-700 font-semibold dark:text-lime-500 bg-primary-200 lg:bg-white lg:dark:bg-gray-900
+                                    @else
+                                        block px-4 py-2 items-center text-gray-800 lg:bg-white dark:text-white lg:text-primary-700 dark:text-white dark:text-lime-500 lg:bg-white lg:dark:bg-gray-800
+                                    @endif">
+                                        <span class="relative group text-xs">
+                                                    Scramble Word
+                                            <span class="absolute left-0 -bottom-1 w-0 h-[2px] bg-current transition-all duration-300 group-hover:w-full"></span>
+                                        </span>
+                                    </a>
+                                </li>
+                                {{-- <li>
+                                    <a href="{{route('emotional.tools')}}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Emotional Well-Being</a>
+                                </li>
+                                <li>
+                                    <a href="{{route('financial.tools')}}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Financial Well-being</a>
+                                </li>
+                                <li>
+                                    <a href="{{route('social.tools')}}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Social Well-being</a>
+                                </li> --}}
+                            </ul>
+                        </div>
+                        </li>
+                        {{-- <li>
                             <a href="{{ route('quiz') }}"
                             class="@if(request()->routeIs('quiz'))
                                 flex items-center gap-1 text-primary-700 font-semibold dark:text-lime-500 bg-primary-200 p-2 lg:bg-white lg:dark:bg-gray-800 lg:p-0
@@ -163,7 +215,7 @@
                                     <span class="absolute left-0 -bottom-1 w-0 h-[2px] bg-current transition-all duration-300 group-hover:w-full"></span>
                                 </span>
                             </a>
-                        </li>
+                        </li> --}}
                         <li>
                             <a href="{{ route('policies') }}"
                             class="@if(request()->routeIs('policies'))

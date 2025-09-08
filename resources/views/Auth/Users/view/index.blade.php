@@ -10,7 +10,7 @@
             📊 Daily Report - {{ $today }}
             <span class="ml-2 text-sm text-gray-500">(Quiz Sets 1, 2, 3)</span>
         </h2>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Your Daily Performance -->
             <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-4 rounded-lg">
@@ -74,7 +74,7 @@
                 @endif
             </div>
         </div>
-        
+
         <!-- Note about mini games exclusion -->
         <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
             <div class="flex items-center">
@@ -94,7 +94,6 @@
         <div class="bg-white 2xl:h-110 dark:bg-gray-800 p-6 rounded-xl shadow">
             <h2 class="2xl:text-xl text-md font-semibold text-gray-800 dark:text-white flex items-center justify-between">
                 Overall Leaderboard
-                <span class="text-sm text-gray-500 font-normal">(Quiz Sets 1, 2, 3)</span>
                 <a href='{{route('leaderboards')}}' class="hover:bg-primary-500 cursor-pointer transition-all hover:-translate-y-1 rounded-full">
                     <img src="/images/crown.gif" class="w-15 h-15 relative" alt="">
                 </a>

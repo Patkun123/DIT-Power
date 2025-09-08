@@ -8,5 +8,6 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-// Schedule automatic quiz notifications (start, reminder, end) every minute
-Schedule::command('quiz:auto-notify')->everyMinute();
+
+Schedule::command('quiz:auto-notify')->everySecond();
+Schedule::command('chat:auto-notify')->everySecond();

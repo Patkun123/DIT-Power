@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\journals;
+use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -46,13 +47,20 @@ class JournalsController extends Controller
             'tags'    => ['nullable', 'string'],
         ]);
 
-        journals::create([
+        $journal = journals::create([
             'user_id' => $user->id,
             'title'   => $validated['title'],
             'text'    => $validated['text'],
             'feeling' => $validated['feeling'],
             'tags'    => $validated['tags'] ?? '',
         ]);
+
+        // Log journal activity
+        ActivityService::logJournalAdded(
+            $user->id,
+            $validated['title'],
+            $validated['feeling']
+        );
 
         return redirect()
             ->route('journal')
@@ -83,6 +91,12 @@ class JournalsController extends Controller
 
         $journal->update($request->only(['title', 'text', 'feeling', 'tags']));
 
+        // Log journal update activity
+        ActivityService::logJournalUpdated(
+            $journal->user_id,
+            $journal->title
+        );
+
         return redirect()->back()->with('success', 'Journal updated successfully.');
 }
 
@@ -101,7 +115,13 @@ class JournalsController extends Controller
     public function destroy($id)
     {
         $journal = Journals::findOrFail($id);
+        $title = $journal->title;
+        $userId = $journal->user_id;
+        
         $journal->delete();
+
+        // Log journal delete activity
+        ActivityService::logJournalDeleted($userId, $title);
 
         return redirect()->back()->with('success', 'Journal deleted successfully.');
     }

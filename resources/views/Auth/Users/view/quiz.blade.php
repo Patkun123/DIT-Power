@@ -4,5 +4,4 @@
 @section('content')
 
 @livewire('quiz.index')
-
 @endsection

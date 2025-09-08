@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\QuizAttempt;
 use App\Models\user_information;
 use App\Models\Feedbacks;
+use App\Models\journals;
 use Carbon\Carbon;
 
 class AdminDashboardController extends Controller
@@ -86,6 +87,25 @@ class AdminDashboardController extends Controller
             ->whereYear('created_at', Carbon::now()->year)
             ->count();
 
+        // Analysis metrics
+        $today = Carbon::today();
+        $startOfMonth = Carbon::now()->startOfMonth();
+
+        $analysis = [
+            'users_today' => User::whereDate('created_at', $today)->count(),
+            'users_this_month' => User::where('created_at', '>=', $startOfMonth)->count(),
+            'quizzes_today' => QuizAttempt::whereDate('created_at', $today)->count(),
+            'avg_quiz_score_today' => round((float) (QuizAttempt::whereDate('created_at', $today)->avg('score') ?? 0), 2),
+            'journals_today' => journals::whereDate('created_at', $today)->count(),
+            'feedbacks_today' => Feedbacks::whereDate('created_at', $today)->count(),
+            'avg_rating_this_month' => round((float) (Feedbacks::where('created_at', '>=', $startOfMonth)->avg('rating') ?? 0), 2),
+            'active_users_today' => collect([
+                QuizAttempt::whereDate('created_at', $today)->distinct('user_id')->count('user_id'),
+                journals::whereDate('created_at', $today)->distinct('user_id')->count('user_id'),
+                Feedbacks::whereDate('created_at', $today)->distinct('email')->count('email'),
+            ])->max(),
+        ];
+
         return view('auth.admin.view.dashboard', [
             'totalUsers'       => $totalUsers,
             'weeklyLabels'     => $dates->map(fn($d) => Carbon::parse($d)->format('d F')),
@@ -103,6 +123,7 @@ class AdminDashboardController extends Controller
             'averageRating'    => round($averageRating, 2),
             'recentFeedbacks'  => $recentFeedbacks,
             'monthlyFeedbacks' => $monthlyFeedbacks,
+            'analysis'        => $analysis,
         ]);
     }
     public function getUsersByRange(Request $request)

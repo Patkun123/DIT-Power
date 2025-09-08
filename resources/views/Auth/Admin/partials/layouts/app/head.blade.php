@@ -28,6 +28,7 @@
         </script>
     </head>
     <Body>
+        @include('components.loading-screen')
         @include('sweetalert2::index')
         @yield('content')
         @include('Auth.Admin.partials.modals.user-add')

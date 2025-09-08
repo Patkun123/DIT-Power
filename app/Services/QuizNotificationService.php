@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Notification;
 use App\Models\User;
 use Carbon\Carbon;
+use App\Events\NotificationSent;
 
 class QuizNotificationService
 {
@@ -19,7 +20,7 @@ class QuizNotificationService
         $users = User::where('role', 'user')->get();
         
         foreach ($users as $user) {
-            Notification::create([
+            $notification = Notification::create([
                 'user_id' => $user->id,
                 'type' => 'quiz_start',
                 'title' => $title,
@@ -30,6 +31,7 @@ class QuizNotificationService
                     'action_url' => route('quiz')
                 ]
             ]);
+            event(new NotificationSent($notification));
         }
         
         return $users->count();
@@ -44,7 +46,7 @@ class QuizNotificationService
         $users = User::where('role', 'user')->get();
         
         foreach ($users as $user) {
-            Notification::create([
+            $notification = Notification::create([
                 'user_id' => $user->id,
                 'type' => 'quiz_reminder',
                 'title' => $title,
@@ -55,6 +57,7 @@ class QuizNotificationService
                     'action_url' => route('quiz')
                 ]
             ]);
+            event(new NotificationSent($notification));
         }
         
         return $users->count();
@@ -69,7 +72,7 @@ class QuizNotificationService
         $users = User::where('role', 'user')->get();
         
         foreach ($users as $user) {
-            Notification::create([
+            $notification = Notification::create([
                 'user_id' => $user->id,
                 'type' => 'quiz_ending',
                 'title' => $title,
@@ -80,6 +83,7 @@ class QuizNotificationService
                     'action_url' => route('quiz')
                 ]
             ]);
+            event(new NotificationSent($notification));
         }
         
         return $users->count();

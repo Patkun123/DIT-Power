@@ -24,6 +24,8 @@
         </style>
     </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen w-full">
+        <!-- Loading Screen -->
+        @include('components.loading-screen')
         @include('partials.header')
         <section class="text-gray-600 body-font w-full overflow-x-auto">
             <div class="container mx-auto my-5 flex px-auto md:px-5 lg:px-25 overflow-auto py-25 md:flex-row flex-col items-center ">
