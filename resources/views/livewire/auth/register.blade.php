@@ -133,8 +133,8 @@
                         placeholder="Enter you DTI ID"
                     />
                     <flux:input wire:model.defer="position" icon="user-circle" :label="__('Position')" placeholder="Enter your Position" required />
-                    <flux:input wire:model.defer="department" icon="user-circle" :label="__('Departmet')" placeholder="Enter your Departmet" required />
-                    <flux:select wire:model.defer="office" :label="__('Choose Office')" placeholder="Choose Department...">
+                    <flux:input wire:model.defer="department" icon="user-circle" :label="__('Department')" placeholder="Enter your Department" required />
+                    <flux:select wire:model.defer="office" :label="__('Choose Office')" placeholder="Choose Office...">
                         <flux:select.option>General Santos City</flux:select.option>
                         <flux:select.option>Sarangani Province</flux:select.option>
                         <flux:select.option>South Cotabato</flux:select.option>

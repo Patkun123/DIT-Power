@@ -44,6 +44,9 @@
                 <flux:navlist.item :href="route('manage.user')" :current="request()->routeIs('manage.user')" wire:navigate>{{ __('Upcomng Events') }}</flux:navlist.item>
                 <flux:navlist.item :href="route('article')" :current="request()->routeIs('article')" wire:navigate>{{ __('News Article') }}</flux:navlist.item>
             </flux:navlist.group>
+            <flux:navlist.group expandable heading="Feedback Management" class="hidden lg:grid">
+                <flux:navlist.item :href="route('admin.feedbacks.index')" :current="request()->routeIs('admin.feedbacks.*')" wire:navigate>{{ __('User Feedbacks') }}</flux:navlist.item>
+            </flux:navlist.group>
         </flux:navlist>
         </ul>
       </div>

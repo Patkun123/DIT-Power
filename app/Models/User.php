@@ -82,6 +82,17 @@ class User extends Authenticatable
     {
         return $this->hasMany(journals::class);
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    public function unreadNotifications()
+    {
+        return $this->notifications()->whereNull('read_at');
+    }
+
     public function getProfileImageUrlAttribute()
     {
         return $this->profile_image

@@ -1,6 +1,7 @@
 import "../../node_modules/flowbite/dist/flowbite.min.js";
 import "../../node_modules/apexcharts/dist/apexcharts.min.js";
-import ApexCharts from 'apexcharts';
+import 'flowbite';
+
 
 
 var themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
@@ -43,3 +44,16 @@ themeToggleBtn.addEventListener('click', function() {
     }
 
 });
+
+const scrollContainer = document.getElementById("scrollContainer");
+  const scrollLeft = document.getElementById("scrollLeft");
+  const scrollRight = document.getElementById("scrollRight");
+
+  scrollLeft.addEventListener("click", () => {
+    scrollContainer.scrollBy({ left: -200, behavior: "smooth" });
+  });
+
+  scrollRight.addEventListener("click", () => {
+    scrollContainer.scrollBy({ left: 200, behavior: "smooth" });
+  });
+

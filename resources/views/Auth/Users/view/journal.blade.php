@@ -152,24 +152,18 @@
 
                     {{-- Actions --}}
                     <div class="flex gap-2 mt-4">
-                        <a href=""
+                        <button data-modal-target="view-modal{{ $journal->id }}" data-modal-toggle="view-modal{{ $journal->id }}"
                            class="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg text-sm shadow-sm">
                             View
-                        </a>
-                        {{-- Uncomment for Edit/Delete if needed --}}
-                        {{-- <a href="{{ route('journal.edit', $journal->id) }}" class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm shadow-sm">Edit</a> --}}
-                        {{-- <form action="{{ route('journal.destroy', $journal->id) }}" method="POST" onsubmit="return confirm('Are you sure?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm shadow-sm">Delete</button>
-                        </form> --}}
+                        </button>
                     </div>
                 </div>
+                @include('Auth.Users.partials.view-journal')
+
             @endforeach
         @endif
     </div>
 </div>
-
     </div>
 </div>
 @endsection

@@ -27,4 +27,5 @@ class QuizAttemptAnswer extends Model
     {
         return $this->belongsTo(QuizChoice::class, 'choice_id');
     }
+
 }

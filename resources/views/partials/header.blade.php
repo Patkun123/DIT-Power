@@ -38,7 +38,10 @@
                     <a href="{{route('login')}}"class="text-white lg:block md:block sm:block hidden bg-primary-700 hover:bg-white hover:text-primary-500 transition-all duration-300 hover:shadow-lg shadow-primary-500/50 hover:-translate-y-0.5 focus:ring-4 hover:ring-1 hover:ring-primary-500 focus:ring-primary-600 font-medium rounded-full text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
                 Get Started</a>
             @endif
-            <div>
+            <div class="flex items-center space-x-2">
+                @if(Auth::check())
+                    @livewire('notification-bell')
+                @endif
                 <flux:button x-data x-on:click="$flux.dark = ! $flux.dark" icon="moon" variant="subtle" class="" aria-label="Toggle dark mode" />
             </div>
                 <button data-collapse-toggle="mobile-menu-2" type="button" class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="mobile-menu-2" aria-expanded="false">

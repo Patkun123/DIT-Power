@@ -14,7 +14,7 @@
 </div>
 
     <main class="p-4 md:ml-64 h-auto pt-5 bg-gray-200 dark:bg-gray-900">
-      <div class="grid grid-cols-1 sm:grid-cols-2 transition-all hover:shadow-lg shadow-lg hover:-translate-y-2 hover:shadow-primary-500 dark:bg-gray-800 border-2 dark:border-gray-800 bg-white p-3 rounded-xl lg:grid-cols-4 gap-4 mb-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 transition-all hover:shadow-lg shadow-lg hover:-translate-y-2 hover:shadow-primary-500 dark:bg-gray-800 border-2 dark:border-gray-800 bg-white p-3 rounded-xl lg:grid-cols-6 gap-4 mb-4">
         <div class="dark:bg-gray-900 hover:dark:text-gray-950 text-lg font-semibold bg-gray-50 rounded-lg transition-all hover:-translate-y-2 hover:bg-primary-400 shadow-primary-500 shadow-md dark:border-gray-600 h-32 md:h-35 flex items-center justify-center space-x-4 p-4">
             <flux:button icon="user-group" variant="primary" color="lime" class="" />
             <div class="">
@@ -22,20 +22,20 @@
                 <span class="font-bold text-3xl">{{ $totalUsers ?? 0}}</span>
             </div>
         </div>
-        <div class="dark:bg-gray-900 hover:dark:text-gray-950 text-lg font-semibold bg-gray-50 rounded-lg transition-all hover:-translate-y-2 hover:bg-primary-400 shadow-primary-500 shadow-md dark:border-gray-600 h-32 md:h-35 flex items-center justify-center space-x-4 p-4">
+        {{-- <div class="dark:bg-gray-900 hover:dark:text-gray-950 text-lg font-semibold bg-gray-50 rounded-lg transition-all hover:-translate-y-2 hover:bg-primary-400 shadow-primary-500 shadow-md dark:border-gray-600 h-32 md:h-35 flex items-center justify-center space-x-4 p-4">
             <flux:button icon="clipboard" variant="primary" color="lime" />
             <div class="">
-                <h2 class="font-semibold">Total Users</h2>
+                <h2 class="font-semibold">Daily Users Quiz</h2>
                 <span class="font-bold text-3xl">{{ $totalUsers ?? 0}}</span>
             </div>
-        </div>
-        <div class="dark:bg-gray-900 hover:dark:text-gray-950 text-lg font-semibold bg-gray-50 rounded-lg transition-all hover:-translate-y-2 hover:bg-primary-400 shadow-primary-500 shadow-md dark:border-gray-600 h-32 md:h-35 flex items-center justify-center space-x-4 p-4">
+        </div> --}}
+        {{-- <div class="dark:bg-gray-900 hover:dark:text-gray-950 text-lg font-semibold bg-gray-50 rounded-lg transition-all hover:-translate-y-2 hover:bg-primary-400 shadow-primary-500 shadow-md dark:border-gray-600 h-32 md:h-35 flex items-center justify-center space-x-4 p-4">
             <flux:button icon="megaphone" variant="primary" color="lime" />
                 <div class="">
                     <h2 class="font-semibold">Total Users</h2>
                     <span class="font-bold text-3xl">{{ $totalUsers ?? 0}}</span>
                 </div>
-        </div>
+        </div> --}}
         <div class="dark:bg-gray-900 hover:dark:text-gray-950 text-lg font-semibold bg-gray-50 rounded-lg transition-all hover:-translate-y-2 hover:bg-primary-400 shadow-primary-500 shadow-md dark:border-gray-600 h-32 md:h-35 flex items-center justify-center space-x-4 p-4">
             <flux:button icon="newspaper"  variant="primary" color="lime" />
             <div class="">
@@ -43,18 +43,42 @@
                 <span class="font-bold text-3xl">{{ $news_articleCount ?? 0}}</span>
             </div>
         </div>
+        <div class="dark:bg-gray-900 hover:dark:text-gray-950 text-lg font-semibold bg-gray-50 rounded-lg transition-all hover:-translate-y-2 hover:bg-primary-400 shadow-primary-500 shadow-md dark:border-gray-600 h-32 md:h-35 flex items-center justify-center space-x-4 p-4">
+            <flux:button icon="chat-bubble-left-right" variant="primary" color="lime" />
+            <div class="">
+                <h2 class="font-semibold">Total Feedbacks</h2>
+                <span class="font-bold text-3xl">{{ $totalFeedbacks ?? 0}}</span>
+            </div>
+        </div>
+        <div class="dark:bg-gray-900 hover:dark:text-gray-950 text-lg font-semibold bg-gray-50 rounded-lg transition-all hover:-translate-y-2 hover:bg-primary-400 shadow-primary-500 shadow-md dark:border-gray-600 h-32 md:h-35 flex items-center justify-center space-x-4 p-4">
+            <flux:button icon="star" variant="primary" color="lime" />
+            <div class="">
+                <h2 class="font-semibold">Avg Rating</h2>
+                <span class="font-bold text-3xl">{{ $averageRating ?? 0}}/5</span>
+            </div>
+        </div>
+        <div class="dark:bg-gray-900 hover:dark:text-gray-950 text-lg font-semibold bg-gray-50 rounded-lg transition-all hover:-translate-y-2 hover:bg-primary-400 shadow-primary-500 shadow-md dark:border-gray-600 h-32 md:h-35 flex items-center justify-center space-x-4 p-4">
+            <flux:button icon="clock" variant="primary" color="lime" />
+            <div class="">
+                <h2 class="font-semibold">This Week</h2>
+                <span class="font-bold text-3xl">{{ $recentFeedbacks ?? 0}}</span>
+            </div>
+        </div>
       </div>
-      <div class="grid grid-cols-2 gap-4 mb-4 ">
-        <div class=" p-4 md:p-6 bg-white dark:bg-gray-800 rounded-lg transition-all hover:-translate-y-2 hover:shadow-primary-500  shadow-md dark:shadow-gray-700  h-100 md:h-auto">
+        <div class="p-4 md:p-6 rounded-lgbg-white dark:bg-gray-800 rounded-lg transition-all hover:-translate-y-2 hover:shadow-primary-500  shadow-md dark:shadow-gray-700 h-96 mb-4">
             @include('auth.admin.partials.layouts.app.graph')
         </div>
+      <div class="grid grid-cols-2 gap-4 mb-4 ">
         <div class=" p-10 md:p-4 bg-white dark:bg-gray-800 rounded-lg transition-all hover:-translate-y-2 hover:shadow-primary-500  shadow-md dark:shadow-gray-700  h-auto md:h-auto">
             @include('auth.admin.partials.layouts.app.bargraph')
         </div>
+        <div class=" p-10 md:p-4 bg-white dark:bg-gray-800 rounded-lg transition-all hover:-translate-y-2 hover:shadow-primary-500  shadow-md dark:shadow-gray-700  h-auto md:h-auto">
+            @include('auth.admin.partials.layouts.app.pie')
+        </div>
       </div>
-      {{-- </div>
+{{-- </div>
         <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4">
-      </div>
+        </div>
       <div
         class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"
       ></div> --}}
@@ -78,7 +102,7 @@
   <script>
     if (document.getElementById("area-chart") && typeof ApexCharts !== 'undefined') {
     const options = {
-        chart: { height: "73%", maxWidth: "100%", type: "area", fontFamily: "Inter, sans-serif", dropShadow: { enabled: false }, toolbar: { show: false } },
+        chart: { height: "68%", maxWidth: "90%", type: "area", fontFamily: "Inter, sans-serif", dropShadow: { enabled: false }, toolbar: { show: false } },
         series: [{
             name: "New users",
             data: @json($weeklyData),
@@ -112,4 +136,5 @@
 
   </script>
 
+  @include('auth.admin.partials.layouts.footer')
 @endsection

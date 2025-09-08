@@ -34,10 +34,7 @@
         @livewire('admin.question-add')
         @livewire('admin.adduser')
         @livewireScripts()
-
-
-
-
+        <script src="{{asset('include/pie.js')}}"></script>
     </Body>
 
 </html>

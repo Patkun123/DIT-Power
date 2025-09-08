@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminFeedbackController;
 use App\Http\Controllers\ArticleandNewsController;
 use App\Http\Controllers\emotional;
 use App\Http\Controllers\JournalsController;
+use App\Http\Controllers\leaderboards;
 use App\Http\Controllers\NutritionController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\QuizController;
@@ -47,6 +49,12 @@ Route::middleware(['auth', 'is_admin:admin'])->group(function () {
 
     //Quiz
     Route::view('ManageQuiz', 'Auth.Admin.view.managequiz')->name('managequiz');
+
+    //Feedback Management
+    Route::get('feedbacks', [AdminFeedbackController::class, 'index'])->name('admin.feedbacks.index');
+    Route::get('feedbacks/{feedback}', [AdminFeedbackController::class, 'show'])->name('admin.feedbacks.show');
+    Route::delete('feedbacks/{feedback}', [AdminFeedbackController::class, 'destroy'])->name('admin.feedbacks.destroy');
+    Route::get('feedbacks/export/csv', [AdminFeedbackController::class, 'export'])->name('admin.feedbacks.export');
 });
 
 Route::middleware(['auth','check_profile'])->group(function () {
@@ -61,6 +69,10 @@ Route::middleware(['auth','check_profile'])->group(function () {
 
     Route::get('Journal', [JournalsController::class, 'index'])->name('journal');
     Route::post('Journal', [JournalsController::class, 'store'])->name('journal.store');
+    Route::delete('journals/{journal}', [JournalsController::class, 'destroy'])->name('journals.destroy');
+    Route::put('journals/{journal}', [JournalsController::class, 'update'])->name('journals.update');
+
+
 
     Route::get('Nutrition', [NutritionController::class, 'index'])->name('nutrition');
     Route::get('quiz', [QuizController::class, 'index'])->name('quiz');
@@ -79,6 +91,7 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::view('mental-tools','Auth.users.view.mental')->name('mental.tools');
     Route::get('emotional-tools',[emotional::class, 'index'])->name('emotional.tools');
     Route::view('social-tools','Auth.users.view.social')->name('social.tools');
+    Route::get('leaderboard', [leaderboards::class, 'index'])->name('leaderboards');
 
 
 });

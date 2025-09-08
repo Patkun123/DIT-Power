@@ -8,6 +8,7 @@ use App\Models\QuizAttempt;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class UserIndexController extends Controller
 {
@@ -17,23 +18,78 @@ class UserIndexController extends Controller
     public function index()
     {
         $user = auth()->user();
+        $today = Carbon::now()->format('F d, Y');
 
+        // Overall leaderboard (all time)
         $topPlayers = QuizAttempt::select('user_id')
             ->selectRaw('SUM(score) as best_score')
-            ->with('user') // Assuming relationship to User model
+            ->with('user')
+            ->whereNotNull('set')
+            ->whereIn('set', ['1', '2', '3'])
             ->groupBy('user_id')
             ->orderByDesc('best_score')
+            ->limit(3)
             ->get();
 
+        // Daily leaderboard for today
+        $dailyTopPlayers = QuizAttempt::select('user_id', 'score', 'correct', 'set')
+            ->with('user:id,firstname,lastname,profileimage')
+            ->whereNotNull('set')
+            ->whereIn('set', ['1', '2', '3'])
+            ->whereDate('created_at', $today)
+            ->orderBy('score', 'desc')
+            ->orderBy('correct', 'desc')
+            ->limit(10)
+            ->get()
+            ->groupBy('user_id')
+            ->map(function ($attempts) {
+                $user = $attempts->first()->user;
+                $bestScore = $attempts->max('score');
+                $bestCorrect = $attempts->max('correct');
+                $attemptsCount = $attempts->count();
+                
+                return [
+                    'user' => $user,
+                    'best_score' => $bestScore,
+                    'best_correct' => $bestCorrect,
+                    'attempts_count' => $attemptsCount
+                ];
+            })
+            ->sortByDesc('best_score')
+            ->take(3)
+            ->values();
+
+        // Daily stats for the current user
+        $userDailyStats = [
+            'today_score' => $user->quizAttempts()
+                ->whereNotNull('set')
+                ->whereIn('set', ['1', '2', '3'])
+                ->whereDate('created_at', $today)
+                ->max('score') ?? 0,
+            'today_attempts' => $user->quizAttempts()
+                ->whereNotNull('set')
+                ->whereIn('set', ['1', '2', '3'])
+                ->whereDate('created_at', $today)
+                ->count(),
+            'today_correct' => $user->quizAttempts()
+                ->whereNotNull('set')
+                ->whereIn('set', ['1', '2', '3'])
+                ->whereDate('created_at', $today)
+                ->max('correct') ?? 0,
+        ];
+
         $quizCount = $user->quizAttempts()->sum('score');
-        $journalCount = $user
-        ->journals()
-        ->count();
-        $articles = news_article::where('status', 'Published')
-        ->latest()
-        ->get();
-        return view('Auth.Users.view.index', compact('articles','journalCount','topPlayers'
-        ,'quizCount'
+        $journalCount = $user->journals()->count();
+        $articles = news_article::where('status', 'Published')->latest()->get();
+        
+        return view('Auth.Users.view.index', compact(
+            'articles',
+            'journalCount',
+            'topPlayers',
+            'quizCount',
+            'dailyTopPlayers',
+            'userDailyStats',
+            'today'
         ));
     }
 

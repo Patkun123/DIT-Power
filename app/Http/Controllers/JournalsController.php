@@ -70,15 +70,27 @@ class JournalsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(journals $jornals)
+    public function update(Request $request, $id)
     {
-        //
-    }
+        $journal = Journals::findOrFail($id);
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'text' => 'required|string',
+            'feeling' => 'required|string',
+            'tags' => 'nullable|string',
+        ]);
+
+        $journal->update($request->only(['title', 'text', 'feeling', 'tags']));
+
+        return redirect()->back()->with('success', 'Journal updated successfully.');
+}
+
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, journals $jornals)
+    public function edit(Request $request, journals $jornals)
     {
         //
     }
@@ -86,8 +98,12 @@ class JournalsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(journals $jornals)
+    public function destroy($id)
     {
-        //
+        $journal = Journals::findOrFail($id);
+        $journal->delete();
+
+        return redirect()->back()->with('success', 'Journal deleted successfully.');
     }
+
 }

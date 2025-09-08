@@ -4,16 +4,100 @@
 @section('content')
 <div class="p-4 sm:p-6 space-y-10 bg-gray-50 dark:bg-gray-900 min-h-screen">
 
+    {{-- DAILY REPORT SECTION --}}
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
+            📊 Daily Report - {{ $today }}
+            <span class="ml-2 text-sm text-gray-500">(Quiz Sets 1, 2, 3)</span>
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Your Daily Performance -->
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-4 rounded-lg">
+                <h3 class="font-semibold text-gray-800 dark:text-white mb-3">Your Performance Today</h3>
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $userDailyStats['today_score'] }}</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">Best Score</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ $userDailyStats['today_correct'] }}</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">Correct Answers</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ $userDailyStats['today_attempts'] }}</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">Attempts</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Top 3 -->
+            <div class="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 p-4 rounded-lg">
+                <h3 class="font-semibold text-gray-800 dark:text-white mb-3">Today's Top Performers</h3>
+                @if($dailyTopPlayers->count() > 0)
+                    <div class="space-y-2">
+                        @foreach($dailyTopPlayers as $index => $player)
+                            <div class="flex items-center justify-between p-2 bg-white dark:bg-gray-700 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold
+                                                @if($index === 0) bg-yellow-400 text-yellow-900
+                                                @elseif($index === 1) bg-gray-300 text-gray-700
+                                                @elseif($index === 2) bg-amber-600 text-amber-900
+                                                @else bg-gray-200 text-gray-700
+                                                @endif">
+                                        {{ $index + 1 }}
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-sm text-gray-800 dark:text-white">
+                                            {{ $player['user']->firstname }} {{ $player['user']->lastname }}
+                                        </div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                                            {{ $player['attempts_count'] }} attempt(s)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold text-sm text-gray-800 dark:text-white">
+                                        {{ $player['best_score'] }}
+                                    </div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                                        {{ $player['best_correct'] }} correct
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center text-gray-500 dark:text-gray-400 py-4">
+                        No quiz attempts today yet. Be the first to take a quiz!
+                    </div>
+                @endif
+            </div>
+        </div>
+        
+        <!-- Note about mini games exclusion -->
+        <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <div class="flex items-center">
+                <svg class="w-4 h-4 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="text-blue-800 dark:text-blue-200 text-sm">
+                    <strong>Note:</strong> Daily reports only include quiz sets 1, 2, and 3. Mini games are excluded from rankings.
+                </span>
+            </div>
+        </div>
+    </div>
+
     {{-- TOP QUIZ PERFORMERS & WELLNESS STATS --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Top Quiz Performers -->
         <div class="bg-white 2xl:h-110 dark:bg-gray-800 p-6 rounded-xl shadow">
             <h2 class="2xl:text-xl text-md font-semibold text-gray-800 dark:text-white flex items-center justify-between">
-                Leaderboard Ranking
-                <button id="readProductButton" data-modal-target="leaderboardModal" data-modal-toggle="leaderboardModal" class="hover:bg-primary-500 cursor-pointer transition-all hover:-translate-y-1 rounded-full">
+                Overall Leaderboard
+                <span class="text-sm text-gray-500 font-normal">(Quiz Sets 1, 2, 3)</span>
+                <a href='{{route('leaderboards')}}' class="hover:bg-primary-500 cursor-pointer transition-all hover:-translate-y-1 rounded-full">
                     <img src="/images/crown.gif" class="w-15 h-15 relative" alt="">
-                </button>
-
+                </a>
             </h2>
             @php
             // Prepare default empty players if not enough data

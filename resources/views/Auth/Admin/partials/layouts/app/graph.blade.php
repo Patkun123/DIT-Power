@@ -1,16 +1,16 @@
 
-  <div class="flex justify-between">
+<div class="flex justify-between">
     <div>
-      <h5 class="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">{{ $thisWeekCount }}</h5>
-      <p class="text-base font-normal text-gray-500 dark:text-gray-400">Users this week</p>
+        <h5 class="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">{{ $thisWeekCount }}</h5>
+        <p class="text-base font-normal text-gray-500 dark:text-gray-400">Users this week</p>
+        </div>
+        <div class="flex items-center px-2.5 py-0.5 text-base font-semibold
+        {{ $percentageChange >= 0 ? 'text-primary-500 dark:text-primary-500' : 'text-red-500 dark:text-red-500' }} text-center">
+        {{ $percentageChange }}%
+        <svg class="w-3 h-3 ms-1" ...></svg>
     </div>
-    <div class="flex items-center px-2.5 py-0.5 text-base font-semibold
-    {{ $percentageChange >= 0 ? 'text-primary-500 dark:text-primary-500' : 'text-red-500 dark:text-red-500' }} text-center">
-    {{ $percentageChange }}%
-    <svg class="w-3 h-3 ms-1" ...></svg>
 </div>
-  </div>
-  <div id="area-chart"></div>
+<div id="area-chart"></div>
   <div class="grid grid-cols-1 items-center border-gray-200 border-t dark:border-gray-700 justify-between">
     <div class="flex justify-between items-center pt-5">
       <!-- Button -->
