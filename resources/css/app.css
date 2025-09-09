@@ -240,6 +240,261 @@ html {
   background: rgba(75, 85, 99, 0.7);
 }
 
+/* Enhanced notification badge styling */
+.notification-badge {
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.25rem;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 2px solid white;
+  animation: notificationPulse 2s ease-in-out infinite;
+}
+
+.dark .notification-badge {
+  border-color: #1f2937;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes notificationPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+  }
+}
+
+/* Notification dropdown enhancements */
+.notification-dropdown {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.dark .notification-dropdown {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* Notification item hover effects */
+.notification-item {
+  transition: all 0.2s ease-in-out;
+}
+
+.notification-item:hover {
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dark .notification-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Notification icon animations */
+.notification-icon {
+  transition: all 0.2s ease-in-out;
+}
+
+.notification-item:hover .notification-icon {
+  transform: scale(1.1);
+}
+
+/* Unread notification indicator */
+.unread-indicator {
+  animation: unreadPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes unreadPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+/* Notification type badges */
+.notification-type-badge {
+  font-size: 0.625rem;
+  font-weight: 600;
+  padding: 0.125rem 0.375rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+/* Enhanced notification header */
+.notification-header {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+.dark .notification-header {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+}
+
+/* Notification empty state */
+.notification-empty {
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+}
+
+.dark .notification-empty {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+}
+
+/* Profile Picture Enhancements */
+.profile-picture {
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-picture:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.dark .profile-picture:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Online Status Indicator */
+.online-indicator {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid white;
+  animation: onlinePulse 2s ease-in-out infinite;
+}
+
+.dark .online-indicator {
+  border-color: #1f2937;
+}
+
+@keyframes onlinePulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* Profile Picture Loading State */
+.profile-picture-loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: profileLoading 1.5s infinite;
+}
+
+@keyframes profileLoading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Profile Picture Hover Effects */
+.profile-picture-container {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-picture-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  background: linear-gradient(45deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.profile-picture-container:hover::before {
+  opacity: 1;
+}
+
+/* Social Post Profile Pictures */
+.social-profile-pic {
+  border: 2px solid #e5e7eb;
+  transition: all 0.2s ease-in-out;
+}
+
+.social-profile-pic:hover {
+  border-color: #3b82f6;
+  transform: scale(1.02);
+}
+
+.dark .social-profile-pic {
+  border-color: #374151;
+}
+
+.dark .social-profile-pic:hover {
+  border-color: #60a5fa;
+}
+
+/* Comment Profile Pictures */
+.comment-profile-pic {
+  border: 2px solid #e5e7eb;
+  transition: all 0.2s ease-in-out;
+}
+
+.comment-profile-pic:hover {
+  border-color: #3b82f6;
+  transform: scale(1.05);
+}
+
+.dark .comment-profile-pic {
+  border-color: #374151;
+}
+
+.dark .comment-profile-pic:hover {
+  border-color: #60a5fa;
+}
+
+/* Reply Profile Pictures */
+.reply-profile-pic {
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease-in-out;
+}
+
+.reply-profile-pic:hover {
+  border-color: #3b82f6;
+  transform: scale(1.05);
+}
+
+.dark .reply-profile-pic {
+  border-color: #374151;
+}
+
+.dark .reply-profile-pic:hover {
+  border-color: #60a5fa;
+}
+
 /* Loading Screen Styles */
 .loading-screen {
   position: fixed;

@@ -93,10 +93,45 @@ class User extends Authenticatable
         return $this->notifications()->whereNull('read_at');
     }
 
+    // Social features relationships
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function replies()
+    {
+        return $this->hasMany(Reply::class);
+    }
+
+    public function postLikes()
+    {
+        return $this->hasMany(PostLike::class);
+    }
+
+    public function commentLikes()
+    {
+        return $this->hasMany(CommentLike::class);
+    }
+
+    public function replyLikes()
+    {
+        return $this->hasMany(ReplyLike::class);
+    }
+
     public function getProfileImageUrlAttribute()
     {
-        return $this->profile_image
-            ? asset('storage/' . $this->profileimage)
-            : asset('images/default.png'); // fallback avatar
+        if ($this->profileimage) {
+            return asset('storage/' . $this->profileimage);
+        }
+        
+        // Generate initials-based avatar as fallback
+        $initials = strtoupper(substr($this->firstname, 0, 1) . substr($this->lastname, 0, 1));
+        return "https://ui-avatars.com/api/?name={$initials}&background=random&color=fff&size=100&bold=true";
     }
 }

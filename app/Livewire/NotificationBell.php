@@ -62,6 +62,10 @@ class NotificationBell extends Component
             'echo:quiz-notifications,QuizStarted' => 'loadNotifications',
             'chat-message-sent' => 'loadNotifications',
             "echo-private:notifications.{$userId},notification.sent" => 'loadNotifications',
+            "echo-private:notifications.{$userId},post.liked" => 'loadNotifications',
+            "echo-private:notifications.{$userId},comment.liked" => 'loadNotifications',
+            "echo-private:notifications.{$userId},comment.created" => 'loadNotifications',
+            "echo-private:notifications.{$userId},reply.created" => 'loadNotifications',
         ];
     }
 
