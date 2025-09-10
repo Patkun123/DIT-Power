@@ -174,7 +174,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{route('index')}}"
+                                    <a href="{{route('scramble')}}"
                                     class="@if(request()->routeIs('scramble.words'))
                                         block px-4 py-2 items-center text-primary-700 font-semibold dark:text-lime-500 bg-primary-200 lg:bg-white lg:dark:bg-gray-900
                                     @else

@@ -19,6 +19,7 @@ use App\Livewire\Settings\Profile;
 use Illuminate\Support\Facades\Route;
 use App\Notifications\RealtimeTestNotification;
 use App\Http\Livewire\FinanceDashboard;
+use App\Http\Controllers\ScrambleWordController;
 
 Route::get('/', function () {
     return view('home');
@@ -57,6 +58,12 @@ Route::middleware(['auth', 'is_admin:admin'])->group(function () {
     //Quiz
     Route::view('ManageQuiz', 'Auth.Admin.view.managequiz')->name('managequiz');
 
+    // Scramble words management
+    Route::get('manage-scramble-words', [ScrambleWordController::class, 'index'])->name('admin.scramble-words.index');
+    Route::post('manage-scramble-words', [ScrambleWordController::class, 'store'])->name('admin.scramble-words.store');
+    Route::put('manage-scramble-words/{scrambleWord}', [ScrambleWordController::class, 'update'])->name('admin.scramble-words.update');
+    Route::delete('manage-scramble-words/{scrambleWord}', [ScrambleWordController::class, 'destroy'])->name('admin.scramble-words.destroy');
+
     //Feedback Management
     Route::get('feedbacks', [AdminFeedbackController::class, 'index'])->name('admin.feedbacks.index');
     Route::get('feedbacks/{feedback}', [AdminFeedbackController::class, 'show'])->name('admin.feedbacks.show');
@@ -83,6 +90,9 @@ Route::middleware(['auth','check_profile'])->group(function () {
 
     Route::get('Nutrition', [NutritionController::class, 'index'])->name('nutrition');
     Route::get('quiz', [QuizController::class, 'index'])->name('quiz');
+
+    // Scramble game (UI similar to quiz)
+    Route::view('scramble', 'Auth.Users.view.scramble')->name('scramble');
 
     Route::get('Physical-tools', [ToolsController::class, 'index'])->name('physical.tools');
     Route::post('physical-tools', [ToolsController::class, 'calculate'])->name('calculate.bmi');

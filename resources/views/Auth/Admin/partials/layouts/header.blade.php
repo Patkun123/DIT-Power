@@ -35,6 +35,7 @@
         <ul class="space-y-2">
             <flux:navlist variant="outline">
             <flux:navlist.item  icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Overview') }}</flux:navlist.item>
+            <flux:navlist.item icon="inbox" :href="route('admin.scramble-words.index')" :current="request()->routeIs('admin.scramble-words.index')" wire:navigate>{{ __('Scramble Management') }}</flux:navlist.item>
             <flux:navlist.item icon="inbox" :href="route('managequiz')" :current="request()->routeIs('managequiz')" wire:navigate>{{ __('ManageQuiz') }}</flux:navlist.item>
             <flux:navlist.group expandable heading="Manage User" class="hidden lg:grid">
                 <flux:navlist.item :href="route('manage.user')" :current="request()->routeIs('manage.user')" wire:navigate>{{ __('Manage User') }}</flux:navlist.item>

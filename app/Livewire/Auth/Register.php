@@ -105,7 +105,10 @@ class Register extends Component
 
         dti_id::updateOrCreate(
         // Conditions to find the existing record
-        ['user_id'    => $user->id],
+        [
+        'user_id'    => $user->id,
+        'office' => $this->office
+    ],
 
         // Values to update if found, or insert if not found
         [
