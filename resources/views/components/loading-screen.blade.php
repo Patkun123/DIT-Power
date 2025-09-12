@@ -27,7 +27,7 @@
         <!-- App Title -->
         <div class="text-center loading-content">
             <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-                DIT-Power
+                DTI-Power
             </h1>
             <p class="text-sm text-gray-600 dark:text-gray-400">
                 Personalized Online Wellness Resource HUB

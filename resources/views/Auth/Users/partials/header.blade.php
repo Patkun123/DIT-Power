@@ -82,7 +82,6 @@
                 @else
                     <a href="{{route('login')}}" class="text-white bg-primary-700 hover:bg-white hover:text-primary-500 transition-all duration-300 hover:shadow-lg shadow-primary-500/50 hover:-translate-y-0.5 focus:ring-4 hover:ring-1 hover:ring-primary-500 focus:ring-primary-600 font-medium rounded-full text-xs px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-gray-800 focus:outline-none dark:focus:ring-primary-800">Get Started</a>
             @endif
-
                 <!-- Mobile Sidebar Toggle Button -->
                 <button id="mobile-sidebar-toggle" type="button" class="inline-flex items-center p-2 ml-1 text-xs text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
                     <span class="sr-only">Open sidebar</span>
@@ -276,7 +275,7 @@
 <!-- Mobile Sidebar -->
 <div id="mobile-sidebar" class="fixed inset-0 z-50 lg:hidden hidden">
     <!-- Backdrop -->
-    <div id="mobile-sidebar-backdrop" class="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300"></div>
+    <div id="mobile-sidebar-backdrop" class="fixed inset-0 bg-gray-900 bg-opacity-100 transition-opacity duration-300"></div>
 
     <!-- Sidebar -->
     <div class="fixed left-0 top-0 h-full w-80 bg-white dark:bg-gray-800 shadow-xl transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto overscroll-contain" id="mobile-sidebar-content">
@@ -430,61 +429,5 @@
 
 <!-- Mobile Sidebar JavaScript -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const sidebar = document.getElementById('mobile-sidebar');
-    const sidebarContent = document.getElementById('mobile-sidebar-content');
-    const backdrop = document.getElementById('mobile-sidebar-backdrop');
-    const toggleBtn = document.getElementById('mobile-sidebar-toggle');
-    const closeBtn = document.getElementById('mobile-sidebar-close');
 
-    function openSidebar() {
-        sidebar.classList.remove('hidden');
-        setTimeout(() => {
-            sidebarContent.classList.remove('-translate-x-full');
-        }, 10);
-    }
-
-    function closeSidebar() {
-        sidebarContent.classList.add('-translate-x-full');
-        setTimeout(() => {
-            sidebar.classList.add('hidden');
-        }, 300);
-    }
-
-    // Open sidebar
-    toggleBtn.addEventListener('click', openSidebar);
-
-    // Close sidebar
-    closeBtn.addEventListener('click', closeSidebar);
-    backdrop.addEventListener('click', closeSidebar);
-
-    // Close on escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && !sidebar.classList.contains('hidden')) {
-            closeSidebar();
-        }
-    });
-
-    // Dropdowns: Games & Quizzes
-    const ddGamesToggle = document.getElementById('mobile-dd-games-toggle');
-    const ddGames = document.getElementById('mobile-dd-games');
-    const ddGamesArrow = document.getElementById('mobile-dd-games-arrow');
-    if (ddGamesToggle && ddGames && ddGamesArrow) {
-        ddGamesToggle.addEventListener('click', function () {
-            ddGames.classList.toggle('hidden');
-            ddGamesArrow.classList.toggle('rotate-180');
-        });
-    }
-
-    // Dropdowns: Well-being Tools
-    const ddToolsToggle = document.getElementById('mobile-dd-tools-toggle');
-    const ddTools = document.getElementById('mobile-dd-tools');
-    const ddToolsArrow = document.getElementById('mobile-dd-tools-arrow');
-    if (ddToolsToggle && ddTools && ddToolsArrow) {
-        ddToolsToggle.addEventListener('click', function () {
-            ddTools.classList.toggle('hidden');
-            ddToolsArrow.classList.toggle('rotate-180');
-        });
-    }
-});
 </script>

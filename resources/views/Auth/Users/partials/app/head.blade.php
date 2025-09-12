@@ -31,13 +31,13 @@
        </section>
         @stack('scripts')
         @livewireScripts
-
         <script>
     document.getElementById('scrollAllBtn')?.addEventListener('click', () => {
         const container = document.getElementById('answersContainer');
         container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
     });
 </script>
+    <script src="{{asset('js/drawer.js')}}"></script>
     </body>
 
 </html>
