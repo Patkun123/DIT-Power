@@ -275,6 +275,146 @@ class ActivityService
     }
 
     /**
+     * Log quiz created
+     */
+    public static function logQuizCreated(int $userId, string $quizTitle): ActivityLog
+    {
+        return self::log(
+            'quiz_created',
+            'Quiz Created',
+            "Created quiz: {$quizTitle}",
+            ['quiz_title' => $quizTitle],
+            $userId
+        );
+    }
+
+    /**
+     * Log quiz updated
+     */
+    public static function logQuizUpdated(int $userId, string $quizTitle): ActivityLog
+    {
+        return self::log(
+            'quiz_updated',
+            'Quiz Updated',
+            "Updated quiz: {$quizTitle}",
+            ['quiz_title' => $quizTitle],
+            $userId
+        );
+    }
+
+    /**
+     * Log quiz deleted
+     */
+    public static function logQuizDeleted(int $userId, string $quizTitle): ActivityLog
+    {
+        return self::log(
+            'quiz_deleted',
+            'Quiz Deleted',
+            "Deleted quiz: {$quizTitle}",
+            ['quiz_title' => $quizTitle],
+            $userId
+        );
+    }
+
+    /**
+     * Log question created
+     */
+    public static function logQuestionCreated(int $userId, string $questionContent, string $quizTitle): ActivityLog
+    {
+        return self::log(
+            'question_created',
+            'Question Created',
+            "Created question for quiz: {$quizTitle}",
+            ['question_content' => $questionContent, 'quiz_title' => $quizTitle],
+            $userId
+        );
+    }
+
+    /**
+     * Log question updated
+     */
+    public static function logQuestionUpdated(int $userId, string $questionContent, string $quizTitle): ActivityLog
+    {
+        return self::log(
+            'question_updated',
+            'Question Updated',
+            "Updated question for quiz: {$quizTitle}",
+            ['question_content' => $questionContent, 'quiz_title' => $quizTitle],
+            $userId
+        );
+    }
+
+    /**
+     * Log question deleted
+     */
+    public static function logQuestionDeleted(int $userId, string $questionContent, string $quizTitle): ActivityLog
+    {
+        return self::log(
+            'question_deleted',
+            'Question Deleted',
+            "Deleted question from quiz: {$quizTitle}",
+            ['question_content' => $questionContent, 'quiz_title' => $quizTitle],
+            $userId
+        );
+    }
+
+    /**
+     * Log quiz activated activity
+     */
+    public static function logQuizActivated(string $userId, string $quizTitle, string $activatedAt): ActivityLog
+    {
+        return self::log(
+            'quiz_activated',
+            'Quiz Activated',
+            "Quiz '{$quizTitle}' was automatically activated at {$activatedAt} (Philippines time)",
+            ['quiz_title' => $quizTitle, 'activated_at' => $activatedAt],
+            $userId === 'system' ? 1 : $userId // Use admin user ID for system activations
+        );
+    }
+
+    /**
+     * Log quiz set created
+     */
+    public static function logQuizSetCreated(int $userId, string $setName, string $quizTitle): ActivityLog
+    {
+        return self::log(
+            'quiz_set_created',
+            'Quiz Set Created',
+            "Created set '{$setName}' for quiz: {$quizTitle}",
+            ['set_name' => $setName, 'quiz_title' => $quizTitle],
+            $userId
+        );
+    }
+
+    /**
+     * Log quiz set updated
+     */
+    public static function logQuizSetUpdated(int $userId, string $setName, string $quizTitle): ActivityLog
+    {
+        return self::log(
+            'quiz_set_updated',
+            'Quiz Set Updated',
+            "Updated set '{$setName}' for quiz: {$quizTitle}",
+            ['set_name' => $setName, 'quiz_title' => $quizTitle],
+            $userId
+        );
+    }
+
+    /**
+     * Log quiz set deleted
+     */
+    public static function logQuizSetDeleted(int $userId, string $setName, string $quizTitle): ActivityLog
+    {
+        return self::log(
+            'quiz_set_deleted',
+            'Quiz Set Deleted',
+            "Deleted set '{$setName}' from quiz: {$quizTitle}",
+            ['set_name' => $setName, 'quiz_title' => $quizTitle],
+            $userId
+        );
+    }
+
+    /**
      * Get activity statistics
      */
     public static function getActivityStats()

@@ -1,108 +1,84 @@
 <section class="w-full">
-    @include('partials.settings-heading')
-
     <x-settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
-        <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
+        <form wire:submit="updateProfileInformation" class="my-6 w-full">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Left: Avatar Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 shadow-sm">
+                    <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-100">Profile Picture</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">PNG/JPG up to 2MB. Square images look best.</p>
 
-                    @if (auth()->user()->profileimage)
-                        <img
-                            src="{{ asset('storage/' . auth()->user()->profileimage) }}"
-                            alt="Current Profile"
-                            class="w-24 h-24 rounded-full object-cover border border-gray-300 dark:border-gray-700"
-                        >
-                    @else
-                        <img
-                            src="{{ asset('images/default.png') }}"
-                            alt="Default Profile"
-                            class="w-24 h-24 rounded-full object-cover border border-gray-300 dark:border-gray-700"
-                        >
-                    @endif
-            <!-- 2-column layout for inputs -->
-            <div class="grid grid-cols-2 md:grid-cols-2 gap-6">
-                <flux:input wire:model="firstname" :label="__('First name')" type="text" required autofocus autocomplete="firstname" />
-                <flux:input wire:model="lastname" :label="__('Last name')" type="text" required autofocus autocomplete="lastname" />
+                    <div class="mt-4 flex items-center gap-4">
+                        <!-- Current/Preview Image -->
+                        @php
+                            $currentImage = auth()->user()->profileimage ? asset('storage/' . auth()->user()->profileimage) : asset('images/default.png');
+                        @endphp
+                        <div class="relative">
+                            <img
+                                src="{{ (is_object($profileImage) && method_exists($profileImage, 'temporaryUrl')) ? $profileImage->temporaryUrl() : $currentImage }}"
+                                alt="Profile Preview"
+                                class="w-20 h-20 rounded-full object-cover border border-gray-300 dark:border-gray-700"
+                            >
+                        </div>
 
-                <!-- Profile Image Display + Upload -->
-                <div class="flex flex-col gap-2">
-                    <label class="text-sm font-medium text-gray-700 dark:text-gray-200">Profile Picture</label>
-
-                    <!-- Current Image -->
-
-
-                    <!-- Preview New Upload -->
-
-
-                    <!-- File Input -->
-                    <input type="file" wire:model="profileImage" class="mt-2">
-                    @error('profileImage') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        <div class="flex-1">
+                            <label for="profileImageInput" class="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-lg cursor-pointer bg-primary-600 text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                                Change photo
+                            </label>
+                            <input id="profileImageInput" type="file" class="hidden" wire:model="profileImage" accept="image/*">
+                            @error('profileImage') <div class="text-xs text-red-500 mt-2">{{ $message }}</div> @enderror
+                        </div>
+                    </div>
                 </div>
 
-                <div class="md:col-span-2">
-                    <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email" />
-
-                    @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! auth()->user()->hasVerifiedEmail())
+                <!-- Right: Details Card -->
+                <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 shadow-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <flux:text class="mt-4">
-                                {{ __('Your email address is unverified.') }}
+                            <label class="block text-xs font-medium text-gray-700 dark:text-gray-200 mb-1">First name</label>
+                            <flux:input wire:model="firstname" type="text" placeholder="Juan" autocomplete="given-name" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 dark:text-gray-200 mb-1">Last name</label>
+                            <flux:input wire:model="lastname" type="text" placeholder="Dela Cruz" autocomplete="family-name" />
+                        </div>
 
-                                <flux:link class="text-sm cursor-pointer" wire:click.prevent="resendVerificationNotification">
-                                    {{ __('Click here to re-send the verification email.') }}
-                                </flux:link>
-                            </flux:text>
-
-                            @if (session('status') === 'verification-link-sent')
-                                <flux:text class="mt-2 font-medium !dark:text-green-400 !text-green-600">
-                                    {{ __('A new verification link has been sent to your email address.') }}
-                                </flux:text>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-gray-700 dark:text-gray-200 mb-1">Email</label>
+                            <flux:input wire:model="email" type="email" placeholder="you@example.com" autocomplete="email" />
+                            @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! auth()->user()->hasVerifiedEmail())
+                                <div class="mt-2">
+                                    <p class="text-xs text-amber-600 dark:text-amber-400">Your email address is unverified.</p>
+                                    <flux:link class="text-xs cursor-pointer" wire:click.prevent="resendVerificationNotification">
+                                        Click here to re-send the verification email.
+                                    </flux:link>
+                                    @if (session('status') === 'verification-link-sent')
+                                        <p class="mt-2 text-xs font-medium text-green-600 dark:text-green-400">A new verification link has been sent to your email address.</p>
+                                    @endif
+                                </div>
                             @endif
                         </div>
-                    @endif
+
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-gray-700 dark:text-gray-200 mb-1">About you</label>
+                            <textarea wire:model="bio" rows="4" class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm text-gray-800 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"></textarea>
+                            @error('bio') <div class="text-xs text-red-500 mt-1">{{ $message }}</div> @enderror
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 mt-6">
+                        <flux:button variant="primary" type="submit" class="px-5">
+                            Save changes
+                        </flux:button>
+                        <x-action-message class="me-3" on="profile-updated">
+                            Saved.
+                        </x-action-message>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Action buttons -->
-            <div class="flex items-center gap-4 mt-6">
-                <flux:button variant="primary" type="submit" class="w-full md:w-auto">
-                    {{ __('Save') }}
-                </flux:button>
-
-                <x-action-message class="me-3" on="profile-updated">
-                    {{ __('Saved.') }}
-                </x-action-message>
             </div>
         </form>
 
-        <script>
-    let cropper;
-    const imageElement = document.getElementById('cropper-image');
-    const fileInput = document.getElementById('profileImageInput');
-
-    fileInput.addEventListener('change', function (e) {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = function (event) {
-            imageElement.src = event.target.result;
-
-            if (cropper) cropper.destroy();
-            cropper = new Cropper(imageElement, {
-                aspectRatio: 1,
-                viewMode: 1,
-                responsive: true,
-            });
-        };
-        reader.readAsDataURL(file);
-    });
-
-    // Example: You could hook this to a button to send cropped image to Livewire
-    function getCroppedImage() {
-        if (!cropper) return;
-        cropper.getCroppedCanvas().toBlob((blob) => {
-            @this.upload('profileImage', blob);
-        }, 'image/jpeg');
-    }
-</script>
+        
 
         <livewire:settings.delete-user-form />
     </x-settings.layout>

@@ -39,13 +39,12 @@
                         @foreach($dailyTopPlayers as $index => $player)
                             <div class="flex items-center justify-between p-2 bg-white dark:bg-gray-700 rounded-lg">
                                 <div class="flex items-center space-x-3">
-                                    <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold
-                                                @if($index === 0) bg-yellow-400 text-yellow-900
-                                                @elseif($index === 1) bg-gray-300 text-gray-700
-                                                @elseif($index === 2) bg-amber-600 text-amber-900
-                                                @else bg-gray-200 text-gray-700
-                                                @endif">
-                                        {{ $index + 1 }}
+                                    <div class="w-8 h-8 rounded-full overflow-hidden border border-gray-300 dark:border-gray-600">
+                                        @if($player['user']->profileimage)
+                                            <img src="{{ asset('storage/' . $player['user']->profileimage) }}" alt="{{ $player['user']->firstname }} {{ $player['user']->lastname }}" class="w-full h-full object-cover">
+                                        @else
+                                            <img src="{{ asset('images/default.png') }}" alt="Default Profile" class="w-full h-full object-cover">
+                                        @endif
                                     </div>
                                     <div>
                                         <div class="font-medium text-sm text-gray-800 dark:text-white">

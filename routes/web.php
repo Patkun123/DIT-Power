@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminFeedbackController;
+use App\Http\Controllers\AdminQuizController;
 use App\Http\Controllers\ArticleandNewsController;
 use App\Http\Controllers\emotional;
 use App\Http\Controllers\JournalsController;
@@ -27,6 +28,7 @@ Route::get('/', function () {
     'guest',        // Laravel's built-in authentication check
     'check_profile' // Your custom middleware to check if the user profile is complete
 ])->name('home');
+
 Route::get('about', function () {
     return view('about');
 })->middleware(['guest'])->name('about');
@@ -34,6 +36,7 @@ Route::get('about', function () {
 Route::get('loading-demo', function () {
     return view('loading-demo');
 })->name('loading.demo');
+
 
 Route::middleware(['auth', 'is_admin:admin'])->group(function () {
     Route::get('Dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
@@ -55,8 +58,29 @@ Route::middleware(['auth', 'is_admin:admin'])->group(function () {
     Route::delete('article/{news_article}', [ArticleandNewsController::class, 'destroy'])->name('news-articles.destroy');
 
 
-    //Quiz
-    Route::view('ManageQuiz', 'Auth.Admin.view.managequiz')->name('managequiz');
+    //Quiz Management
+    Route::get('ManageQuiz', [AdminQuizController::class, 'index'])->name('managequiz');
+    Route::get('quizzes/create', [AdminQuizController::class, 'create'])->name('admin.quizzes.create');
+    Route::post('quizzes', [AdminQuizController::class, 'store'])->name('admin.quizzes.store');
+    Route::get('quizzes/{quiz}', [AdminQuizController::class, 'show'])->name('admin.quizzes.show');
+    Route::get('quizzes/{quiz}/edit', [AdminQuizController::class, 'edit'])->name('admin.quizzes.edit');
+    Route::put('quizzes/{quiz}', [AdminQuizController::class, 'update'])->name('admin.quizzes.update');
+    Route::delete('quizzes/{quiz}', [AdminQuizController::class, 'destroy'])->name('admin.quizzes.destroy');
+    Route::get('quizzes/{quiz}/questions', [AdminQuizController::class, 'questions'])->name('admin.quizzes.questions');
+    Route::get('quizzes/{quiz}/questions/create', [AdminQuizController::class, 'createQuestion'])->name('admin.quizzes.questions.create');
+    Route::post('quizzes/{quiz}/questions', [AdminQuizController::class, 'storeQuestion'])->name('admin.quizzes.questions.store');
+    Route::get('quizzes/{quiz}/questions/{question}/edit', [AdminQuizController::class, 'editQuestion'])->name('admin.quizzes.questions.edit');
+    Route::put('quizzes/{quiz}/questions/{question}', [AdminQuizController::class, 'updateQuestion'])->name('admin.quizzes.questions.update');
+    Route::delete('quizzes/{quiz}/questions/{question}', [AdminQuizController::class, 'destroyQuestion'])->name('admin.quizzes.questions.destroy');
+            Route::get('quizzes/{quiz}/statistics', [AdminQuizController::class, 'statistics'])->name('admin.quizzes.statistics');
+
+            // Quiz Sets Management
+            Route::get('quizzes/{quiz}/sets', [AdminQuizController::class, 'sets'])->name('admin.quizzes.sets');
+            Route::get('quizzes/{quiz}/sets/create', [AdminQuizController::class, 'createSet'])->name('admin.quizzes.sets.create');
+            Route::post('quizzes/{quiz}/sets', [AdminQuizController::class, 'storeSet'])->name('admin.quizzes.sets.store');
+            Route::get('quizzes/{quiz}/sets/{set}/edit', [AdminQuizController::class, 'editSet'])->name('admin.quizzes.sets.edit');
+            Route::put('quizzes/{quiz}/sets/{set}', [AdminQuizController::class, 'updateSet'])->name('admin.quizzes.sets.update');
+            Route::delete('quizzes/{quiz}/sets/{set}', [AdminQuizController::class, 'destroySet'])->name('admin.quizzes.sets.destroy');
 
     // Scramble words management
     Route::get('manage-scramble-words', [ScrambleWordController::class, 'index'])->name('admin.scramble-words.index');
@@ -90,6 +114,11 @@ Route::middleware(['auth','check_profile'])->group(function () {
 
     Route::get('Nutrition', [NutritionController::class, 'index'])->name('nutrition');
     Route::get('quiz', [QuizController::class, 'index'])->name('quiz');
+    Route::get('quiz/{quiz}', [QuizController::class, 'show'])->name('quiz.show');
+    Route::get('quiz/{quiz}/set/{set}', [QuizController::class, 'showSet'])->name('quiz.set.show');
+    Route::post('quiz/{quiz}/set/{set}/submit', [QuizController::class, 'submit'])->name('quiz.set.submit');
+    Route::get('quiz/result/{attempt}', [QuizController::class, 'result'])->name('quiz.result');
+    Route::get('quiz/history', [QuizController::class, 'history'])->name('quiz.history');
 
     // Scramble game (UI similar to quiz)
     Route::view('scramble', 'Auth.Users.view.scramble')->name('scramble');

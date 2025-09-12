@@ -19,6 +19,8 @@ class UserIndexController extends Controller
     public function index()
     {
         $user = auth()->user();
+        // Use a Carbon date for queries and a formatted string for display
+        $todayDate = Carbon::today();
         $today = Carbon::now()->format('F d, Y');
 
         // Overall leaderboard (all time)
@@ -37,7 +39,7 @@ class UserIndexController extends Controller
             ->with('user:id,firstname,lastname,profileimage')
             ->whereNotNull('set')
             ->whereIn('set', ['1', '2', '3'])
-            ->whereDate('created_at', $today)
+            ->whereDate('created_at', $todayDate)
             ->orderBy('score', 'desc')
             ->orderBy('correct', 'desc')
             ->limit(10)
@@ -65,17 +67,17 @@ class UserIndexController extends Controller
             'today_score' => $user->quizAttempts()
                 ->whereNotNull('set')
                 ->whereIn('set', ['1', '2', '3'])
-                ->whereDate('created_at', $today)
+                ->whereDate('created_at', $todayDate)
                 ->max('score') ?? 0,
             'today_attempts' => $user->quizAttempts()
                 ->whereNotNull('set')
                 ->whereIn('set', ['1', '2', '3'])
-                ->whereDate('created_at', $today)
+                ->whereDate('created_at', $todayDate)
                 ->count(),
             'today_correct' => $user->quizAttempts()
                 ->whereNotNull('set')
                 ->whereIn('set', ['1', '2', '3'])
-                ->whereDate('created_at', $today)
+                ->whereDate('created_at', $todayDate)
                 ->max('correct') ?? 0,
         ];
 

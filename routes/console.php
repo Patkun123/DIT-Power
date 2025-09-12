@@ -10,4 +10,10 @@ Artisan::command('inspire', function () {
 
 
 Schedule::command('quiz:auto-notify')->everySecond();
+Schedule::command('quiz:notify')->everySecond();
 Schedule::command('chat:auto-notify')->everySecond();
+Schedule::command('quiz:activate')->everySecond();
+Schedule::command('quiz-sets:activate')->everySecond();
+
+// Calculate daily winners every day at midnight
+Schedule::command('winners:calculate')->dailyAt('00:01');

@@ -60,12 +60,16 @@ class NotificationBell extends Component
         $userId = auth()->id();
         return [
             'echo:quiz-notifications,QuizStarted' => 'loadNotifications',
+            'echo:quiz-notifications,QuizActivated' => 'loadNotifications',
+            'echo:quiz-notifications,QuizEnded' => 'loadNotifications',
+            'echo:quiz-notifications,QuizReminder' => 'loadNotifications',
             'chat-message-sent' => 'loadNotifications',
             "echo-private:notifications.{$userId},notification.sent" => 'loadNotifications',
             "echo-private:notifications.{$userId},post.liked" => 'loadNotifications',
             "echo-private:notifications.{$userId},comment.liked" => 'loadNotifications',
             "echo-private:notifications.{$userId},comment.created" => 'loadNotifications',
             "echo-private:notifications.{$userId},reply.created" => 'loadNotifications',
+            "echo-private:notifications.{$userId},mention.created" => 'loadNotifications',
         ];
     }
 

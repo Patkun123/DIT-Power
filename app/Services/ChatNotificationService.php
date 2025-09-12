@@ -77,4 +77,32 @@ class ChatNotificationService
         
         return true;
     }
+
+    public function sendChatMentionNotification($message, $senderId, $recipientId)
+    {
+        $sender = User::find($senderId);
+        if (!$sender || $senderId === $recipientId) {
+            return false;
+        }
+
+        $title = "You were mentioned in chat";
+        $messageContent = "{$sender->firstname} {$sender->lastname} mentioned you in the social tools chat";
+
+        $notification = Notification::create([
+            'user_id' => $recipientId,
+            'type' => 'chat_mention',
+            'title' => $title,
+            'message' => $messageContent,
+            'data' => [
+                'sender_id' => $senderId,
+                'sender_name' => "{$sender->firstname} {$sender->lastname}",
+                'message_preview' => substr($message, 0, 50) . (strlen($message) > 50 ? '...' : ''),
+                'action_url' => route('social.tools'),
+                'timestamp' => now()->toISOString()
+            ]
+        ]);
+        event(new NotificationSent($notification));
+
+        return true;
+    }
 }

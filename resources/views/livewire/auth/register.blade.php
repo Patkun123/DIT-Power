@@ -1,22 +1,160 @@
 <div class="flex flex-col md:flex-row min-h-screen bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-white">
     <!-- Left Sidebar -->
-    <div class="w-full md:w-1/2 bg-blue-700 p-8  flex-col justify-center hidden md:flex lg:block">
-        {{-- <a href="#" class="text-white text-lg mb-4">&larr; Go back</a>
-            <h2 class="text-white text-xl font-semibold mb-2">Your selected plan</h2>
-            <p class="text-blue-200 mb-4">30-day free trial</p>
-            <ul class="text-sm space-y-2">
-                <li>✅ Individual configuration</li>
-                <li>✅ No setup, or hidden fees</li>
-                <li>✅ Team size: <span class="font-bold">1 developer</span></li>
-                <li>✅ Premium support: <span class="font-bold">6 months</span></li>
-                <li>✅ Free updates: <span class="font-bold">6 months</span></li>
-            </ul> --}}
+    <div class="w-full md:w-1/2 p-6 md:p-10 sm:mt-15 md:mt-0 flex-col dark:bg-gray-900 bg-gray-200 justify-center hidden md:flex lg:block">
+    <div class="mx-auto max-w-screen-2xl px-4 md:px-8">
+        <!-- text - start -->
+        <div class="mb-10 md:mb-16">
+        <h2 class="mb-4 text-center text-xl font-bold text-gray-700 dark:text-gray-100 md:mb-6 lg:text-3xl">Frequently asked questions</h2>
+
+        <p class="mx-auto max-w-screen-md text-center text-gray-500 dark:text-gray-300 md:text-lg">Get answers to common questions about DIT-Power, our comprehensive wellness platform designed specifically for DTI Region 12 employees.</p>
+        </div>
+        <!-- text - end -->
+
+        <div class="mx-auto flex max-w-screen-sm flex-col border-gray-700 border-t" x-data="faqDropdown()">
+        <!-- question - start -->
+        <div class="border-b border-gray-700">
+            <div class="flex cursor-pointer justify-between gap-2 py-4 text-gray-500 dark:text-white hover:text-primary-500 active:text-primary-600"
+                 @click="toggleFaq(1)">
+            <span class="font-semibold transition duration-100 md:text-lg">What is DIT-POWeR Hub?</span>
+
+            <span class="dark:text-white text-gray-400 transition-transform duration-200"
+                  :class="{ 'rotate-180': openFaq === 1 }">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </span>
+            </div>
+
+            <div class="overflow-hidden transition-all duration-300 ease-in-out"
+                 x-show="openFaq === 1"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 max-h-0"
+                 x-transition:enter-end="opacity-100 max-h-96"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 max-h-96"
+                 x-transition:leave-end="opacity-0 max-h-0">
+                <p class="mb-4 text-gray-500 dark:text-gray-300">DIT-Power is a comprehensive Personalized Online Wellness Resource Hub designed for DTI Region 12 employees. It provides health assessments, nutrition guidance, fitness tracking, and wellness resources to help you achieve your health goals.</p>
+            </div>
+        </div>
+        <!-- question - end -->
+
+        <!-- question - start -->
+        <div class="border-b border-gray-700">
+            <div class="flex cursor-pointer justify-between gap-2 py-4 text-gray-500 dark:text-white hover:text-primary-500 active:text-primary-600"
+                 @click="toggleFaq(2)">
+            <span class="font-semibold transition duration-100 md:text-lg">How do I get started?</span>
+
+            <span class="dark:text-white text-gray-400 transition-transform duration-200"
+                  :class="{ 'rotate-180': openFaq === 2 }">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </span>
+            </div>
+
+            <div class="overflow-hidden transition-all duration-300 ease-in-out"
+                 x-show="openFaq === 2"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 max-h-0"
+                 x-transition:enter-end="opacity-100 max-h-96"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 max-h-96"
+                 x-transition:leave-end="opacity-0 max-h-0">
+                <p class="mb-4 text-gray-500 dark:text-gray-300">Simply complete the registration form on this page. You'll need to provide your personal information, health profile, dietary preferences, and create a secure password. Once registered, you can access all wellness features and resources.</p>
+            </div>
+        </div>
+        <!-- question - end -->
+
+        <!-- question - start -->
+        <div class="border-b border-gray-700">
+            <div class="flex cursor-pointer justify-between gap-2 py-4 text-gray-500 dark:text-white hover:text-primary-500 active:text-primary-600"
+                 @click="toggleFaq(3)">
+            <span class="font-semibold transition duration-100 md:text-lg">What features are available?</span>
+
+            <span class="dark:text-white text-gray-400 transition-transform duration-200"
+                  :class="{ 'rotate-180': openFaq === 3 }">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </span>
+            </div>
+
+            <div class="overflow-hidden transition-all duration-300 ease-in-out"
+                 x-show="openFaq === 3"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 max-h-0"
+                 x-transition:enter-end="opacity-100 max-h-96"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 max-h-96"
+                 x-transition:leave-end="opacity-0 max-h-0">
+                <p class="mb-4 text-gray-500 dark:text-gray-300">DIT-Power offers comprehensive wellness features including health assessments, personalized nutrition plans, fitness tracking, wellness quizzes, social wellness feed, financial wellness tools, and access to health professionals and resources.</p>
+            </div>
+        </div>
+        <!-- question - end -->
+
+        <!-- question - start -->
+        <div class="border-b border-gray-700">
+            <div class="flex cursor-pointer justify-between gap-2 py-4 text-gray-500 dark:text-white hover:text-primary-500 active:text-primary-600"
+                 @click="toggleFaq(4)">
+            <span class="font-semibold transition duration-100 md:text-lg">Is my data secure?</span>
+
+            <span class="dark:text-white text-gray-400 transition-transform duration-200"
+                  :class="{ 'rotate-180': openFaq === 4 }">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </span>
+            </div>
+
+            <div class="overflow-hidden transition-all duration-300 ease-in-out"
+                 x-show="openFaq === 4"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 max-h-0"
+                 x-transition:enter-end="opacity-100 max-h-96"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 max-h-96"
+                 x-transition:leave-end="opacity-0 max-h-0">
+                <p class="mb-4 text-gray-500 dark:text-gray-300">Yes, your data is completely secure. We use industry-standard encryption and security measures to protect your personal and health information. Your data is only accessible to you and authorized DTI personnel for wellness program management.</p>
+            </div>
+        </div>
+        <!-- question - end -->
+
+        <!-- question - start -->
+        <div class="border-b border-gray-700">
+            <div class="flex cursor-pointer justify-between gap-2 py-4 text-gray-500 dark:text-white hover:text-primary-500 active:text-primary-600"
+                 @click="toggleFaq(5)">
+            <span class="font-semibold transition duration-100 md:text-lg">How can I get support?</span>
+
+            <span class="dark:text-white text-gray-400 transition-transform duration-200"
+                  :class="{ 'rotate-180': openFaq === 5 }">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </span>
+            </div>
+
+            <div class="overflow-hidden transition-all duration-300 ease-in-out"
+                 x-show="openFaq === 5"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 max-h-0"
+                 x-transition:enter-end="opacity-100 max-h-96"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 max-h-96"
+                 x-transition:leave-end="opacity-0 max-h-0">
+                <p class="mb-4 text-gray-500 dark:text-gray-300">You can get support through our in-app messaging system, contact the DTI Region 12 wellness team, or reach out to your local office administrator. We also provide comprehensive help documentation and tutorials within the platform.</p>
+            </div>
+        </div>
+        <!-- question - end -->
+        </div>
+    </div>
     </div>
 
     <!-- Right Form Section -->
     <div class="w-full md:w-1/2 p-6 md:p-10 sm:mt-15 md:mt-0 flex flex-col justify-center">
+
         <!-- Auth Header -->
         <x-auth-header
+
             :title="__('Fill up the Requirements')"
             :description="__('Step ' . $step . ' of 4')"
         />
@@ -120,6 +258,16 @@
                                 label="Dairy-Free"
                                 description="Eliminates milk and dairy products (cheese, yogurt, butter)."
                             />
+                            <flux:radio
+                                value="Balanced"
+                                label="Balanced"
+                                description="A balance between meat, vegetable, fruits, grains, and dairy."
+                            />
+                            <flux:radio
+                                value="meat-based"
+                                label="Meat-Based"
+                                description="Heavily relies on meat and a few grams of other nutrients"
+                            />
                         </flux:radio.group>
                     </div>
                 @endif
@@ -174,3 +322,16 @@
         </div>
     </div>
 </div>
+
+<script>
+function faqDropdown() {
+    return {
+        openFaq: null,
+
+        toggleFaq(faqNumber) {
+            // If clicking the same FAQ, close it; otherwise, open the new one
+            this.openFaq = this.openFaq === faqNumber ? null : faqNumber;
+        }
+    }
+}
+</script>

@@ -1,42 +1,97 @@
 <?php
 
 use function Livewire\Volt\{state};
+use App\Models\Quiz;
 use App\Models\QuizQuestion;
 use Carbon\Carbon;
+use App\Models\QuizSet;
 
-$set = null;
-$determineSet = function () {
-    $now = Carbon::now('Asia/Manila');
+// Get available quizzes
+$activeQuizzes = Quiz::active()->withCount('questions')->get();
+$upcomingQuizzes = Quiz::upcoming()->withCount('questions')->get();
+$userAttempts = auth()->user()->quizAttempts()->with('quiz')->latest()->get();
+$latestAttempt = auth()->user()->quizAttempts()->with('quiz')->latest()->first();
 
-    // Quiz time slots (matching the notification service)
-    if ($now->between($now->copy()->setTime(9,30), $now->copy()->setTime(10,30))) {
-        return 1; // Set 1: 9:30am–10:30am
-    } elseif ($now->between($now->copy()->setTime(12,0), $now->copy()->setTime(13,0))) {
-        return 2; // Set 2: 12:00pm–1:00pm
-    } elseif ($now->between($now->copy()->setTime(15,0), $now->copy()->setTime(16,0))) {
-        return 3; // Set 3: 3:00pm–4:00pm
+// Get available quiz sets
+$activeSet = QuizSet::active()->first(); // one active set
+$latestAttemptForSet = $activeSet
+    ? auth()->user()->quizAttempts()
+        ->where('set', $activeSet->set_number)
+        ->with('quiz')
+        ->latest()
+        ->first()
+    : null;
+$upcomingSet = QuizSet::upcoming()->first();
+
+// Check if user has any available quizzes to take
+$availableQuiz = null;
+$nextQuiz = null;
+$errorMessage = null;
+$takenAttemptForActiveSet = null;
+
+if ($activeQuizzes->isNotEmpty()) {
+    // Consider attempts only for the current active set so the same quiz can be taken again in a new set
+    $takenQuizIds = $activeSet
+        ? $userAttempts->where('set', $activeSet->set_number)->pluck('quiz_id')->toArray()
+        : $userAttempts->pluck('quiz_id')->toArray();
+    $availableQuiz = $activeQuizzes->whereNotIn('id', $takenQuizIds)->first();
+
+    // Slot Check: if no active set
+    if (!$activeSet) {
+        $errorMessage = "No active quiz slot available right now. Please wait for the next schedule.";
+        $availableQuiz = null;
     }
+    // If user already took all quizzes in this set
+    elseif (!$availableQuiz) {
+        $errorMessage = "You have already taken all quizzes in the current slot (Set {$activeSet->set_number}).";
+    }
+    // If there is an available quiz but the user already took THIS quiz in the current set (edge case when data reloads)
+    elseif ($availableQuiz && $activeSet) {
+        $takenAttemptForActiveSet = $userAttempts
+            ->where('quiz_id', $availableQuiz->id)
+            ->firstWhere('set', $activeSet->set_number);
 
-    return null;
-};
+        if ($takenAttemptForActiveSet) {
+            $errorMessage = "You already took this quiz in the current slot (Set {$activeSet->set_number}).";
+            $availableQuiz = null;
+        }
+    }
+} else {
+    if ($upcomingQuizzes->isNotEmpty()) {
+        $nextQuiz = $upcomingQuizzes->first();
+        $errorMessage = "No quizzes are currently available. Next quiz: " .
+            $nextQuiz->quiz_title . " starting on " .
+            $nextQuiz->start_date->setTimezone('Asia/Manila')->format('M d, Y H:i') .
+            " (Philippines time)";
+    } else {
+        $errorMessage = "No quizzes are currently available or scheduled.";
+    }
+}
 
-$set = $determineSet();
 
 state([
-    'set' => $set,
-    'questions' => $set
-        ? QuizQuestion::where('set', $set)->with(['choices'])->inRandomOrder()->take(15)->get()
-        : collect(),
+    'activeQuizzes' => $activeQuizzes,
+    'upcomingQuizzes' => $upcomingQuizzes,
+    'availableQuiz' => $availableQuiz,
+    'nextQuiz' => $nextQuiz,
+    'errorMessage' => $errorMessage,
+    'currentSet' => optional($activeSet)->set_number,
+    'takenAttemptScore' => optional($takenAttemptForActiveSet)->score,
+    'questions' => collect(),
     'answers' => [],
-    'phase' => $set ? 'start' : 'start',
+    'phase' => 'start',
     'index' => 0,
-    'attempt' => auth()->user()->quizAttempts->first(),
+    'attempt' => null,
     'time' => 0,
     'bestScore' => optional(
         auth()->user()->quizAttempts()
             ->orderBy('score', 'desc')
             ->first()
     )->score ?? 0,
+    'latestAttemptScore' => optional($latestAttempt)->score,
+    'latestAttemptQuizTitle' => optional(optional($latestAttempt)->quiz)->quiz_title,
+    'latestAttemptScoreSet' => optional($latestAttemptForSet)->score,
+    'latestAttemptQuizTitleSet' => optional(optional($latestAttemptForSet)->quiz)->quiz_title,
     'isSubmitted' => false
 ]);
 
@@ -47,7 +102,9 @@ $saveAnswers = function () {
     $this->isSubmitted = true;
 
     $attempt = auth()->user()->quizAttempts()->create([
-        'set' => $this->set
+        'quiz_id' => $this->availableQuiz->id,
+        // Save the real active set number if present, fallback to 1 for compatibility
+        'set' => $this->currentSet ?? 1
     ]);
     $totalScore = 0;
     $correctCount = 0;
@@ -91,7 +148,7 @@ $saveAnswers = function () {
         auth()->id(),
         $totalScore,
         $correctCount,
-        (string)$this->set
+        $this->availableQuiz->quiz_title
     );
 
     if ($totalScore > $this->bestScore) {
@@ -102,65 +159,22 @@ $saveAnswers = function () {
     $this->phase = 'result';
 };
 $startQuiz = function () {
-    $now = Carbon::now('Asia/Manila');
-
-    // Define quiz slots (matching notification service)
-    $slots = collect([
-        Carbon::today('Asia/Manila')->setTime(9, 30),  // Set 1: 9:30 AM
-        Carbon::today('Asia/Manila')->setTime(12, 0),  // Set 2: 12:00 PM
-        Carbon::today('Asia/Manila')->setTime(15, 0),  // Set 3: 3:00 PM
-    ]);
-
-    // Match set to time
-    if ($now->between($slots[0], $slots[0]->copy()->addHour())) {
-        $this->set = 1;
-    } elseif ($now->between($slots[1], $slots[1]->copy()->addHour())) {
-        $this->set = 2;
-    } elseif ($now->between($slots[2], $slots[2]->copy()->addHour())) {
-        $this->set = 3;
-    } else {
-        session()->flash('error', 'Not in quiz time. Try 9:30 AM, 12:00 PM, or 3:00 PM.');
+    if (!$this->availableQuiz) {
+        session()->flash('error', $this->errorMessage);
         return;
     }
 
-    // Load questions for this set
-    $this->questions = QuizQuestion::where('set', $this->set)
+    // Load questions for this quiz filtered by current set
+    $this->questions = $this->availableQuiz->questions()
+        ->where('set', $this->currentSet ?? 1) // Filter by current set
         ->with('choices')
         ->inRandomOrder()
         ->take(15)
         ->get();
 
     if ($this->questions->isEmpty()) {
-        session()->flash('error', 'No questions available for this set.');
+        session()->flash('error', 'No questions available for this quiz in the current set.');
         return;
-    }
-
-    // Find next available slot
-    $findNextSlot = function ($time) use ($slots) {
-        foreach ($slots as $slot) {
-            if ($time->lt($slot)) {
-                return $slot;
-            }
-        }
-        // If none left today, first slot tomorrow
-        return $slots->first()->copy()->addDay();
-    };
-
-    // Prevent multiple attempts
-    $lastAttempt = auth()->user()->quizAttempts()->latest('created_at')->first();
-    if ($lastAttempt) {
-        $lastTime = Carbon::parse($lastAttempt->created_at)->timezone('Asia/Manila');
-        $nextSlot = $findNextSlot($lastTime);
-
-        if ($now->lt($nextSlot)) {
-            $this->attempt = $lastAttempt;
-            $this->phase = 'alreadyTaken';
-            session()->flash(
-                'error',
-                'You have already taken the quiz. Next available slot: ' . $nextSlot->format('F j, Y g:i A')
-            );
-            return;
-        }
     }
 
     $this->phase = 'quiz';
@@ -214,6 +228,8 @@ $selectAnswer = function (int $id, string $letter, int $seconds) {
                     {{ session('error') }}
                 </div>
             @endif
+
+            @if ($availableQuiz)
             <!-- Icon -->
             <div class="flex justify-center mb-4">
                 <div class="bg-primary-100 p-3 rounded-full">
@@ -227,10 +243,24 @@ $selectAnswer = function (int $id, string $letter, int $seconds) {
             </div>
 
             <!-- Title -->
-            <h2 class="text-xl font-bold text-gray-800 dark:text-white">Health Trivia Quiz</h2>
-            <p class="text-gray-500 dark:text-gray-400 mt-1">
-                A fun and educational quiz about health and wellness.
-            </p>
+                <h2 class="text-xl font-bold text-gray-800 dark:text-white">{{ $availableQuiz->quiz_title }}</h2>
+                @if($availableQuiz->description)
+                    <p class="text-gray-500 dark:text-gray-400 mt-1">{{ $availableQuiz->description }}</p>
+                @endif
+
+                <!-- Quiz Info -->
+                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mt-4">
+                    <div class="text-sm text-blue-800 dark:text-blue-200">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-medium">Available Until:</span>
+                            <span>{{ $availableQuiz->end_date->setTimezone('Asia/Manila')->format('M d, Y H:i') }} (Philippines time)</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-1">
+                            <span class="font-medium">Questions:</span>
+                            <span>{{ \App\Models\QuizQuestion::where('quiz_id', $availableQuiz->id)->where('set', $currentSet ?? 1)->count() }}</span>
+                        </div>
+                    </div>
+                </div>
 
             <!-- Info boxes -->
             <div class="grid grid-cols-3 gap-3 mt-6">
@@ -254,7 +284,7 @@ $selectAnswer = function (int $id, string $letter, int $seconds) {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                     </svg>
-                    <p class="text-gray-800 dark:text-white text-sm font-semibold">15</p>
+                        <p class="text-gray-800 dark:text-white text-sm font-semibold">{{ min($availableQuiz->questions_count, 15) }}</p>
                     <span class="text-gray-500 dark:text-gray-400 text-xs">questions</span>
                 </div>
 
@@ -274,12 +304,71 @@ $selectAnswer = function (int $id, string $letter, int $seconds) {
             <!-- Button -->
             <button
                 wire:click='startQuiz'
-                @if(session('error')) disabled @endif
-                class="mt-6 w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 rounded-full disabled:opacity-50"
+                    class="mt-6 w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 rounded-full"
             >
-                Start
+                    Start Quiz
             </button>
+            @else
+                <!-- No Quiz Available State -->
+                <div class="flex justify-center mb-4">
+                    <div class="bg-yellow-100 p-3 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6 text-yellow-500" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0a9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                </div>
 
+                <!-- Title / Message -->
+                <h2 class="text-xl font-bold text-gray-800 dark:text-white">No Quiz Available</h2>
+                @if($latestAttemptScoreSet)
+                    <p class="text-gray-500 dark:text-gray-400 mt-1">
+                        Your last score for Set {{ $currentSet ?? '-' }}:
+                        <span class="font-semibold text-gray-800 dark:text-white">{{ $latestAttemptScoreSet }}</span>
+                        @if($latestAttemptQuizTitleSet)
+                            on "{{ $latestAttemptQuizTitleSet }}"
+                        @endif
+                    </p>
+                @elseif($latestAttemptScore)
+                    <p class="text-gray-500 dark:text-gray-400 mt-1">
+                        Your last score: <span class="font-semibold text-gray-800 dark:text-white">{{ $latestAttemptScore }}</span>
+                        @if($latestAttemptQuizTitle)
+                            on "{{ $latestAttemptQuizTitle }}"
+                        @endif
+                    </p>
+                @else
+                    <p class="text-gray-500 dark:text-gray-400 mt-1">{{ $errorMessage }}</p>
+                @endif
+
+                @if($nextQuiz)
+                    <!-- Next Quiz Info -->
+                    <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mt-4">
+                        <div class="text-sm text-yellow-800 dark:text-yellow-200">
+                            <div class="font-medium mb-2">Next Quiz:</div>
+                            <div class="flex justify-between items-center mb-1">
+                                <span>Title:</span>
+                                <span>{{ $nextQuiz->quiz_title }}</span>
+                            </div>
+                            <div class="flex justify-between items-center mb-1">
+                                <span>Starts:</span>
+                                <span>{{ $nextQuiz->start_date->setTimezone('Asia/Manila')->format('M d, Y H:i') }} (Philippines time)</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span>Questions:</span>
+                                <span>{{ $nextQuiz->questions_count }}</span>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Button -->
+                <a href="{{ route('index') }}"
+                    class="mt-6 w-full bg-gray-500 hover:bg-gray-600 text-white font-medium py-3 rounded-full inline-block text-center">
+                    Back to Home
+                </a>
+            @endif
         </div>
     @elseif ($phase === 'quiz')
         <div x-data="{
@@ -369,7 +458,8 @@ $selectAnswer = function (int $id, string $letter, int $seconds) {
                 </div>
 
                 <!-- Title -->
-                <h2 class="text-xl font-bold text-gray-800 dark:text-white">Results</h2>
+                <h2 class="text-xl font-bold text-gray-800 dark:text-white">Quiz Results</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $availableQuiz->quiz_title }}</p>
 
                 <!-- Buttons -->
                 <div class="flex gap-3 justify-center mt-4">
@@ -566,35 +656,6 @@ $selectAnswer = function (int $id, string $letter, int $seconds) {
     </div>
 
 
-        @elseif($phase === 'alreadyTaken')
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow p-8 max-w-md w-full text-center">
-                <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4">
-                    You have already taken this quiz
-                </h2>
-
-                <p class="text-gray-500 dark:text-gray-400 mb-6">
-                    Next available slot: {{ $attempt ? $attempt->created_at->timezone('Asia/Manila')->addHours(3)->format('F j, Y g:i A') : '' }}
-                </p>
-
-                <!-- Show last score -->
-                <div class="bg-primary-100 h-28 w-28 mx-auto flex flex-col justify-center rounded-full mb-4">
-                    <div class="text-primary-700 font-black text-2xl">
-                        {{ $attempt->score }}
-                    </div>
-                </div>
-
-                <!-- Buttons -->
-                <div class="flex gap-3 justify-center">
-                    <a href="{{ route('index') }}"
-                    class="px-4 py-2 bg-primary-300 hover:bg-primary-500 text-white rounded-full transition">
-                        Home
-                    </a>
-                    <button wire:click="$set('phase','result')"
-                    class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full transition">
-                        View Result
-                    </button>
-                </div>
-            </div>
 
         @endif
 

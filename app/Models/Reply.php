@@ -13,9 +13,11 @@ class Reply extends Model
 
     protected $fillable = [
         'comment_id',
+        'parent_reply_id',
         'user_id',
         'content',
         'likes_count',
+        'replies_count',
     ];
 
     protected $casts = [
@@ -26,6 +28,16 @@ class Reply extends Model
     public function comment(): BelongsTo
     {
         return $this->belongsTo(Comment::class);
+    }
+
+    public function parentReply(): BelongsTo
+    {
+        return $this->belongsTo(Reply::class, 'parent_reply_id');
+    }
+
+    public function childReplies(): HasMany
+    {
+        return $this->hasMany(Reply::class, 'parent_reply_id')->latest();
     }
 
     public function user(): BelongsTo
@@ -57,5 +69,15 @@ class Reply extends Model
             $this->likes()->where('user_id', $user->id)->delete();
             $this->decrement('likes_count');
         }
+    }
+
+    public function incrementRepliesCount(): void
+    {
+        $this->increment('replies_count');
+    }
+
+    public function decrementRepliesCount(): void
+    {
+        $this->decrement('replies_count');
     }
 }
