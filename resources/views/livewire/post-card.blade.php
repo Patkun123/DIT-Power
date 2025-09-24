@@ -1,4 +1,4 @@
-<div class="p-4">
+<div id="post-{{ $post->id }}" class="p-4">
     <!-- Facebook-style Post Header -->
     <div class="flex items-center justify-between mb-3">
         <div class="flex items-center space-x-3">
@@ -41,7 +41,7 @@
                     <button wire:click="startEdit" class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">Edit post</button>
                     <button wire:click="deletePost" class="w-full text-left px-3 py-2 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30">Delete post</button>
                 @else
-                    <button class="w-full text-left px-3 py-2 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30">Report</button>    
+                    <button class="w-full text-left px-3 py-2 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30">Report</button>
                 @endif
     </div>
         </div>
@@ -187,7 +187,7 @@
             <!-- Comments List -->
             <div class="space-y-3">
                 @foreach($post->comments as $comment)
-                    <div class="flex space-x-3">
+                    <div id="comment-{{ $comment->id }}" class="flex space-x-3">
                         <img class="h-8 w-8 rounded-full object-cover cursor-pointer"
                              src="{{ $comment->user->profile_image_url }}"
                              alt="{{ $comment->user->firstname }} {{ $comment->user->lastname }}"
@@ -285,7 +285,7 @@
 
                                     <!-- Replies List -->
                                     @foreach($comment->replies->where('parent_reply_id', null) as $reply)
-                                        <div class="flex space-x-2 ml-6">
+                                        <div id="reply-{{ $reply->id }}" class="flex space-x-2 ml-6">
                                             <img class="h-6 w-6 rounded-full object-cover cursor-pointer"
                                                  src="{{ $reply->user->profile_image_url }}"
                                                  alt="{{ $reply->user->firstname }} {{ $reply->user->lastname }}"
@@ -373,7 +373,7 @@
 
                                                         <!-- Nested Replies List -->
                                                         @foreach($reply->childReplies as $nestedReply)
-                                                            <div class="flex space-x-2 ml-8">
+                                                            <div id="reply-{{ $nestedReply->id }}" class="flex space-x-2 ml-8">
                                                                 <img class="h-5 w-5 rounded-full object-cover cursor-pointer"
                                                                      src="{{ $nestedReply->user->profile_image_url }}"
                                                                      alt="{{ $nestedReply->user->firstname }} {{ $nestedReply->user->lastname }}"
@@ -407,4 +407,38 @@
         </div>
     @endif
 </div>
+@push('scripts')
+<script>
+    function scrollToAnchor() {
+        if (!window.location.hash) return;
+
+        const hash = window.location.hash;
+        let tries = 0;
+
+        function attemptScroll() {
+            const target = document.querySelector(hash);
+            if (target) {
+                target.scrollIntoView({ behavior: "smooth", block: "center" });
+                target.classList.add("ring-2", "ring-yellow-400", "bg-yellow-50");
+
+                // remove highlight after 2s
+                setTimeout(() => {
+                    target.classList.remove("ring-2", "ring-yellow-400", "bg-yellow-50");
+                }, 2000);
+            } else if (tries < 20) {
+                // try again until Livewire finishes rendering
+                tries++;
+                setTimeout(attemptScroll, 300);
+            }
+        }
+
+        attemptScroll();
+    }
+
+    document.addEventListener("DOMContentLoaded", scrollToAnchor);
+    document.addEventListener("livewire:update", scrollToAnchor);
+    document.addEventListener("livewire:navigated", scrollToAnchor);
+</script>
+
+@endpush
 

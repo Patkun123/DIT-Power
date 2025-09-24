@@ -13,9 +13,9 @@
     </div>
 
     {{-- Sticky/Floating Chat Widget (Facebook Messenger Style) --}}
-    <div id="sticky-chat-widget" 
-         x-data="{ 
-             isMinimized: true, 
+    <div id="sticky-chat-widget"
+         x-data="{
+             isMinimized: true,
              isVisible: false,
              toggleChat() {
                  this.isMinimized = !this.isMinimized;
@@ -31,9 +31,9 @@
          class="fixed bottom-4 right-4 z-50 transition-all duration-300 ease-in-out"
          :class="isMinimized ? 'scale-100' : 'scale-100'"
          style="display: none;">
-        
+
         {{-- Minimized Chat Button --}}
-        <div x-show="isMinimized" 
+        <div x-show="isMinimized"
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0 scale-95"
              x-transition:enter-end="opacity-100 scale-100"
@@ -55,7 +55,7 @@
         </div>
 
         {{-- Expanded Chat Window --}}
-        <div x-show="!isMinimized" 
+        <div x-show="!isMinimized"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 scale-95 translate-y-4"
              x-transition:enter-end="opacity-100 scale-100 translate-y-0"
@@ -63,7 +63,7 @@
              x-transition:leave-start="opacity-100 scale-100 translate-y-0"
              x-transition:leave-end="opacity-0 scale-95 translate-y-4"
              class="chat-window bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col w-[calc(100vw-2rem)] max-w-full h-[70vh] max-h-[80vh] sm:w-[360px] sm:h-[460px] lg:w-[430px] lg:h-[500px] overflow-hidden">
-            
+
             {{-- Chat Header --}}
             <div class="chat-header flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-700 rounded-t-lg">
                 <div class="flex items-center space-x-2">
@@ -79,13 +79,13 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-1">
-                    <button @click="toggleChat()" 
+                    <button @click="toggleChat()"
                             class="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors">
                         <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
                         </svg>
                     </button>
-                    <button @click="closeChat()" 
+                    <button @click="closeChat()"
                             class="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors">
                         <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -112,21 +112,21 @@
 // Tab switching functionality
 function showTab(tabName) {
     console.log('Switching to tab:', tabName); // Debug log
-    
+
     // Hide all tab contents
     const tabContents = document.querySelectorAll('.tab-content');
     tabContents.forEach(content => {
         content.classList.add('hidden');
         console.log('Hiding content:', content.id); // Debug log
     });
-    
+
     // Remove active class from all tabs (both mobile and desktop)
     const tabs = document.querySelectorAll('[id$="-tab"], [id$="-tab-desktop"]');
     tabs.forEach(tab => {
         tab.classList.remove('bg-white', 'dark:bg-gray-800', 'text-gray-900', 'dark:text-white', 'shadow-sm');
         tab.classList.add('text-gray-600', 'dark:text-gray-400');
     });
-    
+
     // Show selected tab content
     const selectedContent = document.getElementById(tabName + '-content');
     if (selectedContent) {
@@ -135,11 +135,11 @@ function showTab(tabName) {
     } else {
         console.error('Tab content not found:', tabName + '-content'); // Debug log
     }
-    
+
     // Add active class to selected tab (both mobile and desktop)
     const selectedTab = document.getElementById(tabName + '-tab');
     const selectedTabDesktop = document.getElementById(tabName + '-tab-desktop');
-    
+
     if (selectedTab) {
         selectedTab.classList.remove('text-gray-600', 'dark:text-gray-400');
         selectedTab.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-900', 'dark:text-white', 'shadow-sm');
@@ -147,7 +147,7 @@ function showTab(tabName) {
     } else {
         console.error('Mobile tab not found:', tabName + '-tab'); // Debug log
     }
-    
+
     if (selectedTabDesktop) {
         selectedTabDesktop.classList.remove('text-gray-600', 'dark:text-gray-400');
         selectedTabDesktop.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-900', 'dark:text-white', 'shadow-sm');
@@ -155,7 +155,7 @@ function showTab(tabName) {
     } else {
         console.error('Desktop tab not found:', tabName + '-tab-desktop'); // Debug log
     }
-    
+
     // Handle sticky chat widget visibility
     const stickyChatWidget = document.getElementById('sticky-chat-widget');
     if (stickyChatWidget) {
@@ -173,7 +173,7 @@ function showTab(tabName) {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, initializing tabs...');
     showTab('social-feed');
-    
+
     // Add click event listeners to tab buttons
     const tabButtons = document.querySelectorAll('[data-tab]');
     tabButtons.forEach(button => {
@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
             showTab(tabName);
         });
     });
-    
+
     // Also handle onclick attributes as fallback
     const onclickButtons = document.querySelectorAll('[onclick^="showTab"]');
     onclickButtons.forEach(button => {
@@ -201,6 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
 </script>
 @endpush
 @endsection

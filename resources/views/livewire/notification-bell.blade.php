@@ -2,9 +2,9 @@
     <!-- Notification Bell Button - Enhanced with better alignment -->
     <button
         wire:click="toggleDropdown"
-        class="relative p-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white 
-               transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 
-               focus:ring-opacity-50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 
+        class="relative p-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white
+               transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500
+               focus:ring-opacity-50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800
                notification-bell-button group"
         @click="open"
     >
@@ -24,7 +24,7 @@
     </button>
 
     <!-- Dropdown Panel - Enhanced with better positioning and styling -->
-    <div 
+    <div
         x-show="open"
         x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0 scale-95 translate-y-2"
@@ -33,8 +33,8 @@
         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
         x-transition:leave-end="opacity-0 scale-95 translate-y-2"
         @click.away="open = false"
-        class="absolute right-0 mt-3 w-80 sm:w-96 max-w-[calc(100vw-2rem)] 
-               bg-white dark:bg-gray-800 rounded-xl shadow-2xl border 
+        class="absolute right-0 mt-3 w-80 sm:w-96 max-w-[calc(100vw-2rem)]
+               bg-white dark:bg-gray-800 rounded-xl shadow-2xl border
                border-gray-200 dark:border-gray-700 z-[9999] notification-dropdown
                transform -translate-x-2 sm:translate-x-0 backdrop-blur-sm"
         style="display: none;"
@@ -54,7 +54,7 @@
             @if($unreadCount > 0)
                 <button
                     wire:click="markAllAsRead"
-                    class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 
+                    class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300
                            focus:outline-none focus:underline transition-colors duration-200 font-medium"
                 >
                     Mark all as read
@@ -66,12 +66,11 @@
         <div class="max-h-80 sm:max-h-96 overflow-y-auto notification-scroll scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
             @forelse($notifications as $notification)
                 <div
-                    wire:click="markAsRead({{ $notification->id }})"
-                    class="px-4 py-3 border-b border-gray-100 dark:border-gray-700 
-                           hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-all duration-200 
-                           notification-item active:bg-gray-100 dark:active:bg-gray-600 
-                           {{ $notification->isRead() ? '' : 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-l-blue-500' }}"
-                >
+                    wire:click="markAsReadAndRedirect({{ $notification->id }})"
+                    class="px-4 py-3 border-b border-gray-100 dark:border-gray-700
+                           hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-all duration-200
+                           notification-item active:bg-gray-100 dark:active:bg-gray-600
+                           {{ $notification->isRead() ? '' : 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-l-blue-500' }}">
                     <div class="flex items-start space-x-3">
                         <!-- Notification Icon - Enhanced with social types -->
                         <div class="flex-shrink-0 notification-icon">
@@ -172,8 +171,8 @@
         <!-- Footer - Enhanced with better styling -->
         @if($notifications->count() > 0)
             <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-                <a href="#" class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 
-                                 text-center block focus:outline-none focus:underline transition-colors duration-200 
+                <a href="#" class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300
+                                 text-center block focus:outline-none focus:underline transition-colors duration-200
                                  font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 py-2 px-3 rounded-lg">
                     View all notifications
                 </a>
@@ -181,3 +180,10 @@
         @endif
     </div>
 </div>
+<script>
+    window.addEventListener('redirect', event => {
+        if (event.detail.url && event.detail.url !== '#') {
+            window.location.href = event.detail.url;
+        }
+    });
+</script>

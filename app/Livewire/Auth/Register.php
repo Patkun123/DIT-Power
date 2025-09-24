@@ -21,6 +21,14 @@ class Register extends Component
     public string $password_confirmation = '';
     public string $role = 'user';
 
+    public string $civil_status = '';
+    public string $career = '';
+    public string $level_career = '';
+    public string $nature_of_work = '';
+    public string $function = '';
+    public string $educational_attachment_type = '';
+    public string $educational_attachment = '';
+
     public ?string $phone_number = null;
     public ?string $gender = null;
     public ?string $birthday = null;

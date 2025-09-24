@@ -22,6 +22,7 @@ class SocialNotificationService
                     'post_id' => $post->id,
                     'liker_id' => $liker->id,
                     'liker_name' => $liker->firstname . ' ' . $liker->lastname,
+                    'url'        => route('social.show', $post->id),
                 ],
             ]);
         }
@@ -40,6 +41,7 @@ class SocialNotificationService
                     'post_id' => $comment->post_id,
                     'liker_id' => $liker->id,
                     'liker_name' => $liker->firstname . ' ' . $liker->lastname,
+                    'url'        => route('social.show', $comment->post_id) . '#comment-' . $comment->id,
                 ],
             ]);
         }
@@ -58,6 +60,7 @@ class SocialNotificationService
                     'post_id' => $comment->post_id,
                     'commenter_id' => $comment->user_id,
                     'commenter_name' => $comment->user->firstname . ' ' . $comment->user->lastname,
+                    'url' => route('social.show', $comment->post_id) . '#comment-' . $comment->id, // ✅ scroll to comment
                 ],
             ]);
         }
@@ -77,6 +80,7 @@ class SocialNotificationService
                     'post_id' => $reply->comment->post_id,
                     'replier_id' => $reply->user_id,
                     'replier_name' => $reply->user->firstname . ' ' . $reply->user->lastname,
+                    'url' => route('social.show', $reply->comment->post_id) . '#reply-' . $reply->id, // ✅ scroll to reply
                 ],
             ]);
         }

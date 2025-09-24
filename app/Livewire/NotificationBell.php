@@ -25,7 +25,7 @@ class NotificationBell extends Component
                 ->latest()
                 ->limit(10)
                 ->get();
-            
+
             $this->unreadCount = auth()->user()
                 ->unreadNotifications()
                 ->count();
@@ -45,13 +45,52 @@ class NotificationBell extends Component
             $this->loadNotifications();
         }
     }
+    public function markAsReadAndRedirect($notificationId)
+{
+    $notification = Notification::find($notificationId);
+
+    if (! $notification || $notification->user_id !== auth()->id()) {
+        return;
+    }
+
+    $notification->markAsRead();
+    $this->loadNotifications();
+    $this->showDropdown = false;
+
+    $url = '/'; // fallback
+
+    switch ($notification->type) {
+        case 'comment_created':
+        case 'reply_created':
+            $postId = data_get($notification->data, 'post_id');
+            $commentId = data_get($notification->data, 'comment_id');
+            $url = route('social.show', $postId) . '#comment-' . $commentId;
+            break;
+
+        case 'post_liked':
+            $postId = data_get($notification->data, 'post_id');
+            $url = route('social.show', $postId);
+            break;
+
+        case 'chat_message':
+            $chatId = data_get($notification->data, 'chat_id');
+            $url = route('social.tools', $chatId);
+            break;
+
+        default:
+            $url = '/notifications'; // or some safe page
+    }
+
+    return redirect()->to($url);
+}
+
 
     public function markAllAsRead()
     {
         auth()->user()
             ->unreadNotifications()
             ->update(['read_at' => now()]);
-        
+
         $this->loadNotifications();
     }
 

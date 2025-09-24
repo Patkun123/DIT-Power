@@ -1,7 +1,7 @@
 <div class="flex flex-col md:flex-row min-h-screen bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-white">
     <!-- Left Sidebar -->
-    <div class="w-full md:w-1/2 p-6 md:p-10 sm:mt-15 md:mt-0 flex-col dark:bg-gray-900 bg-gray-200 justify-center hidden md:flex lg:block">
-    <div class="mx-auto max-w-screen-2xl px-4 md:px-8">
+    <div class="w-full md:w-1/2 p-6 md:p-10 sm:mt-15 md:mt-0 flex-col dark:bg-gray-800 bg-gray-200 justify-center hidden md:flex lg:block">
+    <div class="mx-auto max-w-screen-2xl mt-10 px-4 md:px-8">
         <!-- text - start -->
         <div class="mb-10 md:mb-16">
         <h2 class="mb-4 text-center text-xl font-bold text-gray-700 dark:text-gray-100 md:mb-6 lg:text-3xl">Frequently asked questions</h2>
@@ -160,42 +160,49 @@
         />
 
         <!-- Step Progress Tracker -->
-<ol class="grid grid-cols-2 sm:grid-cols-1 mt-8 ml-3 sm:mt-10 lg:grid-cols-4 gap-6 w-full">
-    @foreach ([1 => 'Account', 2 => 'Profile', 3 => 'Preferences', 4 => 'Password'] as $i => $label)
-        <li class="flex items-center space-x-2.5 rtl:space-x-reverse
-            @if($step === $i) text-primary-600 dark:text-primary-500
-            @elseif($step > $i) text-primary-700 dark:text-primary-400
-            @else text-gray-500 dark:text-gray-400 @endif">
+        <ol class="grid grid-cols-2 sm:grid-cols-1 mt-8 ml-3 sm:mt-10 lg:grid-cols-4 gap-6 w-full">
+            @foreach ([1 => 'Account', 2 => 'Profile', 3 => 'Preferences', 4 => 'Password'] as $i => $label)
+                <li class="flex items-center space-x-2.5 rtl:space-x-reverse text-sm
+                    @if($step === $i) text-primary-600 dark:text-primary-500
+                    @elseif($step > $i)  text-primary-700 dark:text-primary-400
+                    @else text-gray-500 dark:text-gray-400 @endif">
 
-            {{-- Step Circle --}}
-            <span class="flex items-center justify-center w-8 h-8 rounded-full shrink-0 border
-                @if($step === $i) border-primary-600 text-primary-600 dark:border-primary-500 dark:text-primary-500
-                @elseif($step > $i) border-primary-700 text-primary-700 dark:border-primary-400 dark:text-primary-400
-                @else border-gray-500 text-gray-500 dark:border-gray-400 dark:text-gray-400 @endif">
-                {{ $i }}
-            </span>
+                    {{-- Step Circle --}}
+                    <span class="flex items-center justify-center w-8 h-8 rounded-full shrink-0 border
+                        @if($step === $i) bg-primary-600 border-primary-600 text-primary-50 dark:border-primary-500 dark:text-gray-900
+                        @elseif($step > $i) border-primary-700 text-primary-700 dark:border-primary-400 dark:text-primary-400
+                        @else border-gray-500 text-gray-500 dark:border-gray-400 dark:text-gray-400 @endif">
 
-            {{-- Step Label --}}
-            <span>
-                <h3 class="font-medium leading-tight">{{ $label }}</h3>
-                <p class="text-sm">
-                    @if($i === 1) Start your account setup
-                    @elseif($i === 2) Complete your Health profile
-                    @elseif($i === 3) Choose your preferences
-                    @elseif($i === 4) Secure with a password
-                    @endif
-                </p>
-            </span>
-        </li>
-    @endforeach
-</ol>
+                        @if($step > $i)
+                            <!-- Show checkmark if completed -->
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                        @else
+                            <!-- Otherwise show step number -->
+                            {{ $i }}
+                        @endif
+                    </span>
 
 
+                    {{-- Step Label --}}
+                    <span>
+                        <h3 class="font-medium leading-tight">{{ $label }}</h3>
+                        <p class="text-xs">
+                            @if($i === 1) Start your account setup
+                            @elseif($i === 2) Complete your Health profile
+                            @elseif($i === 3) Choose your preferences
+                            @elseif($i === 4) Secure with a password
+                            @endif
+                        </p>
+                    </span>
+                </li>
+            @endforeach
+        </ol>
 
         <!-- Form Card -->
-        <div class="dark:bg-gray-900 bg-gray-100 p-6 rounded-lg shadow space-y-10">
+        <div class="dark:bg-gray-900 bg-gray-100 p-6 space-y-10">
             <x-auth-session-status class="text-center" :status="session('status')" />
-
             <form wire:submit.prevent="{{ $step === 4 ? 'register' : 'nextStep' }}" class="space-y-6">
                 @if ($step === 1)
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -206,15 +213,37 @@
                             <flux:select.option>Female</flux:select.option>
                         </flux:select>
                         <flux:input type="date" max="2999-12-31" wire:model.defer="birthday" :label="__('Birthday')"></flux:input>
+                            <flux:input 
+                                type="tel" 
+                                wire:model.defer="phone_number" 
+                                icon="phone" 
+                                :label="__('Phone Number')" 
+                                placeholder="+63" 
+                                required 
+                            />
+                            <flux:select wire:model="civil_status" :label="__('Civil Status')">
+                                <flux:select.option>Married</flux:select.option>
+                                <flux:select.option>Single</flux:select.option>
+                                <flux:select.option>Widow</flux:select.option>
+                                <flux:select.option value="solo_parent">Solo Parent</flux:select.option>
+                            </flux:select>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
-                            <flux:input wire:model.defer="address" icon="map-pin" :label="__('address')" placeholder="Address" required />
-                            <flux:input wire:model.defer="phone_number" icon="phone" :label="__('Phone Number')" placeholder="+63" required />
+                        <div class="grid grid-cols-1 gap-6">
+                            <flux:input wire:model.defer="address" icon="map-pin" :label="__('Address')" placeholder="Address" required />
                         </div>
-
                 @endif
-
                 @if ($step === 2)
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <flux:select wire:model="career" :label="__('Select Career or Non-Career')">
+                            <flux:select.option>Career</flux:select.option>
+                            <flux:select.option>Non-Career</flux:select.option>
+                        </flux:select>
+                        <flux:select wire:model="level_career" :label="__('Select Career Level')">
+                            <flux:select.option>1st</flux:select.option>
+                            <flux:select.option>2nd</flux:select.option>
+                            <flux:select.option>3rd</flux:select.option>
+                        </flux:select>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <flux:input type="number" icon="circle-stack" wire:model.defer="height" :label="__('Height')" placeholder="152 (cm)" required />
                         <flux:input wire:model.defer="weight" icon="circle-stack" :label="__('Weight (kg)')" placeholder="52 (kg)" required />
@@ -314,7 +343,7 @@
                         </flux:button>
                     @endif
 
-                    <flux:button type="submit" variant="primary" icon="arrow-right" class="ml-auto">
+                    <flux:button type="submit" variant="primary" color="lime" icon="arrow-right" class="ml-auto">
                         {{ $step === 4 ? __('Submit') : __('Next') }}
                     </flux:button>
                 </div>

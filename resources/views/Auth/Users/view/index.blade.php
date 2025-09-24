@@ -410,8 +410,8 @@
       });
     });
   });
-</script>
 
+</script>
 
 @endpush
 @endsection

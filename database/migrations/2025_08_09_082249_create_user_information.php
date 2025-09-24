@@ -18,6 +18,15 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->string('phone_number')->nullable();
             $table->string('gender')->nullable();
+            $table->string('civil_status');
+            $table->string('career')->nullable();
+            $table->string('level_career');
+            $table->string('nature_of_work');
+            $table->string('function');
+            $table->string('educational_attachment_type');
+            $table->string('educational_attachment');
+            $table->string('post_graduate')->default('none');
+            $table->string('gender')->nullable();
             $table->date('birthday')->nullable();
             $table->string('height')->nullable();
             $table->string('weight')->nullable();

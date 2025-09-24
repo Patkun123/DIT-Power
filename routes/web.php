@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Route;
 use App\Notifications\RealtimeTestNotification;
 use App\Http\Livewire\FinanceDashboard;
 use App\Http\Controllers\ScrambleWordController;
+use App\Http\Controllers\SocialController;
 
 Route::get('/', function () {
     return view('home');
@@ -136,7 +137,8 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::view('Financial-tools','Auth.users.view.financial')->name('financial.tools');
     Route::view('mental-tools','Auth.users.view.mental')->name('mental.tools');
     Route::get('emotional-tools',[emotional::class, 'index'])->name('emotional.tools');
-    Route::view('social-tools','Auth.users.view.social')->name('social.tools');
+    Route::get('social',[SocialController::class, 'index'])->name('social.tools');
+    Route::get('social/{post}',[SocialController::class, 'show'])->name('social.show');
     Route::get('leaderboard', [leaderboards::class, 'index'])->name('leaderboards');
 
     // Quick test route to trigger a realtime broadcast notification for the current user
