@@ -3,7 +3,7 @@
 namespace App\Livewire\Auth;
 
 use App\Models\dti_id;
-use App\Models\User_Information;
+use App\Models\user_information;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -28,6 +28,13 @@ class Register extends Component
     public string $function = '';
     public string $educational_attachment_type = '';
     public string $educational_attachment = '';
+    
+    public function updatedEducationalAttachmentType()
+    {
+        // Clear the educational attachment when type changes
+        $this->educational_attachment = '';
+    }
+    public string $post_graduate = 'none';
 
     public ?string $phone_number = null;
     public ?string $gender = null;
@@ -74,6 +81,14 @@ class Register extends Component
             'gender'                => ['nullable', 'string'],
             'birthday'              => ['nullable', 'date'],
             'address'               => ['nullable', 'string'],
+            'civil_status'          => ['nullable', 'string'],
+            'career'                => ['nullable', 'string'],
+            'level_career'          => ['nullable', 'string'],
+            'nature_of_work'        => ['nullable', 'string'],
+            'function'              => ['nullable', 'string'],
+            'educational_attachment_type' => ['nullable', 'string'],
+            'educational_attachment'      => ['nullable', 'string'],
+            'post_graduate'         => ['nullable', 'string'],
             'height'                => ['nullable', 'string'],
             'weight'                => ['nullable', 'string'],
             'activity_level'        => ['nullable', 'string'],
@@ -83,7 +98,6 @@ class Register extends Component
             'office'                => ['nullable', 'string'],
             'position'              => ['nullable', 'string'],
             'department'            => ['nullable', 'string'],
-
         ]);
 
         // If password is filled in, hash it before saving
@@ -98,17 +112,26 @@ class Register extends Component
         $user->save();
 
         // Create or update user information
-        User_Information::create([
-            'user_id'             => $user->id,
-            'phone_number'        => $this->phone_number,
-            'gender'              => $this->gender,
-            'birthday'            => $this->birthday,
-            'address'             => $this->address,
-            'height'              => $this->height,
-            'weight'              => $this->weight,
-            'activity_level'      => $this->activity_level,
-            'health_goals'        => $this->health_goals,
-            'dietary_preferences' => $this->dietary_preferences,
+        user_information::create([
+            'user_id'                     => $user->id,
+            'staff_id'                    => $this->staff_id,
+            'phone_number'                => $this->phone_number,
+            'gender'                      => $this->gender,
+            'birthday'                    => $this->birthday,
+            'address'                     => $this->address,
+            'civil_status'                => $this->civil_status,
+            'career'                      => $this->career,
+            'level_career'                => $this->level_career,
+            'nature_of_work'              => $this->nature_of_work,
+            'function'                    => $this->function,
+            'educational_attachment_type' => $this->educational_attachment_type,
+            'educational_attachment'      => $this->educational_attachment,
+            'post_graduate'               => $this->post_graduate,
+            'height'                      => $this->height,
+            'weight'                      => $this->weight,
+            'activity_level'              => $this->activity_level,
+            'health_goals'                => $this->health_goals,
+            'dietary_preferences'         => $this->dietary_preferences,
         ]);
 
         dti_id::updateOrCreate(
@@ -147,15 +170,22 @@ class Register extends Component
 
         if ($this->step === 2) {
             $this->validate([
-                'height'              => ['nullable', 'string'],
-                'weight'              => ['nullable', 'string'],
-                'activity_level'      => ['nullable', 'string'],
-                'health_goals'        => ['nullable', 'string'],
+                'career'                      => ['nullable', 'string'],
+                'level_career'                => ['nullable', 'string'],
+                'nature_of_work'              => ['nullable', 'string'],
+                'function'                    => ['nullable', 'string'],
+                'educational_attachment_type' => ['nullable', 'string'],
+                'educational_attachment'      => ['nullable', 'string'],
+                'post_graduate'               => ['nullable', 'string'],
             ]);
         }
 
         if ($this->step === 3) {
             $this->validate([
+                'height'                      => ['nullable', 'string'],
+                'weight'                      => ['nullable', 'string'],
+                'activity_level'              => ['nullable', 'string'],
+                'health_goals'                => ['nullable', 'string'],
                 'dietary_preferences' => ['nullable', 'string'],
             ]);
         }

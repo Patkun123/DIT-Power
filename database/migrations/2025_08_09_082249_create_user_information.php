@@ -26,7 +26,6 @@ return new class extends Migration
             $table->string('educational_attachment_type');
             $table->string('educational_attachment');
             $table->string('post_graduate')->default('none');
-            $table->string('gender')->nullable();
             $table->date('birthday')->nullable();
             $table->string('height')->nullable();
             $table->string('weight')->nullable();
