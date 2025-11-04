@@ -204,6 +204,7 @@
             <x-auth-session-status class="text-center" :status="session('status')" />
             <form wire:submit.prevent="{{ $step === 4 ? 'register' : 'nextStep' }}" class="space-y-6">
                 @if ($step === 1)
+<<<<<<< HEAD
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:input wire:model.defer="firstname" icon="user-circle" :label="__('First Name')" placeholder="First name" required />
                     <flux:input wire:model.defer="lastname" icon="user-circle" :label="__('Last Name')" placeholder="Last name" required />
@@ -303,6 +304,143 @@
                             description="Heavily relies on meat and a few grams of other nutrients" />
                     </flux:radio.group>
                 </div>
+=======
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <flux:input wire:model.defer="firstname" icon="user-circle" :label="__('First Name')" placeholder="First name" required />
+                        <flux:input wire:model.defer="lastname" icon="user-circle" :label="__('Last Name')" placeholder="Last name" required />
+                        <flux:select wire:model.defer="gender" placeholder="Select Gender" :label="__('Gender')">
+                            <flux:select.option>Male</flux:select.option>
+                            <flux:select.option>Female</flux:select.option>
+                        </flux:select>
+                        <flux:input type="date" max="2999-12-31" wire:model.defer="birthday" :label="__('Birthday')"></flux:input>
+                            <flux:input 
+                                type="tel" 
+                                wire:model.defer="phone_number" 
+                                icon="phone" 
+                                :label="__('Phone Number')" 
+                                placeholder="+63" 
+                                required 
+                            />
+                            <flux:select wire:model="civil_status" :label="__('Civil Status')">
+                                <flux:select.option>Married</flux:select.option>
+                                <flux:select.option>Single</flux:select.option>
+                                <flux:select.option>Widow</flux:select.option>
+                                <flux:select.option value="solo_parent">Solo Parent</flux:select.option>
+                            </flux:select>
+                        </div>
+                        <div class="grid grid-cols-1 gap-6">
+                            <flux:input wire:model.defer="address" icon="map-pin" :label="__('Address')" placeholder="Address" required />
+                        </div>
+                @endif
+                @if ($step === 2)
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <flux:select wire:model.defer="career" :label="__('Select Career or Non-Career')">
+                            <flux:select.option value="Career">Career</flux:select.option>
+                            <flux:select.option value="Non-Career">Non-Career</flux:select.option>
+                        </flux:select>
+                        <flux:select wire:model.defer="level_career" :label="__('Select Career Level')">
+                            <flux:select.option value="1st">1st</flux:select.option>
+                            <flux:select.option value="2nd">2nd</flux:select.option>
+                            <flux:select.option value="3rd">3rd</flux:select.option>
+                        </flux:select>
+                        <flux:select wire:model.defer="nature_of_work" :label="__('Nature of Work')">
+                            <flux:select.option value="Manager">Manager</flux:select.option>
+                            <flux:select.option value="Supervisor">Supervisor</flux:select.option>
+                            <flux:select.option value="Clerical">Clerical</flux:select.option>
+                            <flux:select.option value="BlueCollar">Blue Collar</flux:select.option>
+                        </flux:select>
+                        <flux:input wire:model.defer="function" :label="__('Function')" placeholder="Enter your function" />
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <flux:select wire:model.live="educational_attachment_type" :label="__('Educational Attachment Type')">
+                            <flux:select.option value="none">None</flux:select.option>
+                            <flux:select.option value="bachelors">Bachelor's Degree</flux:select.option>
+                            <flux:select.option value="vocational">Vocational Course</flux:select.option>
+                            <flux:select.option value="highschool">High School</flux:select.option>
+                        </flux:select>
+                        
+                        @if($educational_attachment_type === 'bachelors')
+                            <flux:select wire:model.live="educational_attachment" :label="__('Educational Attachment')">
+                                <flux:select.option value="">Select a field of study</flux:select.option>
+                                <flux:select.option value="accountancy">Accountancy</flux:select.option>
+                                <flux:select.option value="business">Business Related</flux:select.option>
+                                <flux:select.option value="agriculture">Agriculture</flux:select.option>
+                                <flux:select.option value="law">Law</flux:select.option>
+                                <flux:select.option value="economics">Economics</flux:select.option>
+                                <flux:select.option value="engineering">Engineering</flux:select.option>
+                                <flux:select.option value="food_tech">Food Tech</flux:select.option>
+                                <flux:select.option value="arts">Arts</flux:select.option>
+                                <flux:select.option value="it">IT</flux:select.option>
+                            </flux:select>
+                        @elseif($educational_attachment_type === 'vocational' || $educational_attachment_type === 'highschool')
+                            <flux:input wire:model.live="educational_attachment" :label="__('Educational Attachment')" placeholder="Enter your educational background" />
+                        @else
+                            <flux:input wire:model.live="educational_attachment" :label="__('Educational Attachment')" placeholder="Select educational type first" disabled />
+                        @endif
+                        
+                        <flux:select wire:model="post_graduate" :label="__('Post Graduate')">
+                            <flux:select.option value="none">None</flux:select.option>
+                            <flux:select.option value="master">Master's Degree</flux:select.option>
+                            <flux:select.option value="doctorate">Doctorate</flux:select.option>
+                            <flux:select.option value="certificate">Certificate</flux:select.option>
+                        </flux:select>
+                    </div>
+                @endif
+
+                @if ($step === 3)
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <flux:input type="number" icon="circle-stack" wire:model.defer="height" :label="__('Height')" placeholder="152 (cm)" required />
+                    <flux:input wire:model.defer="weight" icon="circle-stack" :label="__('Weight (kg)')" placeholder="52 (kg)" required />
+                    <flux:select wire:model="activity_level" placeholder="Select Activity Level" :label="__('Activity Level')">
+                        <flux:select.option>Sendentry</flux:select.option>
+                        <flux:select.option>Lightly Active</flux:select.option>
+                        <flux:select.option>Moderately Active</flux:select.option>
+                        <flux:select.option>Very Active</flux:select.option>
+                        <flux:select.option>Extra Active</flux:select.option>
+                    </flux:select>
+                    <flux:select wire:model="health_goals" placeholder="Select Health Goals" :label="__('Health Goals')">
+                        <flux:select.option>Weight Loss</flux:select.option>
+                        <flux:select.option>Muscle Gain</flux:select.option>
+                        <flux:select.option>Maintenance</flux:select.option>
+                        <flux:select.option>General Fitness</flux:select.option>
+                    </flux:select>
+                </div>
+                    <div class="grid grid-cols-1 gap-6">
+                        <flux:radio.group class="grid grid-cols-2 gap-5" wire:model="dietary_preferences" :label="_('Dietary Preferences')">
+                            <flux:radio
+                                value="Vegetarian"
+                                label="Vegetarian"
+                                description="dietary practice that excludes the consumption of meat, poultry, fish, and seafood."
+                                checked
+                            />
+                            <flux:radio
+                                value="Gluten-Free"
+                                label="Gluten-Free"
+                                description="Avoids gluten, a protein found in wheat, barley, and rye."
+                            />
+                            <flux:radio
+                                value="Vegan"
+                                label="Vegan"
+                                description="Excludes all animal products, including meat, dairy, eggs, and honey."
+                            />
+                            <flux:radio
+                                value="Dairy-Free"
+                                label="Dairy-Free"
+                                description="Eliminates milk and dairy products (cheese, yogurt, butter)."
+                            />
+                            <flux:radio
+                                value="Balanced"
+                                label="Balanced"
+                                description="A balance between meat, vegetable, fruits, grains, and dairy."
+                            />
+                            <flux:radio
+                                value="meat-based"
+                                label="Meat-Based"
+                                description="Heavily relies on meat and a few grams of other nutrients"
+                            />
+                        </flux:radio.group>
+                    </div>
+>>>>>>> d57b2f1a024bf5abce2b6f9bd60bf8ece88c09fb
                 @endif
 
                 @if ($step === 4)

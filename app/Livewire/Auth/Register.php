@@ -3,8 +3,12 @@
 namespace App\Livewire\Auth;
 
 use App\Models\dti_id;
+<<<<<<< HEAD
 use App\Models\User;
 use App\Models\User_Information;
+=======
+use App\Models\user_information;
+>>>>>>> d57b2f1a024bf5abce2b6f9bd60bf8ece88c09fb
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -29,6 +33,13 @@ class Register extends Component
     public string $function = '';
     public string $educational_attachment_type = '';
     public string $educational_attachment = '';
+    
+    public function updatedEducationalAttachmentType()
+    {
+        // Clear the educational attachment when type changes
+        $this->educational_attachment = '';
+    }
+    public string $post_graduate = 'none';
 
     public ?string $phone_number = null;
     public ?string $gender = null;
@@ -75,6 +86,7 @@ class Register extends Component
             'gender'                => ['nullable', 'string'],
             'birthday'              => ['nullable', 'date'],
             'address'               => ['nullable', 'string'],
+<<<<<<< HEAD
             'civil_status'          => ['required', 'string'],
             'career'                => ['nullable', 'string'],
             'level_career'          => ['required', 'string'],
@@ -82,6 +94,16 @@ class Register extends Component
             'function'              => ['required', 'string'],
             'educational_attachment_type' => ['required', 'string'],
             'educational_attachment'      => ['required', 'string'],
+=======
+            'civil_status'          => ['nullable', 'string'],
+            'career'                => ['nullable', 'string'],
+            'level_career'          => ['nullable', 'string'],
+            'nature_of_work'        => ['nullable', 'string'],
+            'function'              => ['nullable', 'string'],
+            'educational_attachment_type' => ['nullable', 'string'],
+            'educational_attachment'      => ['nullable', 'string'],
+            'post_graduate'         => ['nullable', 'string'],
+>>>>>>> d57b2f1a024bf5abce2b6f9bd60bf8ece88c09fb
             'height'                => ['nullable', 'string'],
             'weight'                => ['nullable', 'string'],
             'activity_level'        => ['nullable', 'string'],
@@ -91,7 +113,6 @@ class Register extends Component
             'office'                => ['nullable', 'string'],
             'position'              => ['nullable', 'string'],
             'department'            => ['nullable', 'string'],
-
         ]);
 
         // If password is filled in, hash it before saving
@@ -109,6 +130,7 @@ class Register extends Component
         ]);
 
         // Create or update user information
+<<<<<<< HEAD
         User_Information::create([
             'user_id'             => $user->id,
             'staff_id'            => $this->staff_id,
@@ -129,6 +151,28 @@ class Register extends Component
             'activity_level'      => $this->activity_level,
             'health_goals'        => $this->health_goals,
             'dietary_preferences' => $this->dietary_preferences,
+=======
+        user_information::create([
+            'user_id'                     => $user->id,
+            'staff_id'                    => $this->staff_id,
+            'phone_number'                => $this->phone_number,
+            'gender'                      => $this->gender,
+            'birthday'                    => $this->birthday,
+            'address'                     => $this->address,
+            'civil_status'                => $this->civil_status,
+            'career'                      => $this->career,
+            'level_career'                => $this->level_career,
+            'nature_of_work'              => $this->nature_of_work,
+            'function'                    => $this->function,
+            'educational_attachment_type' => $this->educational_attachment_type,
+            'educational_attachment'      => $this->educational_attachment,
+            'post_graduate'               => $this->post_graduate,
+            'height'                      => $this->height,
+            'weight'                      => $this->weight,
+            'activity_level'              => $this->activity_level,
+            'health_goals'                => $this->health_goals,
+            'dietary_preferences'         => $this->dietary_preferences,
+>>>>>>> d57b2f1a024bf5abce2b6f9bd60bf8ece88c09fb
         ]);
 
         dti_id::updateOrCreate(
@@ -168,6 +212,7 @@ class Register extends Component
 
         if ($this->step === 2) {
             $this->validate([
+<<<<<<< HEAD
                 'career'              => ['nullable', 'string'],
                 'level_career'        => ['required', 'string'],
                 'nature_of_work'      => ['required', 'string'],
@@ -178,11 +223,24 @@ class Register extends Component
                 'weight'              => ['nullable', 'string'],
                 'activity_level'      => ['nullable', 'string'],
                 'health_goals'        => ['nullable', 'string'],
+=======
+                'career'                      => ['nullable', 'string'],
+                'level_career'                => ['nullable', 'string'],
+                'nature_of_work'              => ['nullable', 'string'],
+                'function'                    => ['nullable', 'string'],
+                'educational_attachment_type' => ['nullable', 'string'],
+                'educational_attachment'      => ['nullable', 'string'],
+                'post_graduate'               => ['nullable', 'string'],
+>>>>>>> d57b2f1a024bf5abce2b6f9bd60bf8ece88c09fb
             ]);
         }
 
         if ($this->step === 3) {
             $this->validate([
+                'height'                      => ['nullable', 'string'],
+                'weight'                      => ['nullable', 'string'],
+                'activity_level'              => ['nullable', 'string'],
+                'health_goals'                => ['nullable', 'string'],
                 'dietary_preferences' => ['nullable', 'string'],
             ]);
         }
