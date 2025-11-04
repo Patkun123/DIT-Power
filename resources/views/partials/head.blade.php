@@ -8,13 +8,7 @@
 <link rel="preconnect" href="https://fonts.bunny.net">
 <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 
-<!-- Tailwind CSS Play CDN -->
-<script src="https://cdn.tailwindcss.com"></script>
-
-<!-- Flowbite CSS CDN -->
-<link href="https://cdn.jsdelivr.net/npm/flowbite@latest/dist/flowbite.min.css" rel="stylesheet" />
 <link rel="icon" href="/images/favicon.ico" sizes="any">
-<script src="https://cdn.jsdelivr.net/npm/flowbite@latest/dist/flowbite.min.js"></script>
 <script src="{{asset('include/flowbite.js')}}"></script>
 <script src="{{asset('include/apexcharts.js')}}"></script>
 

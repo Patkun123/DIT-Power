@@ -11,12 +11,6 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-    <!-- Tailwind CSS Play CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Flowbite CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/flowbite@latest/dist/flowbite.min.css" rel="stylesheet" />
-
     <script src="{{asset('include/flowbite.js')}}"></script>
     <script src="{{asset('include/apexcharts.js')}}"></script>
     <!-- Fonts -->
@@ -43,8 +37,6 @@
     @livewire('admin.question-add')
     @livewire('admin.adduser')
     @livewireScripts()
-    <!-- Flowbite JS CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@latest/dist/flowbite.min.js"></script>
     <script src="{{asset('include/pie.js')}}"></script>
 </Body>
 

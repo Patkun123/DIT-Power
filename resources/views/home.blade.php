@@ -8,13 +8,6 @@
     <title>{{ $title ?? config('app.name') }} Personalized Online Wellness Resource HUB</title>
 
     <link rel="icon" href="/images/favicon.ico" sizes="any">
-
-    <!-- Tailwind CSS Play CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Flowbite CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/flowbite@latest/dist/flowbite.min.css" rel="stylesheet" />
-
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
@@ -165,8 +158,6 @@
     @include('partials.features')
 
     @include('partials.footer')
-    <!-- Flowbite JS CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@latest/dist/flowbite.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();

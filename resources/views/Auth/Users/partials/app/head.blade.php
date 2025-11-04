@@ -9,13 +9,6 @@
     <title>{{ $title ?? config('app.name') }} Personalized Online Wellness Resource HUB</title>
 
     <link rel="icon" href="/images/favicon.ico" sizes="any">
-
-    <!-- Tailwind CSS Play CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Flowbite CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/flowbite@latest/dist/flowbite.min.css" rel="stylesheet" />
-
     <script src="{{asset('include/flowbite.js')}}"></script>
     <script src="{{asset('include/apexcharts.js')}}"></script>
     <!-- Fonts -->
@@ -42,8 +35,6 @@
     </section>
     @stack('scripts')
     @livewireScripts
-    <!-- Flowbite JS CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@latest/dist/flowbite.min.js"></script>
     <script>
         document.getElementById('scrollAllBtn')?.addEventListener('click', () => {
             const container = document.getElementById('answersContainer');
