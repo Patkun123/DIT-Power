@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Message;
 use App\Services\ChatNotificationService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class Chat extends Component
 {
@@ -35,15 +36,26 @@ class Chat extends Component
         $chatNotificationService = new ChatNotificationService();
         $chatNotificationService->sendChatNotification($this->messageText, Auth::id());
 
-        // Detect mentions and notify mentioned users
-        preg_match_all('/@(\w+\s+\w+)/', $this->messageText, $matches);
-        if (!empty($matches[1])) {
-            foreach ($matches[1] as $mention) {
-                $user = \App\Models\User::whereRaw("CONCAT(firstname, ' ', lastname) = ?", [$mention])->first();
-                if ($user && $user->id !== Auth::id()) {
-                    $chatNotificationService->sendChatMentionNotification($this->messageText, Auth::id(), $user->id);
+        // Detect mentions and notify mentioned users - improved regex
+        try {
+            preg_match_all('/@([A-Za-z][A-Za-z\s\-\']{1,50})/', $this->messageText, $matches);
+            if (!empty($matches[1])) {
+                foreach ($matches[1] as $mention) {
+                    $mention = trim($mention);
+                    if (empty($mention)) continue;
+
+                    $user = \App\Models\User::whereRaw("firstname || ' ' || lastname = ?", [$mention])->first();
+                    if ($user && $user->id !== Auth::id()) {
+                        $chatNotificationService->sendChatMentionNotification($this->messageText, Auth::id(), $user->id);
+                    }
                 }
             }
+        } catch (\Exception $e) {
+            // Log the error but don't break the main functionality
+            Log::error('Error processing chat mentions: ' . $e->getMessage(), [
+                'message' => $this->messageText,
+                'user_id' => Auth::id(),
+            ]);
         }
 
         // Emit event to refresh notification bell
@@ -70,34 +82,51 @@ class Chat extends Component
     // === Mentions ===
     public function searchUsers($rawInput, $field)
     {
-        $mentionQuery = $this->extractMentionQuery((string) $rawInput);
-        if ($mentionQuery === null) {
+        try {
+            $mentionQuery = $this->extractMentionQuery((string) $rawInput);
+            if ($mentionQuery === null) {
+                $this->showMentionSuggestions = false;
+                $this->mentionQuery = '';
+                $this->selectedMentionIndex = -1;
+                return;
+            }
+
+            $this->mentionQuery = $mentionQuery; // can be empty right after '@'
+            $this->currentMentionField = $field;
+            $this->selectedMentionIndex = -1;
+
+            // Limit query length to prevent performance issues
+            if (strlen($mentionQuery) > 50) {
+                $this->showMentionSuggestions = false;
+                return;
+            }
+
+            $this->mentionSuggestions = \App\Models\User::where('id', '!=', Auth::id())
+                ->when($mentionQuery !== '', function ($q) use ($mentionQuery) {
+                    $q->where(function ($q2) use ($mentionQuery) {
+                        $q2->where('firstname', 'like', "%{$mentionQuery}%")
+                            ->orWhere('lastname', 'like', "%{$mentionQuery}%")
+                            ->orWhereRaw("firstname || ' ' || lastname LIKE ?", ["%{$mentionQuery}%"]);
+                    });
+                })
+                ->limit(5)
+                ->get();
+
+            $this->showMentionSuggestions = $this->mentionSuggestions->count() > 0;
+            if (!$this->showMentionSuggestions) {
+                $this->selectedMentionIndex = -1;
+            } else if ($this->selectedMentionIndex >= $this->mentionSuggestions->count()) {
+                $this->selectedMentionIndex = 0;
+            }
+        } catch (\Exception $e) {
+            // Log the error and hide suggestions
+            Log::error('Error searching users for mentions: ' . $e->getMessage(), [
+                'input' => $rawInput,
+                'field' => $field,
+                'user_id' => Auth::id(),
+            ]);
             $this->showMentionSuggestions = false;
-            $this->mentionQuery = '';
             $this->selectedMentionIndex = -1;
-            return;
-        }
-
-        $this->mentionQuery = $mentionQuery; // can be empty right after '@'
-        $this->currentMentionField = $field;
-        $this->selectedMentionIndex = -1;
-
-        $this->mentionSuggestions = \App\Models\User::where('id', '!=', Auth::id())
-            ->when($mentionQuery !== '', function ($q) use ($mentionQuery) {
-                $q->where(function($q2) use ($mentionQuery) {
-                    $q2->where('firstname', 'like', "%{$mentionQuery}%")
-                       ->orWhere('lastname', 'like', "%{$mentionQuery}%")
-                       ->orWhereRaw("CONCAT(firstname, ' ', lastname) LIKE ?", ["%{$mentionQuery}%"]);
-                });
-            })
-            ->limit(5)
-            ->get();
-
-        $this->showMentionSuggestions = $this->mentionSuggestions->count() > 0;
-        if (!$this->showMentionSuggestions) {
-            $this->selectedMentionIndex = -1;
-        } else if ($this->selectedMentionIndex >= $this->mentionSuggestions->count()) {
-            $this->selectedMentionIndex = 0;
         }
     }
 
@@ -111,7 +140,7 @@ class Chat extends Component
         if ($after === '') {
             return '';
         }
-        if (preg_match('/^([A-Za-z\s]{0,50})/', $after, $m)) {
+        if (preg_match('/^([A-Za-z][A-Za-z\s\-\']{0,49})/', $after, $m)) {
             return trim($m[1]);
         }
         return null;
@@ -125,12 +154,28 @@ class Chat extends Component
         $mentionText = "@{$user->firstname} {$user->lastname}";
 
         if ($field === 'chat') {
-            $this->messageText = str_replace("@{$this->mentionQuery}", $mentionText, $this->messageText);
+            $this->messageText = $this->replaceLastMention($this->messageText, '@' . ($this->mentionQuery ?: ''), $mentionText);
         }
 
         $this->showMentionSuggestions = false;
         $this->mentionQuery = '';
         $this->selectedMentionIndex = -1;
+    }
+
+    private function replaceLastMention($text, $pattern, $replacement)
+    {
+        $pos = strrpos($text, '@');
+        if ($pos === false) {
+            return $text;
+        }
+
+        // Find the end of the current mention (next space, punctuation, or end of string)
+        $endPos = $pos + 1;
+        while ($endPos < strlen($text) && preg_match('/[A-Za-z\s\-\']/', $text[$endPos])) {
+            $endPos++;
+        }
+
+        return substr($text, 0, $pos) . $replacement . substr($text, $endPos);
     }
 
     public function hideMentionSuggestions()
@@ -171,9 +216,9 @@ class Chat extends Component
 
     public function parseMentions($content)
     {
-        return preg_replace_callback('/@(\w+\s+\w+)/', function($matches) {
+        return preg_replace_callback('/@([A-Za-z][A-Za-z\s\-\']{1,50})/', function ($matches) {
             $mention = $matches[1];
-            $user = \App\Models\User::whereRaw("CONCAT(firstname, ' ', lastname) = ?", [$mention])->first();
+            $user = \App\Models\User::whereRaw("firstname || ' ' || lastname = ?", [$mention])->first();
             if ($user) {
                 $isMe = (int) $user->id === (int) Auth::id();
                 $classes = $isMe
@@ -185,4 +230,3 @@ class Chat extends Component
         }, $content);
     }
 }
-

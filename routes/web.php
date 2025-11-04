@@ -22,17 +22,44 @@ use App\Notifications\RealtimeTestNotification;
 use App\Http\Livewire\FinanceDashboard;
 use App\Http\Controllers\ScrambleWordController;
 use App\Http\Controllers\SocialController;
+use App\Http\Controllers\UpcomingEventController;
+use App\Http\Controllers\AdminAnalyticsController;
 
 Route::get('/', function () {
-    return view('home');
-})->middleware([
-    'guest',        // Laravel's built-in authentication check
-    'check_profile' // Your custom middleware to check if the user profile is complete
-])->name('home');
+    // Get upcoming events for display
+    $upcomingEvents = \App\Models\UpcomingEvent::published()
+        ->upcoming()
+        ->orderBy('event_date', 'asc')
+        ->limit(3)
+        ->get();
+
+    return view('home', compact('upcomingEvents'));
+})->name('home');
 
 Route::get('about', function () {
     return view('about');
 })->middleware(['guest'])->name('about');
+
+// Test route for events
+Route::get('/test-events', function () {
+    $upcomingEvents = \App\Models\UpcomingEvent::published()
+        ->upcoming()
+        ->orderBy('event_date', 'asc')
+        ->limit(3)
+        ->get();
+
+    return response()->json([
+        'count' => $upcomingEvents->count(),
+        'events' => $upcomingEvents->map(function ($event) {
+            return [
+                'title' => $event->title,
+                'status' => $event->status,
+                'event_date' => $event->event_date,
+                'is_upcoming' => $event->is_upcoming
+            ];
+        })
+    ]);
+});
 
 Route::get('loading-demo', function () {
     return view('loading-demo');
@@ -53,10 +80,20 @@ Route::middleware(['auth', 'is_admin:admin'])->group(function () {
     Route::get('Users/Tracking', [usertrackingController::class, 'index'])->name('users.tracking');
 
     //article and news
-    Route::get('article',[ArticleandNewsController::class, 'index'])->name('article');
+    Route::get('article', [ArticleandNewsController::class, 'index'])->name('article');
     Route::post('article', [ArticleandNewsController::class, 'store'])->name('news-articles.store');
     Route::put('article/{news_article}', [ArticleandNewsController::class, 'update'])->name('news.update');
     Route::delete('article/{news_article}', [ArticleandNewsController::class, 'destroy'])->name('news-articles.destroy');
+
+    //upcoming events
+    Route::get('upcoming-events', [UpcomingEventController::class, 'index'])->name('upcoming-events');
+    Route::post('upcoming-events', [UpcomingEventController::class, 'store'])->name('upcoming-events.store');
+    Route::get('upcoming-events/{upcomingEvent}/edit', [UpcomingEventController::class, 'edit'])->name('upcoming-events.edit');
+    Route::put('upcoming-events/{upcomingEvent}', [UpcomingEventController::class, 'update'])->name('upcoming-events.update');
+    Route::delete('upcoming-events/{upcomingEvent}', [UpcomingEventController::class, 'destroy'])->name('upcoming-events.destroy');
+
+    //analytics
+    Route::get('analytics', [AdminAnalyticsController::class, 'index'])->name('analytics');
 
 
     //Quiz Management
@@ -73,15 +110,15 @@ Route::middleware(['auth', 'is_admin:admin'])->group(function () {
     Route::get('quizzes/{quiz}/questions/{question}/edit', [AdminQuizController::class, 'editQuestion'])->name('admin.quizzes.questions.edit');
     Route::put('quizzes/{quiz}/questions/{question}', [AdminQuizController::class, 'updateQuestion'])->name('admin.quizzes.questions.update');
     Route::delete('quizzes/{quiz}/questions/{question}', [AdminQuizController::class, 'destroyQuestion'])->name('admin.quizzes.questions.destroy');
-            Route::get('quizzes/{quiz}/statistics', [AdminQuizController::class, 'statistics'])->name('admin.quizzes.statistics');
+    Route::get('quizzes/{quiz}/statistics', [AdminQuizController::class, 'statistics'])->name('admin.quizzes.statistics');
 
-            // Quiz Sets Management
-            Route::get('quizzes/{quiz}/sets', [AdminQuizController::class, 'sets'])->name('admin.quizzes.sets');
-            Route::get('quizzes/{quiz}/sets/create', [AdminQuizController::class, 'createSet'])->name('admin.quizzes.sets.create');
-            Route::post('quizzes/{quiz}/sets', [AdminQuizController::class, 'storeSet'])->name('admin.quizzes.sets.store');
-            Route::get('quizzes/{quiz}/sets/{set}/edit', [AdminQuizController::class, 'editSet'])->name('admin.quizzes.sets.edit');
-            Route::put('quizzes/{quiz}/sets/{set}', [AdminQuizController::class, 'updateSet'])->name('admin.quizzes.sets.update');
-            Route::delete('quizzes/{quiz}/sets/{set}', [AdminQuizController::class, 'destroySet'])->name('admin.quizzes.sets.destroy');
+    // Quiz Sets Management
+    Route::get('quizzes/{quiz}/sets', [AdminQuizController::class, 'sets'])->name('admin.quizzes.sets');
+    Route::get('quizzes/{quiz}/sets/create', [AdminQuizController::class, 'createSet'])->name('admin.quizzes.sets.create');
+    Route::post('quizzes/{quiz}/sets', [AdminQuizController::class, 'storeSet'])->name('admin.quizzes.sets.store');
+    Route::get('quizzes/{quiz}/sets/{set}/edit', [AdminQuizController::class, 'editSet'])->name('admin.quizzes.sets.edit');
+    Route::put('quizzes/{quiz}/sets/{set}', [AdminQuizController::class, 'updateSet'])->name('admin.quizzes.sets.update');
+    Route::delete('quizzes/{quiz}/sets/{set}', [AdminQuizController::class, 'destroySet'])->name('admin.quizzes.sets.destroy');
 
     // Scramble words management
     Route::get('manage-scramble-words', [ScrambleWordController::class, 'index'])->name('admin.scramble-words.index');
@@ -96,15 +133,15 @@ Route::middleware(['auth', 'is_admin:admin'])->group(function () {
     Route::get('feedbacks/export/csv', [AdminFeedbackController::class, 'export'])->name('admin.feedbacks.export');
 });
 
-Route::middleware(['auth','check_profile'])->group(function () {
+Route::middleware(['auth', 'check_profile'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
 
-    Route::get('/index',[UserIndexController::class, 'index'])->name('index');
-    Route::post('/index/feed',[UserIndexController::class, 'store'])->name('feedback.store');
+    Route::get('/index', [UserIndexController::class, 'index'])->name('index');
+    Route::post('/index/feed', [UserIndexController::class, 'store'])->name('feedback.store');
 
     Route::get('Journal', [JournalsController::class, 'index'])->name('journal');
     Route::post('Journal', [JournalsController::class, 'store'])->name('journal.store');
@@ -129,20 +166,27 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::post('physical-tools/meditation', [ToolsController::class, 'start'])->name('meditation.start');
     Route::post('/meditation/stop', [ToolsController::class, 'stop'])->name('meditation.stop');
 
+    // Notes routes
+    Route::get('api/notes', [App\Http\Controllers\NoteController::class, 'index'])->name('notes.index');
+    Route::post('api/notes', [App\Http\Controllers\NoteController::class, 'store'])->name('notes.store');
+    Route::put('api/notes/{note}', [App\Http\Controllers\NoteController::class, 'update'])->name('notes.update');
+    Route::delete('api/notes/{note}', [App\Http\Controllers\NoteController::class, 'destroy'])->name('notes.destroy');
+    Route::patch('api/notes/{note}/toggle-important', [App\Http\Controllers\NoteController::class, 'toggleImportant'])->name('notes.toggle-important');
+
     Route::get('Policies', [PdfController::class, 'index'])->name('policies');
 
     // Route::view('Policies', 'Auth.users.view.policies')->name('policies');
     // Route::view('Feedbacks', 'Auth.user.view.policies')->name('policies');
 
-    Route::view('Financial-tools','Auth.users.view.financial')->name('financial.tools');
-    Route::view('mental-tools','Auth.users.view.mental')->name('mental.tools');
-    Route::get('emotional-tools',[emotional::class, 'index'])->name('emotional.tools');
-    Route::get('social',[SocialController::class, 'index'])->name('social.tools');
-    Route::get('social/{post}',[SocialController::class, 'show'])->name('social.show');
+    Route::view('Financial-tools', 'Auth.users.view.financial')->name('financial.tools');
+    Route::view('mental-tools', 'Auth.users.view.mental')->name('mental.tools');
+    Route::get('emotional-tools', [emotional::class, 'index'])->name('emotional.tools');
+    Route::get('social', [SocialController::class, 'index'])->name('social.tools');
+    Route::get('social/{post}', [SocialController::class, 'show'])->name('social.show');
     Route::get('leaderboard', [leaderboards::class, 'index'])->name('leaderboards');
 
     // Quick test route to trigger a realtime broadcast notification for the current user
-    Route::get('notify-test', function() {
+    Route::get('notify-test', function () {
         $user = auth()->user();
         if (!$user) {
             abort(403);
@@ -150,7 +194,6 @@ Route::middleware(['auth','check_profile'])->group(function () {
         $user->notify(new RealtimeTestNotification());
         return back()->with('status', 'Notification sent');
     })->name('notify.test');
-
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

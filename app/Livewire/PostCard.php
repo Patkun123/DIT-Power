@@ -14,6 +14,7 @@ use App\Events\ReplyCreated;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class PostCard extends Component
 {
@@ -27,7 +28,7 @@ class PostCard extends Component
     public $showComments = false;
     public $showReplies = [];
     public $showNestedReplies = [];
-    
+
     // Mention functionality
     public $mentionQuery = '';
     public $showMentionSuggestions = false;
@@ -44,12 +45,12 @@ class PostCard extends Component
     public function mount(Post $post)
     {
         $this->post = $post;
-        
+
         // Auto-show replies for comments that have replies (Facebook-style)
         foreach ($this->post->comments as $comment) {
             if ($comment->replies->where('parent_reply_id', null)->count() > 0) {
                 $this->showReplies[$comment->id] = true;
-                
+
                 // Auto-show nested replies for replies that have nested replies
                 foreach ($comment->replies->where('parent_reply_id', null) as $reply) {
                     if ($reply->childReplies->count() > 0) {
@@ -66,13 +67,13 @@ class PostCard extends Component
             $this->post->unlike(Auth::user());
         } else {
             $this->post->like(Auth::user());
-            
+
             // Dispatch event for real-time notification
             if ($this->post->user_id !== Auth::id()) {
                 event(new PostLiked($this->post, Auth::user()));
             }
         }
-        
+
         $this->dispatch('postLiked');
     }
 
@@ -98,7 +99,7 @@ class PostCard extends Component
 
         $this->newComment = '';
         $this->showComments = true;
-        
+
         $this->dispatch('commentCreated');
     }
 
@@ -125,25 +126,25 @@ class PostCard extends Component
 
         $this->newReply[$commentId] = '';
         $this->showReplies[$commentId] = true;
-        
+
         $this->dispatch('replyCreated');
     }
 
     public function toggleCommentLike($commentId)
     {
         $comment = Comment::find($commentId);
-        
+
         if ($comment->isLikedBy(Auth::user())) {
             $comment->unlike(Auth::user());
         } else {
             $comment->like(Auth::user());
-            
+
             // Dispatch event for real-time notification
             if ($comment->user_id !== Auth::id()) {
                 event(new CommentLiked($comment, Auth::user()));
             }
         }
-        
+
         $this->dispatch('commentCreated');
     }
 
@@ -168,21 +169,22 @@ class PostCard extends Component
         $topLevelParent->incrementRepliesCount();
 
         // Process mentions in nested reply
-        $this->processMentions($this->newNestedReply[$replyId], $reply, 'nested_reply');
+        $content = $this->newNestedReply[$topLevelParentId] ?? $this->newNestedReply[$replyId];
+        $this->processMentions($content, $reply, 'nested_reply');
 
         // Dispatch event for real-time notification
         event(new ReplyCreated($reply));
 
         $this->newNestedReply[$topLevelParentId] = '';
         $this->showNestedReplies[$topLevelParentId] = true;
-        
+
         $this->dispatch('replyCreated');
     }
 
     public function toggleNestedReplies($replyId)
     {
         $this->showNestedReplies[$replyId] = !($this->showNestedReplies[$replyId] ?? false);
-        
+
         // Auto-populate nested reply with mention if showing nested replies
         if ($this->showNestedReplies[$replyId]) {
             $reply = Reply::find($replyId);
@@ -195,7 +197,7 @@ class PostCard extends Component
     public function toggleReplies($commentId)
     {
         $this->showReplies[$commentId] = !($this->showReplies[$commentId] ?? false);
-        
+
         // Auto-populate reply with mention if showing replies
         if ($this->showReplies[$commentId]) {
             $comment = Comment::find($commentId);
@@ -213,7 +215,7 @@ class PostCard extends Component
     public function startReply($commentId, $userId = null)
     {
         $this->showReplies[$commentId] = true;
-        
+
         // Auto-populate with mention if user ID is provided
         if ($userId) {
             $user = User::find($userId);
@@ -227,7 +229,7 @@ class PostCard extends Component
                 $this->newReply[$commentId] = "@{$comment->user->firstname} {$comment->user->lastname} ";
             }
         }
-        
+
         // Emit event for JavaScript focus
         $this->dispatch('replyStarted');
     }
@@ -235,7 +237,9 @@ class PostCard extends Component
     public function startNestedReply($replyId, $userId = null)
     {
         $reply = Reply::find($replyId);
-        if (!$reply) { return; }
+        if (!$reply) {
+            return;
+        }
 
         // Target the top-level reply container
         $topLevelParentId = $reply->parent_reply_id ? $reply->parent_reply_id : $reply->id;
@@ -247,7 +251,7 @@ class PostCard extends Component
         if ($user && $user->id !== Auth::id()) {
             $this->newNestedReply[$topLevelParentId] = "@{$user->firstname} {$user->lastname} ";
         }
-        
+
         // Emit event for JavaScript focus
         $this->dispatch('nestedReplyStarted');
     }
@@ -255,29 +259,45 @@ class PostCard extends Component
     // Mention functionality methods
     public function searchUsers($rawInput, $field)
     {
-        $mentionQuery = $this->extractMentionQuery((string) $rawInput);
-        if ($mentionQuery === null) {
+        try {
+            $mentionQuery = $this->extractMentionQuery((string) $rawInput);
+            if ($mentionQuery === null) {
+                $this->showMentionSuggestions = false;
+                $this->mentionQuery = '';
+                return;
+            }
+
+            $this->mentionQuery = $mentionQuery; // can be empty string right after '@'
+            $this->currentMentionField = $field;
+            $this->selectedMentionIndex = -1;
+
+            // Limit query length to prevent performance issues
+            if (strlen($mentionQuery) > 50) {
+                $this->showMentionSuggestions = false;
+                return;
+            }
+
+            $this->mentionSuggestions = User::where('id', '!=', Auth::id())
+                ->when($mentionQuery !== '', function ($q) use ($mentionQuery) {
+                    $q->where(function ($q2) use ($mentionQuery) {
+                        $q2->where('firstname', 'like', "%{$mentionQuery}%")
+                            ->orWhere('lastname', 'like', "%{$mentionQuery}%")
+                            ->orWhereRaw("firstname || ' ' || lastname LIKE ?", ["%{$mentionQuery}%"]);
+                    });
+                })
+                ->limit(5)
+                ->get();
+
+            $this->showMentionSuggestions = $this->mentionSuggestions->count() > 0;
+        } catch (\Exception $e) {
+            // Log the error and hide suggestions
+            Log::error('Error searching users for mentions: ' . $e->getMessage(), [
+                'input' => $rawInput,
+                'field' => $field,
+                'user_id' => Auth::id(),
+            ]);
             $this->showMentionSuggestions = false;
-            $this->mentionQuery = '';
-            return;
         }
-
-        $this->mentionQuery = $mentionQuery; // can be empty string right after '@'
-        $this->currentMentionField = $field;
-        $this->selectedMentionIndex = -1;
-
-        $this->mentionSuggestions = User::where('id', '!=', Auth::id())
-            ->when($mentionQuery !== '', function ($q) use ($mentionQuery) {
-                $q->where(function($q2) use ($mentionQuery) {
-                    $q2->where('firstname', 'like', "%{$mentionQuery}%")
-                       ->orWhere('lastname', 'like', "%{$mentionQuery}%")
-                       ->orWhereRaw("CONCAT(firstname, ' ', lastname) LIKE ?", ["%{$mentionQuery}%"]);
-                });
-            })
-            ->limit(5)
-            ->get();
-
-        $this->showMentionSuggestions = $this->mentionSuggestions->count() > 0;
     }
 
     private function extractMentionQuery(string $input): ?string
@@ -291,7 +311,7 @@ class PostCard extends Component
         if ($after === '') {
             return '';
         }
-        if (preg_match('/^([A-Za-z\s]{0,50})/', $after, $m)) {
+        if (preg_match('/^([A-Za-z][A-Za-z\s\-\']{0,49})/', $after, $m)) {
             return trim($m[1]);
         }
         return null;
@@ -303,21 +323,40 @@ class PostCard extends Component
         if (!$user) return;
 
         $mentionText = "@{$user->firstname} {$user->lastname}";
-        
+
+        // Find the last @ symbol and replace everything after it with the full mention
+        $replacePattern = '@' . ($this->mentionQuery ?: '');
+
         // Update the appropriate field
         if ($field === 'comment') {
-            $this->newComment = str_replace("@{$this->mentionQuery}", $mentionText, $this->newComment);
+            $this->newComment = $this->replaceLastMention($this->newComment, $replacePattern, $mentionText);
         } elseif (str_starts_with($field, 'reply_')) {
             $commentId = str_replace('reply_', '', $field);
-            $this->newReply[$commentId] = str_replace("@{$this->mentionQuery}", $mentionText, $this->newReply[$commentId]);
+            $this->newReply[$commentId] = $this->replaceLastMention($this->newReply[$commentId], $replacePattern, $mentionText);
         } elseif (str_starts_with($field, 'nested_reply_')) {
             $replyId = str_replace('nested_reply_', '', $field);
-            $this->newNestedReply[$replyId] = str_replace("@{$this->mentionQuery}", $mentionText, $this->newNestedReply[$replyId]);
+            $this->newNestedReply[$replyId] = $this->replaceLastMention($this->newNestedReply[$replyId], $replacePattern, $mentionText);
         }
 
         $this->showMentionSuggestions = false;
         $this->mentionQuery = '';
         $this->selectedMentionIndex = -1;
+    }
+
+    private function replaceLastMention($text, $pattern, $replacement)
+    {
+        $pos = strrpos($text, '@');
+        if ($pos === false) {
+            return $text;
+        }
+
+        // Find the end of the current mention (next space, punctuation, or end of string)
+        $endPos = $pos + 1;
+        while ($endPos < strlen($text) && preg_match('/[A-Za-z\s\-\']/', $text[$endPos])) {
+            $endPos++;
+        }
+
+        return substr($text, 0, $pos) . $replacement . substr($text, $endPos);
     }
 
     public function hideMentionSuggestions()
@@ -329,54 +368,77 @@ class PostCard extends Component
 
     private function processMentions($content, $model, $type)
     {
-        // Extract mentions from content using regex
-        preg_match_all('/@(\w+\s+\w+)/', $content, $matches);
-        
-        if (!empty($matches[1])) {
-            foreach ($matches[1] as $mention) {
-                $user = User::whereRaw("CONCAT(firstname, ' ', lastname) = ?", [$mention])->first();
-                
-                if ($user && $user->id !== Auth::id()) {
-                    // Create mention record
-                    Mention::create([
-                        'user_id' => $user->id,
-                        'mentioned_by' => Auth::id(),
-                        'mentionable_type' => $type,
-                        'mentionable_id' => $model->id,
-                        'post_id' => $this->post->id,
-                        'content' => $content,
-                    ]);
+        try {
+            // Extract mentions from content using regex - improved to handle names with special characters
+            preg_match_all('/@([A-Za-z][A-Za-z\s\-\']{1,50})/', $content, $matches);
 
-                    // Create notification for mentioned user
-                    \App\Models\Notification::create([
-                        'user_id' => $user->id,
-                        'type' => 'mention',
-                        'title' => 'You were mentioned',
-                        'message' => Auth::user()->firstname . ' ' . Auth::user()->lastname . ' mentioned you in a ' . $type,
-                        'data' => [
+            if (!empty($matches[1])) {
+                foreach ($matches[1] as $mention) {
+                    $mention = trim($mention);
+                    if (empty($mention)) continue;
+
+                    $user = User::whereRaw("firstname || ' ' || lastname = ?", [$mention])->first();
+
+                    if ($user && $user->id !== Auth::id()) {
+                        // Check if mention already exists to avoid duplicates
+                        $existingMention = Mention::where([
+                            'user_id' => $user->id,
                             'mentioned_by' => Auth::id(),
-                            'mentioned_by_name' => Auth::user()->firstname . ' ' . Auth::user()->lastname,
-                            'post_id' => $this->post->id,
-                            'mention_type' => $type,
-                            'mention_id' => $model->id,
-                        ],
-                    ]);
+                            'mentionable_type' => $type,
+                            'mentionable_id' => $model->id,
+                        ])->first();
+
+                        if (!$existingMention) {
+                            // Create mention record
+                            Mention::create([
+                                'user_id' => $user->id,
+                                'mentioned_by' => Auth::id(),
+                                'mentionable_type' => $type,
+                                'mentionable_id' => $model->id,
+                                'post_id' => $this->post->id,
+                                'content' => $content,
+                            ]);
+                        }
+
+                        // Create notification for mentioned user (always create notification)
+                        \App\Models\Notification::create([
+                            'user_id' => $user->id,
+                            'type' => 'mention',
+                            'title' => 'You were mentioned',
+                            'message' => Auth::user()->firstname . ' ' . Auth::user()->lastname . ' mentioned you in a ' . $type,
+                            'data' => [
+                                'mentioned_by' => Auth::id(),
+                                'mentioned_by_name' => Auth::user()->firstname . ' ' . Auth::user()->lastname,
+                                'post_id' => $this->post->id,
+                                'mention_type' => $type,
+                                'mention_id' => $model->id,
+                            ],
+                        ]);
+                    }
                 }
             }
+        } catch (\Exception $e) {
+            // Log the error but don't break the main functionality
+            Log::error('Error processing mentions: ' . $e->getMessage(), [
+                'content' => $content,
+                'type' => $type,
+                'model_id' => $model->id ?? null,
+                'user_id' => Auth::id(),
+            ]);
         }
     }
 
     public function parseMentions($content)
     {
-        // Parse mentions and convert them to clickable links with styling
-        return preg_replace_callback('/@(\w+\s+\w+)/', function($matches) {
+        // Parse mentions and convert them to clickable links with styling - improved regex
+        return preg_replace_callback('/@([A-Za-z][A-Za-z\s\-\']{1,50})/', function ($matches) {
             $mention = $matches[1];
-            $user = User::whereRaw("CONCAT(firstname, ' ', lastname) = ?", [$mention])->first();
-            
+            $user = User::whereRaw("firstname || ' ' || lastname = ?", [$mention])->first();
+
             if ($user) {
                 return '<span class="mention-highlight text-blue-600 dark:text-blue-400 font-medium cursor-pointer hover:underline" title="' . $user->firstname . ' ' . $user->lastname . '">@' . $mention . '</span>';
             }
-            
+
             return $matches[0]; // Return original if user not found
         }, htmlspecialchars($content));
     }
@@ -389,7 +451,7 @@ class PostCard extends Component
         }
 
         $this->post->load(['user', 'comments.user', 'comments.replies.user', 'comments.replies.childReplies.user', 'likes.user']);
-        
+
         return view('livewire.post-card');
     }
 

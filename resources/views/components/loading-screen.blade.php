@@ -7,15 +7,15 @@
             <!-- Light mode logo -->
             <div class="block dark:hidden">
                 <img src="/images/DTI_w12.png"
-                     alt="DTI Logo"
-                     class="logo h-16 w-auto loading-logo">
+                    alt="DTI Logo"
+                    class="logo h-16 w-auto loading-logo">
             </div>
 
             <!-- Dark mode logo -->
             <div class="hidden dark:block">
                 <img src="/images/DTI_w12.png"
-                     alt="DTI Logo"
-                     class="logo h-16 w-auto loading-logo">
+                    alt="DTI Logo"
+                    class="logo h-16 w-auto loading-logo">
             </div>
 
             <!-- Rotating ring around logo -->
@@ -62,234 +62,249 @@
 </div>
 
 <style>
-/* Custom animations for loading screen */
-@keyframes logoFloat {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-}
+    /* Custom animations for loading screen */
+    @keyframes logoFloat {
 
-@keyframes progressGlow {
-    0%, 100% { box-shadow: 0 0 5px rgba(34, 197, 94, 0.3); }
-    50% { box-shadow: 0 0 20px rgba(34, 197, 94, 0.6); }
-}
+        0%,
+        100% {
+            transform: translateY(0px);
+        }
 
-@keyframes fadeInUp {
-    from {
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    @keyframes progressGlow {
+
+        0%,
+        100% {
+            box-shadow: 0 0 5px rgba(34, 197, 94, 0.3);
+        }
+
+        50% {
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Apply animations */
+    #loading-screen .animate-pulse {
+        animation: logoFloat 2s ease-in-out infinite;
+    }
+
+    #loading-progress {
+        animation: progressGlow 2s ease-in-out infinite;
+    }
+
+    #loading-screen>div {
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    /* Loading screen fade out animation */
+    #loading-screen.fade-out {
         opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Apply animations */
-#loading-screen .animate-pulse {
-    animation: logoFloat 2s ease-in-out infinite;
-}
-
-#loading-progress {
-    animation: progressGlow 2s ease-in-out infinite;
-}
-
-#loading-screen > div {
-    animation: fadeInUp 0.8s ease-out;
-}
-
-/* Loading screen fade out animation */
-#loading-screen.fade-out {
-    opacity: 0;
-    transform: scale(0.95);
-    pointer-events: none;
-}
-
-/* Responsive adjustments */
-@media (max-width: 640px) {
-    #loading-screen .flex.flex-col.space-y-8 {
-        padding: 0 2rem;
+        transform: scale(0.95);
+        pointer-events: none;
     }
 
-    #loading-screen h1 {
-        font-size: 1.5rem;
-    }
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+        #loading-screen .flex.flex-col.space-y-8 {
+            padding: 0 2rem;
+        }
 
-    #loading-screen .w-64 {
-        width: 16rem;
+        #loading-screen h1 {
+            font-size: 1.5rem;
+        }
+
+        #loading-screen .w-64 {
+            width: 16rem;
+        }
     }
-}
 </style>
 
 <script>
-(function() {
-    'use strict';
+    (function() {
+        'use strict';
 
-    let loadingScreen, progressBar, loadingText;
-    let loadingInterval;
-    let isLoaded = false;
+        let loadingScreen, progressBar, loadingText;
+        let loadingInterval;
+        let isLoaded = false;
 
-    // Loading messages
-    const loadingMessages = [
-        'Initializing DIT-Power...',
-        'Loading wellness resources...',
-        'Preparing your dashboard...',
-        'Setting up notifications...',
-        'Almost ready...',
-        'Welcome to DIT-Power!'
-    ];
+        // Loading messages
+        const loadingMessages = [
+            'Initializing DIT-Power...',
+            'Loading wellness resources...',
+            'Preparing your dashboard...',
+            'Setting up notifications...',
+            'Almost ready...',
+            'Welcome to DIT-Power!'
+        ];
 
-    let currentMessage = 0;
-    let progress = 0;
+        let currentMessage = 0;
+        let progress = 0;
 
-    // Initialize loading screen
-    function initLoadingScreen() {
-        loadingScreen = document.getElementById('loading-screen');
-        progressBar = document.getElementById('loading-progress');
-        loadingText = document.getElementById('loading-text');
+        // Initialize loading screen
+        function initLoadingScreen() {
+            loadingScreen = document.getElementById('loading-screen');
+            progressBar = document.getElementById('loading-progress');
+            loadingText = document.getElementById('loading-text');
 
-        if (!loadingScreen || !progressBar || !loadingText) {
-            console.warn('Loading screen elements not found');
-            return;
-        }
-
-        startLoadingAnimation();
-    }
-
-    // Start loading animation
-    function startLoadingAnimation() {
-        // Reset state
-        progress = 0;
-        currentMessage = 0;
-        progressBar.style.width = '0%';
-        loadingText.textContent = 'Loading...';
-
-        // Start progress simulation
-        loadingInterval = setInterval(updateProgress, 150);
-    }
-
-    // Update progress and messages
-    function updateProgress() {
-        // Increment progress with some randomness for realistic feel
-        const increment = Math.random() * 12 + 3; // 3-15% increments
-        progress += increment;
-
-        if (progress > 100) {
-            progress = 100;
-        }
-
-        progressBar.style.width = progress + '%';
-
-        // Update loading text based on progress
-        updateLoadingMessage();
-
-        // Complete loading
-        if (progress >= 100) {
-            completeLoading();
-        }
-    }
-
-    // Update loading message
-    function updateLoadingMessage() {
-        if (currentMessage < loadingMessages.length - 1) {
-            const messageProgress = (progress / 100) * loadingMessages.length;
-            const newMessageIndex = Math.floor(messageProgress);
-            if (newMessageIndex !== currentMessage && newMessageIndex < loadingMessages.length) {
-                currentMessage = newMessageIndex;
-                loadingText.textContent = loadingMessages[currentMessage];
+            if (!loadingScreen || !progressBar || !loadingText) {
+                console.warn('Loading screen elements not found');
+                return;
             }
-        }
-    }
 
-    // Complete loading process
-    function completeLoading() {
-        if (loadingInterval) {
-            clearInterval(loadingInterval);
-        }
-
-        loadingText.textContent = 'Ready!';
-        isLoaded = true;
-
-        // Hide loading screen after a short delay
-        setTimeout(() => {
-            hideLoadingScreen();
-        }, 800);
-    }
-
-    // Hide loading screen with animation
-    function hideLoadingScreen() {
-        if (loadingScreen) {
-            loadingScreen.classList.add('fade-out');
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-                loadingScreen.classList.remove('fade-out');
-            }, 500);
-        }
-    }
-
-    // Show loading screen
-    function showLoadingScreen() {
-        if (loadingScreen) {
-            loadingScreen.style.display = 'flex';
-            loadingScreen.classList.remove('fade-out');
             startLoadingAnimation();
         }
-    }
 
-    // Event listeners
-    function setupEventListeners() {
-        // Hide loading screen on page load (fallback)
-        window.addEventListener('load', function() {
-            setTimeout(() => {
-                if (!isLoaded && loadingScreen && loadingScreen.style.display !== 'none') {
-                    completeLoading();
+        // Start loading animation
+        function startLoadingAnimation() {
+            // Reset state
+            progress = 0;
+            currentMessage = 0;
+            progressBar.style.width = '0%';
+            loadingText.textContent = 'Loading...';
+
+            // Start progress simulation
+            loadingInterval = setInterval(updateProgress, 150);
+        }
+
+        // Update progress and messages
+        function updateProgress() {
+            // Increment progress with some randomness for realistic feel
+            const increment = Math.random() * 12 + 3; // 3-15% increments
+            progress += increment;
+
+            if (progress > 100) {
+                progress = 100;
+            }
+
+            progressBar.style.width = progress + '%';
+
+            // Update loading text based on progress
+            updateLoadingMessage();
+
+            // Complete loading
+            if (progress >= 100) {
+                completeLoading();
+            }
+        }
+
+        // Update loading message
+        function updateLoadingMessage() {
+            if (currentMessage < loadingMessages.length - 1) {
+                const messageProgress = (progress / 100) * loadingMessages.length;
+                const newMessageIndex = Math.floor(messageProgress);
+                if (newMessageIndex !== currentMessage && newMessageIndex < loadingMessages.length) {
+                    currentMessage = newMessageIndex;
+                    loadingText.textContent = loadingMessages[currentMessage];
                 }
-            }, 2000); // Fallback after 2 seconds
-        });
+            }
+        }
 
-        // Livewire navigation events
-        document.addEventListener('livewire:navigating', function() {
-            showLoadingScreen();
-        });
+        // Complete loading process
+        function completeLoading() {
+            if (loadingInterval) {
+                clearInterval(loadingInterval);
+            }
 
-        document.addEventListener('livewire:navigated', function() {
+            loadingText.textContent = 'Ready!';
+            isLoaded = true;
+
+            // Hide loading screen after a short delay
             setTimeout(() => {
                 hideLoadingScreen();
-            }, 300);
-        });
+            }, 800);
+        }
 
-        // Handle page visibility changes
-        document.addEventListener('visibilitychange', function() {
-            if (document.hidden) {
-                // Page is hidden, pause loading
-                if (loadingInterval) {
-                    clearInterval(loadingInterval);
-                }
-            } else if (!isLoaded) {
-                // Page is visible again, resume loading
+        // Hide loading screen with animation
+        function hideLoadingScreen() {
+            if (loadingScreen) {
+                loadingScreen.classList.add('fade-out');
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                    loadingScreen.classList.remove('fade-out');
+                }, 500);
+            }
+        }
+
+        // Show loading screen
+        function showLoadingScreen() {
+            if (loadingScreen) {
+                loadingScreen.style.display = 'flex';
+                loadingScreen.classList.remove('fade-out');
                 startLoadingAnimation();
             }
-        });
-    }
+        }
 
-    // Initialize when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
+        // Event listeners
+        function setupEventListeners() {
+            // Hide loading screen on page load (fallback)
+            window.addEventListener('load', function() {
+                setTimeout(() => {
+                    if (!isLoaded && loadingScreen && loadingScreen.style.display !== 'none') {
+                        completeLoading();
+                    }
+                }, 2000); // Fallback after 2 seconds
+            });
+
+            // Livewire navigation events
+            document.addEventListener('livewire:navigating', function() {
+                showLoadingScreen();
+            });
+
+            document.addEventListener('livewire:navigated', function() {
+                setTimeout(() => {
+                    hideLoadingScreen();
+                }, 300);
+            });
+
+            // Handle page visibility changes
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    // Page is hidden, pause loading
+                    if (loadingInterval) {
+                        clearInterval(loadingInterval);
+                    }
+                } else if (!isLoaded) {
+                    // Page is visible again, resume loading
+                    startLoadingAnimation();
+                }
+            });
+        }
+
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                initLoadingScreen();
+                setupEventListeners();
+            });
+        } else {
             initLoadingScreen();
             setupEventListeners();
-        });
-    } else {
-        initLoadingScreen();
-        setupEventListeners();
-    }
-
-    // Expose functions globally for manual control
-    window.loadingScreen = {
-        show: showLoadingScreen,
-        hide: hideLoadingScreen,
-        reset: function() {
-            isLoaded = false;
-            showLoadingScreen();
         }
-    };
-})();
+
+        // Expose functions globally for manual control
+        window.loadingScreen = {
+            show: showLoadingScreen,
+            hide: hideLoadingScreen,
+            reset: function() {
+                isLoaded = false;
+                showLoadingScreen();
+            }
+        };
+    })();
 </script>

@@ -3,6 +3,7 @@
 namespace App\Livewire\Auth;
 
 use App\Models\dti_id;
+use App\Models\User;
 use App\Models\User_Information;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
@@ -74,6 +75,13 @@ class Register extends Component
             'gender'                => ['nullable', 'string'],
             'birthday'              => ['nullable', 'date'],
             'address'               => ['nullable', 'string'],
+            'civil_status'          => ['required', 'string'],
+            'career'                => ['nullable', 'string'],
+            'level_career'          => ['required', 'string'],
+            'nature_of_work'        => ['required', 'string'],
+            'function'              => ['required', 'string'],
+            'educational_attachment_type' => ['required', 'string'],
+            'educational_attachment'      => ['required', 'string'],
             'height'                => ['nullable', 'string'],
             'weight'                => ['nullable', 'string'],
             'activity_level'        => ['nullable', 'string'],
@@ -94,16 +102,28 @@ class Register extends Component
         }
 
         // Update user record
-        $user->fill($validated);
-        $user->save();
+        User::where('id', $user->id)->update([
+            'firstname' => $validated['firstname'],
+            'lastname' => $validated['lastname'],
+            'password' => $validated['password'],
+        ]);
 
         // Create or update user information
         User_Information::create([
             'user_id'             => $user->id,
+            'staff_id'            => $this->staff_id,
             'phone_number'        => $this->phone_number,
             'gender'              => $this->gender,
             'birthday'            => $this->birthday,
             'address'             => $this->address,
+            'civil_status'        => $this->civil_status,
+            'career'              => $this->career,
+            'level_career'        => $this->level_career,
+            'nature_of_work'      => $this->nature_of_work,
+            'function'            => $this->function,
+            'educational_attachment_type' => $this->educational_attachment_type,
+            'educational_attachment'      => $this->educational_attachment,
+            'post_graduate'       => 'none',
             'height'              => $this->height,
             'weight'              => $this->weight,
             'activity_level'      => $this->activity_level,
@@ -112,25 +132,25 @@ class Register extends Component
         ]);
 
         dti_id::updateOrCreate(
-        // Conditions to find the existing record
-        [
-        'user_id'    => $user->id,
-        'office' => $this->office
-    ],
+            // Conditions to find the existing record
+            [
+                'user_id'    => $user->id,
+                'office' => $this->office
+            ],
 
-        // Values to update if found, or insert if not found
-        [
-            'staff_id' => $this->staff_id,
-            'position'   => $this->position,
-            'department' => $this->department,
-        ]
-    );
+            // Values to update if found, or insert if not found
+            [
+                'staff_id' => $this->staff_id,
+                'position'   => $this->position,
+                'department' => $this->department,
+            ]
+        );
 
 
-    event(new Registered($user));
+        event(new Registered($user));
 
-    $this->redirect(route('index', absolute: false), navigate: true);
-}
+        $this->redirect(route('index', absolute: false), navigate: true);
+    }
 
     protected function validateCurrentStep(): void
     {
@@ -142,11 +162,18 @@ class Register extends Component
                 'phone_number'        => ['nullable', 'string'],
                 'gender'              => ['nullable', 'string'],
                 'address'             => ['nullable', 'string'],
+                'civil_status'        => ['required', 'string'],
             ]);
         }
 
         if ($this->step === 2) {
             $this->validate([
+                'career'              => ['nullable', 'string'],
+                'level_career'        => ['required', 'string'],
+                'nature_of_work'      => ['required', 'string'],
+                'function'            => ['required', 'string'],
+                'educational_attachment_type' => ['required', 'string'],
+                'educational_attachment'      => ['required', 'string'],
                 'height'              => ['nullable', 'string'],
                 'weight'              => ['nullable', 'string'],
                 'activity_level'      => ['nullable', 'string'],
@@ -157,6 +184,16 @@ class Register extends Component
         if ($this->step === 3) {
             $this->validate([
                 'dietary_preferences' => ['nullable', 'string'],
+            ]);
+        }
+
+        if ($this->step === 4) {
+            $this->validate([
+                'staff_id'            => ['required', 'max:255'],
+                'office'              => ['nullable', 'string'],
+                'position'            => ['nullable', 'string'],
+                'department'          => ['nullable', 'string'],
+                'password'            => ['required', 'confirmed', Password::defaults()],
             ]);
         }
     }

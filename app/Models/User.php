@@ -59,7 +59,7 @@ class User extends Authenticatable
         return Str::of($this->name)
             ->explode(' ')
             ->take(2)
-            ->map(fn ($word) => Str::substr($word, 0, 1))
+            ->map(fn($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
 
@@ -124,12 +124,17 @@ class User extends Authenticatable
         return $this->hasMany(ReplyLike::class);
     }
 
+    public function notes()
+    {
+        return $this->hasMany(Note::class);
+    }
+
     public function getProfileImageUrlAttribute()
     {
         if ($this->profileimage) {
             return asset('storage/' . $this->profileimage);
         }
-        
+
         // Generate initials-based avatar as fallback
         $initials = strtoupper(substr($this->firstname, 0, 1) . substr($this->lastname, 0, 1));
         return "https://ui-avatars.com/api/?name={$initials}&background=random&color=fff&size=100&bold=true";

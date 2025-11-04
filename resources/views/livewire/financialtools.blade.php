@@ -82,8 +82,8 @@
     </div>
 
     @if (session()->has('message'))
-        <div class="mt-4 p-3 bg-green-100 text-green-700 rounded">
-            {{ session('message') }}
-        </div>
+    <div class="mt-4 p-3 bg-green-100 text-green-700 rounded">
+        {{ session('message') }}
+    </div>
     @endif
 </div>

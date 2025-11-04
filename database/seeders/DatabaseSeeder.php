@@ -36,5 +36,15 @@ class DatabaseSeeder extends Seeder
         // $this->call([
         //     QuizSeeder::class
         // ]);
+
+        // Seed scramble words
+        $this->call([
+            ScrambleWordSeeder::class
+        ]);
+
+        // Seed upcoming events
+        $this->call([
+            UpcomingEventSeeder::class
+        ]);
     }
 }

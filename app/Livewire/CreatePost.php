@@ -9,6 +9,7 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class CreatePost extends Component
 {
@@ -73,29 +74,45 @@ class CreatePost extends Component
     // Mention functionality methods
     public function searchUsers($rawInput, $field)
     {
-        $mentionQuery = $this->extractMentionQuery((string) $rawInput);
-        if ($mentionQuery === null) {
+        try {
+            $mentionQuery = $this->extractMentionQuery((string) $rawInput);
+            if ($mentionQuery === null) {
+                $this->showMentionSuggestions = false;
+                $this->mentionQuery = '';
+                return;
+            }
+
+            $this->mentionQuery = $mentionQuery;
+            $this->currentMentionField = $field;
+            $this->selectedMentionIndex = -1;
+
+            // Limit query length to prevent performance issues
+            if (strlen($mentionQuery) > 50) {
+                $this->showMentionSuggestions = false;
+                return;
+            }
+
+            $this->mentionSuggestions = \App\Models\User::where('id', '!=', Auth::id())
+                ->when($mentionQuery !== '', function ($q) use ($mentionQuery) {
+                    $q->where(function ($q2) use ($mentionQuery) {
+                        $q2->where('firstname', 'like', "%{$mentionQuery}%")
+                            ->orWhere('lastname', 'like', "%{$mentionQuery}%")
+                            ->orWhereRaw("firstname || ' ' || lastname LIKE ?", ["%{$mentionQuery}%"]);
+                    });
+                })
+                ->limit(5)
+                ->get();
+
+            $this->showMentionSuggestions = $this->mentionSuggestions->count() > 0;
+        } catch (\Exception $e) {
+            // Log the error and hide suggestions
+            Log::error('Error searching users for mentions: ' . $e->getMessage(), [
+                'input' => $rawInput,
+                'field' => $field,
+                'user_id' => Auth::id(),
+            ]);
             $this->showMentionSuggestions = false;
-            $this->mentionQuery = '';
-            return;
         }
-
-        $this->mentionQuery = $mentionQuery;
-        $this->currentMentionField = $field;
-        $this->selectedMentionIndex = -1;
-
-        $this->mentionSuggestions = \App\Models\User::where('id', '!=', Auth::id())
-            ->when($mentionQuery !== '', function ($q) use ($mentionQuery) {
-                $q->where(function($q2) use ($mentionQuery) {
-                    $q2->where('firstname', 'like', "%{$mentionQuery}%")
-                       ->orWhere('lastname', 'like', "%{$mentionQuery}%")
-                       ->orWhereRaw("CONCAT(firstname, ' ', lastname) LIKE ?", ["%{$mentionQuery}%"]);
-                });
-            })
-            ->limit(5)
-            ->get();
-
-        $this->showMentionSuggestions = $this->mentionSuggestions->count() > 0;
     }
 
     private function extractMentionQuery(string $input): ?string
@@ -108,7 +125,7 @@ class CreatePost extends Component
         if ($after === '') {
             return '';
         }
-        if (preg_match('/^([A-Za-z\s]{0,50})/', $after, $m)) {
+        if (preg_match('/^([A-Za-z][A-Za-z\s\-\']{0,49})/', $after, $m)) {
             return trim($m[1]);
         }
         return null;
@@ -122,12 +139,28 @@ class CreatePost extends Component
         $mentionText = "@{$user->firstname} {$user->lastname}";
 
         if ($field === 'post') {
-            $this->content = str_replace("@{$this->mentionQuery}", $mentionText, $this->content);
+            $this->content = $this->replaceLastMention($this->content, '@' . ($this->mentionQuery ?: ''), $mentionText);
         }
 
         $this->showMentionSuggestions = false;
         $this->mentionQuery = '';
         $this->selectedMentionIndex = -1;
+    }
+
+    private function replaceLastMention($text, $pattern, $replacement)
+    {
+        $pos = strrpos($text, '@');
+        if ($pos === false) {
+            return $text;
+        }
+
+        // Find the end of the current mention (next space, punctuation, or end of string)
+        $endPos = $pos + 1;
+        while ($endPos < strlen($text) && preg_match('/[A-Za-z\s\-\']/', $text[$endPos])) {
+            $endPos++;
+        }
+
+        return substr($text, 0, $pos) . $replacement . substr($text, $endPos);
     }
 
     public function hideMentionSuggestions()
@@ -139,40 +172,63 @@ class CreatePost extends Component
 
     private function processMentions($content, Post $post, string $type)
     {
-        // Extract mentions from content using regex (First Last)
-        preg_match_all('/@(\w+\s+\w+)/', $content, $matches);
-        if (empty($matches[1])) {
-            return;
-        }
-
-        foreach ($matches[1] as $mention) {
-            $user = \App\Models\User::whereRaw("CONCAT(firstname, ' ', lastname) = ?", [$mention])->first();
-            if ($user && $user->id !== Auth::id()) {
-                // Create mention record
-                Mention::create([
-                    'user_id' => $user->id,
-                    'mentioned_by' => Auth::id(),
-                    'mentionable_type' => $type,
-                    'mentionable_id' => $post->id,
-                    'post_id' => $post->id,
-                    'content' => $content,
-                ]);
-
-                // Create notification for mentioned user
-                \App\Models\Notification::create([
-                    'user_id' => $user->id,
-                    'type' => 'mention',
-                    'title' => 'You were mentioned',
-                    'message' => Auth::user()->firstname . ' ' . Auth::user()->lastname . ' mentioned you in a post',
-                    'data' => [
-                        'mentioned_by' => Auth::id(),
-                        'mentioned_by_name' => Auth::user()->firstname . ' ' . Auth::user()->lastname,
-                        'post_id' => $post->id,
-                        'mention_type' => $type,
-                        'mention_id' => $post->id,
-                    ],
-                ]);
+        try {
+            // Extract mentions from content using regex - improved to handle names with special characters
+            preg_match_all('/@([A-Za-z][A-Za-z\s\-\']{1,50})/', $content, $matches);
+            if (empty($matches[1])) {
+                return;
             }
+
+            foreach ($matches[1] as $mention) {
+                $mention = trim($mention);
+                if (empty($mention)) continue;
+
+                $user = \App\Models\User::whereRaw("firstname || ' ' || lastname = ?", [$mention])->first();
+                if ($user && $user->id !== Auth::id()) {
+                    // Check if mention already exists to avoid duplicates
+                    $existingMention = Mention::where([
+                        'user_id' => $user->id,
+                        'mentioned_by' => Auth::id(),
+                        'mentionable_type' => $type,
+                        'mentionable_id' => $post->id,
+                    ])->first();
+
+                    if (!$existingMention) {
+                        // Create mention record
+                        Mention::create([
+                            'user_id' => $user->id,
+                            'mentioned_by' => Auth::id(),
+                            'mentionable_type' => $type,
+                            'mentionable_id' => $post->id,
+                            'post_id' => $post->id,
+                            'content' => $content,
+                        ]);
+                    }
+
+                    // Create notification for mentioned user (always create notification)
+                    \App\Models\Notification::create([
+                        'user_id' => $user->id,
+                        'type' => 'mention',
+                        'title' => 'You were mentioned',
+                        'message' => Auth::user()->firstname . ' ' . Auth::user()->lastname . ' mentioned you in a post',
+                        'data' => [
+                            'mentioned_by' => Auth::id(),
+                            'mentioned_by_name' => Auth::user()->firstname . ' ' . Auth::user()->lastname,
+                            'post_id' => $post->id,
+                            'mention_type' => $type,
+                            'mention_id' => $post->id,
+                        ],
+                    ]);
+                }
+            }
+        } catch (\Exception $e) {
+            // Log the error but don't break the main functionality
+            Log::error('Error processing mentions: ' . $e->getMessage(), [
+                'content' => $content,
+                'type' => $type,
+                'post_id' => $post->id,
+                'user_id' => Auth::id(),
+            ]);
         }
     }
 
