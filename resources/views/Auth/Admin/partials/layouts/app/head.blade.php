@@ -1,41 +1,51 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>{{ $title ?? config('app.name') }} Personalized Online Wellness Resource HUB</title>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <title>{{ $title ?? config('app.name') }} Personalized Online Wellness Resource HUB</title>
 
-        <script src="{{asset('include/flowbite.js')}}"></script>
-        <script src="{{asset('include/apexcharts.js')}}"></script>
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @fluxAppearance
-        @fluxScripts
-        @livewireStyles()
-        <script>
-            // On page load or when changing themes, best to add inline in `head` to avoid FOUC
-            if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark')
-            }
-        </script>
-    </head>
-    <Body>
-        @include('components.loading-screen')
-        @include('sweetalert2::index')
-        @yield('content')
-        @include('Auth.Admin.partials.modals.user-add')
-        @livewire('admin.question-add')
-        @livewire('admin.adduser')
-        @livewireScripts()
-        <script src="{{asset('include/pie.js')}}"></script>
-    </Body>
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Flowbite CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@latest/dist/flowbite.min.css" rel="stylesheet" />
+
+    <script src="{{asset('include/flowbite.js')}}"></script>
+    <script src="{{asset('include/apexcharts.js')}}"></script>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @fluxAppearance
+    @fluxScripts
+    @livewireStyles()
+    <script>
+        // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
+</head>
+
+<Body>
+    @include('components.loading-screen')
+    @include('sweetalert2::index')
+    @yield('content')
+    @include('Auth.Admin.partials.modals.user-add')
+    @livewire('admin.question-add')
+    @livewire('admin.adduser')
+    @livewireScripts()
+    <!-- Flowbite JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@latest/dist/flowbite.min.js"></script>
+    <script src="{{asset('include/pie.js')}}"></script>
+</Body>
 
 </html>
