@@ -1,5 +1,8 @@
-import { defineConfig } from 'vite';
+import {
+    defineConfig
+} from 'vite';
 import laravel from 'laravel-vite-plugin';
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
     plugins: [
@@ -7,18 +10,12 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
         }),
+        tailwindcss(),
     ],
-    build: {
-    manifest: true,
-    outDir: 'public/build',
-    chunkSizeWarningLimit: 1500, // increases limit from 500 KB to 1.5 MB
-    rollupOptions: {
-        output: {
-            chunkFileNames: 'assets/[name]-[hash].js',
-            entryFileNames: 'assets/[name]-[hash].js',
-            assetFileNames: 'assets/[name]-[hash].[ext]',
-        },
+    server: {
+        cors: true,
     },
-},
-
-});
+    build: {
+            chunkSizeWarningLimit: 5500, // Adjust the limit as needed (in kB)
+        },
+    });
