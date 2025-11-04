@@ -4,8 +4,12 @@ namespace App\Livewire\Auth;
 
 use App\Models\dti_id;
 <<<<<<< HEAD
+<<<<<<< HEAD
 use App\Models\User;
 use App\Models\User_Information;
+=======
+use App\Models\user_information;
+>>>>>>> d57b2f1a024bf5abce2b6f9bd60bf8ece88c09fb
 =======
 use App\Models\user_information;
 >>>>>>> d57b2f1a024bf5abce2b6f9bd60bf8ece88c09fb
@@ -87,6 +91,7 @@ class Register extends Component
             'birthday'              => ['nullable', 'date'],
             'address'               => ['nullable', 'string'],
 <<<<<<< HEAD
+<<<<<<< HEAD
             'civil_status'          => ['required', 'string'],
             'career'                => ['nullable', 'string'],
             'level_career'          => ['required', 'string'],
@@ -95,6 +100,8 @@ class Register extends Component
             'educational_attachment_type' => ['required', 'string'],
             'educational_attachment'      => ['required', 'string'],
 =======
+=======
+>>>>>>> d57b2f1a024bf5abce2b6f9bd60bf8ece88c09fb
             'civil_status'          => ['nullable', 'string'],
             'career'                => ['nullable', 'string'],
             'level_career'          => ['nullable', 'string'],
@@ -103,6 +110,9 @@ class Register extends Component
             'educational_attachment_type' => ['nullable', 'string'],
             'educational_attachment'      => ['nullable', 'string'],
             'post_graduate'         => ['nullable', 'string'],
+<<<<<<< HEAD
+>>>>>>> d57b2f1a024bf5abce2b6f9bd60bf8ece88c09fb
+=======
 >>>>>>> d57b2f1a024bf5abce2b6f9bd60bf8ece88c09fb
             'height'                => ['nullable', 'string'],
             'weight'                => ['nullable', 'string'],
@@ -131,6 +141,7 @@ class Register extends Component
 
         // Create or update user information
 <<<<<<< HEAD
+<<<<<<< HEAD
         User_Information::create([
             'user_id'             => $user->id,
             'staff_id'            => $this->staff_id,
@@ -152,6 +163,8 @@ class Register extends Component
             'health_goals'        => $this->health_goals,
             'dietary_preferences' => $this->dietary_preferences,
 =======
+=======
+>>>>>>> d57b2f1a024bf5abce2b6f9bd60bf8ece88c09fb
         user_information::create([
             'user_id'                     => $user->id,
             'staff_id'                    => $this->staff_id,
@@ -172,6 +185,9 @@ class Register extends Component
             'activity_level'              => $this->activity_level,
             'health_goals'                => $this->health_goals,
             'dietary_preferences'         => $this->dietary_preferences,
+<<<<<<< HEAD
+>>>>>>> d57b2f1a024bf5abce2b6f9bd60bf8ece88c09fb
+=======
 >>>>>>> d57b2f1a024bf5abce2b6f9bd60bf8ece88c09fb
         ]);
 
@@ -213,6 +229,7 @@ class Register extends Component
         if ($this->step === 2) {
             $this->validate([
 <<<<<<< HEAD
+<<<<<<< HEAD
                 'career'              => ['nullable', 'string'],
                 'level_career'        => ['required', 'string'],
                 'nature_of_work'      => ['required', 'string'],
@@ -224,6 +241,8 @@ class Register extends Component
                 'activity_level'      => ['nullable', 'string'],
                 'health_goals'        => ['nullable', 'string'],
 =======
+=======
+>>>>>>> d57b2f1a024bf5abce2b6f9bd60bf8ece88c09fb
                 'career'                      => ['nullable', 'string'],
                 'level_career'                => ['nullable', 'string'],
                 'nature_of_work'              => ['nullable', 'string'],
@@ -231,6 +250,9 @@ class Register extends Component
                 'educational_attachment_type' => ['nullable', 'string'],
                 'educational_attachment'      => ['nullable', 'string'],
                 'post_graduate'               => ['nullable', 'string'],
+<<<<<<< HEAD
+>>>>>>> d57b2f1a024bf5abce2b6f9bd60bf8ece88c09fb
+=======
 >>>>>>> d57b2f1a024bf5abce2b6f9bd60bf8ece88c09fb
             ]);
         }

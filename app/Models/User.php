@@ -57,11 +57,17 @@ class User extends Authenticatable
     public function initials(): string
     {
 <<<<<<< HEAD
+<<<<<<< HEAD
         return Str::of($this->name)
             ->explode(' ')
             ->take(2)
             ->map(fn($word) => Str::substr($word, 0, 1))
             ->implode('');
+=======
+        $firstInitial = $this->firstname ? Str::substr($this->firstname, 0, 1) : '';
+        $lastInitial = $this->lastname ? Str::substr($this->lastname, 0, 1) : '';
+        return strtoupper($firstInitial . $lastInitial);
+>>>>>>> d57b2f1a024bf5abce2b6f9bd60bf8ece88c09fb
 =======
         $firstInitial = $this->firstname ? Str::substr($this->firstname, 0, 1) : '';
         $lastInitial = $this->lastname ? Str::substr($this->lastname, 0, 1) : '';
