@@ -9,20 +9,22 @@
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
     @vite(['resources/css/app.css','resources/js/app.js'])
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link href="{{ asset('build/assets/app-BcUgEBcK.css') }}" rel="stylesheet">
+    <script src="{{asset('build/assets/app-BolSYD0V.js')}}"></script>
     @fluxAppearance
     @fluxScripts
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
     <!-- Loading Screen -->
     @include('components.loading-screen')
-    
+
     <!-- Demo Content -->
     <div class="container mx-auto px-4 py-8">
         <div class="max-w-4xl mx-auto">
             <h1 class="text-4xl font-bold text-center mb-8 text-gray-800 dark:text-white">
                 Loading Screen Demo
             </h1>
-            
+
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-8">
                 <h2 class="text-2xl font-semibold mb-4 text-gray-800 dark:text-white">
                     Features
@@ -38,34 +40,34 @@
                     <li>✅ Smooth fade transitions</li>
                 </ul>
             </div>
-            
+
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-8">
                 <h2 class="text-2xl font-semibold mb-4 text-gray-800 dark:text-white">
                     Test Controls
                 </h2>
                 <div class="flex flex-wrap gap-4">
-                    <button onclick="window.loadingScreen.show()" 
+                    <button onclick="window.loadingScreen.show()"
                             class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors">
                         Show Loading Screen
                     </button>
-                    <button onclick="window.loadingScreen.hide()" 
+                    <button onclick="window.loadingScreen.hide()"
                             class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors">
                         Hide Loading Screen
                     </button>
-                    <button onclick="window.loadingScreen.reset()" 
+                    <button onclick="window.loadingScreen.reset()"
                             class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
                         Reset Loading Screen
                     </button>
                 </div>
             </div>
-            
+
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
                 <h2 class="text-2xl font-semibold mb-4 text-gray-800 dark:text-white">
                     How It Works
                 </h2>
                 <div class="space-y-4 text-gray-600 dark:text-gray-300">
                     <p>
-                        The loading screen automatically appears when the page loads and disappears when the content is ready. 
+                        The loading screen automatically appears when the page loads and disappears when the content is ready.
                         It includes several visual elements:
                     </p>
                     <ul class="list-disc list-inside space-y-2 ml-4">
@@ -76,7 +78,7 @@
                         <li><strong>Dynamic Messages:</strong> Changes text based on loading progress</li>
                     </ul>
                     <p>
-                        The loading screen is fully responsive and supports both light and dark modes. 
+                        The loading screen is fully responsive and supports both light and dark modes.
                         It also integrates with Livewire for smooth navigation between pages.
                     </p>
                 </div>

@@ -13,6 +13,8 @@
 
     <script src="{{asset('include/flowbite.js')}}"></script>
     <script src="{{asset('include/apexcharts.js')}}"></script>
+    <link href="{{ asset('build/assets/app-BcUgEBcK.css') }}" rel="stylesheet">
+    <script src="{{asset('build/assets/app-BolSYD0V.js')}}"></script>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
