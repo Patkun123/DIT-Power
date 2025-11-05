@@ -11,7 +11,6 @@
 <link rel="icon" href="/images/favicon.ico" sizes="any">
 <script src="{{asset('include/flowbite.js')}}"></script>
 <script src="{{asset('include/apexcharts.js')}}"></script>
-    <link href="{{ asset('build/assets/app-BcUgEBcK.css') }}" rel="stylesheet">
-    <script src="{{asset('build/assets/app-BolSYD0V.js')}}"></script>
+
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 @fluxAppearance

@@ -11,8 +11,6 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
-    <link href="{{ asset('build/assets/app-BcUgEBcK.css') }}" rel="stylesheet">
-    <script src="{{asset('build/assets/app-BolSYD0V.js')}}"></script>
     <!-- Lucide Icons -->
     @vite(['resources/css/app.css','resources/js/app.js'])
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
