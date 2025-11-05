@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class User extends Authenticatable
@@ -59,7 +60,7 @@ class User extends Authenticatable
         return Str::of($this->name)
             ->explode(' ')
             ->take(2)
-            ->map(fn ($word) => Str::substr($word, 0, 1))
+            ->map(fn($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
 
@@ -129,9 +130,27 @@ class User extends Authenticatable
         if ($this->profileimage) {
             return asset('storage/' . $this->profileimage);
         }
-        
+
         // Generate initials-based avatar as fallback
         $initials = strtoupper(substr($this->firstname, 0, 1) . substr($this->lastname, 0, 1));
         return "https://ui-avatars.com/api/?name={$initials}&background=random&color=fff&size=100&bold=true";
+    }
+
+    /**
+     * Get database-agnostic SQL for concatenating firstname and lastname
+     * 
+     * @return string
+     */
+    public static function getFullNameConcatSql(): string
+    {
+        $driver = DB::getDriverName();
+
+        // SQLite uses || for concatenation
+        if ($driver === 'sqlite') {
+            return "(firstname || ' ' || lastname)";
+        }
+
+        // MySQL, MariaDB, PostgreSQL use CONCAT()
+        return "CONCAT(firstname, ' ', lastname)";
     }
 }

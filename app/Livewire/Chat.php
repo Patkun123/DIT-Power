@@ -39,7 +39,7 @@ class Chat extends Component
         preg_match_all('/@(\w+\s+\w+)/', $this->messageText, $matches);
         if (!empty($matches[1])) {
             foreach ($matches[1] as $mention) {
-                $user = \App\Models\User::whereRaw("CONCAT(firstname, ' ', lastname) = ?", [$mention])->first();
+                $user = \App\Models\User::whereRaw(\App\Models\User::getFullNameConcatSql() . " = ?", [$mention])->first();
                 if ($user && $user->id !== Auth::id()) {
                     $chatNotificationService->sendChatMentionNotification($this->messageText, Auth::id(), $user->id);
                 }
@@ -84,10 +84,10 @@ class Chat extends Component
 
         $this->mentionSuggestions = \App\Models\User::where('id', '!=', Auth::id())
             ->when($mentionQuery !== '', function ($q) use ($mentionQuery) {
-                $q->where(function($q2) use ($mentionQuery) {
+                $q->where(function ($q2) use ($mentionQuery) {
                     $q2->where('firstname', 'like', "%{$mentionQuery}%")
-                       ->orWhere('lastname', 'like', "%{$mentionQuery}%")
-                       ->orWhereRaw("CONCAT(firstname, ' ', lastname) LIKE ?", ["%{$mentionQuery}%"]);
+                        ->orWhere('lastname', 'like', "%{$mentionQuery}%")
+                        ->orWhereRaw(\App\Models\User::getFullNameConcatSql() . " LIKE ?", ["%{$mentionQuery}%"]);
                 });
             })
             ->limit(5)
@@ -171,9 +171,9 @@ class Chat extends Component
 
     public function parseMentions($content)
     {
-        return preg_replace_callback('/@(\w+\s+\w+)/', function($matches) {
+        return preg_replace_callback('/@(\w+\s+\w+)/', function ($matches) {
             $mention = $matches[1];
-            $user = \App\Models\User::whereRaw("CONCAT(firstname, ' ', lastname) = ?", [$mention])->first();
+            $user = \App\Models\User::whereRaw(\App\Models\User::getFullNameConcatSql() . " = ?", [$mention])->first();
             if ($user) {
                 $isMe = (int) $user->id === (int) Auth::id();
                 $classes = $isMe
@@ -185,4 +185,3 @@ class Chat extends Component
         }, $content);
     }
 }
-

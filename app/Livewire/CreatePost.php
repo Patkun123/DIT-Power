@@ -86,10 +86,10 @@ class CreatePost extends Component
 
         $this->mentionSuggestions = \App\Models\User::where('id', '!=', Auth::id())
             ->when($mentionQuery !== '', function ($q) use ($mentionQuery) {
-                $q->where(function($q2) use ($mentionQuery) {
+                $q->where(function ($q2) use ($mentionQuery) {
                     $q2->where('firstname', 'like', "%{$mentionQuery}%")
-                       ->orWhere('lastname', 'like', "%{$mentionQuery}%")
-                       ->orWhereRaw("CONCAT(firstname, ' ', lastname) LIKE ?", ["%{$mentionQuery}%"]);
+                        ->orWhere('lastname', 'like', "%{$mentionQuery}%")
+                        ->orWhereRaw(\App\Models\User::getFullNameConcatSql() . " LIKE ?", ["%{$mentionQuery}%"]);
                 });
             })
             ->limit(5)
@@ -146,7 +146,7 @@ class CreatePost extends Component
         }
 
         foreach ($matches[1] as $mention) {
-            $user = \App\Models\User::whereRaw("CONCAT(firstname, ' ', lastname) = ?", [$mention])->first();
+            $user = \App\Models\User::whereRaw(\App\Models\User::getFullNameConcatSql() . " = ?", [$mention])->first();
             if ($user && $user->id !== Auth::id()) {
                 // Create mention record
                 Mention::create([

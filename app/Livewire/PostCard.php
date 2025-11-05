@@ -27,7 +27,7 @@ class PostCard extends Component
     public $showComments = false;
     public $showReplies = [];
     public $showNestedReplies = [];
-    
+
     // Mention functionality
     public $mentionQuery = '';
     public $showMentionSuggestions = false;
@@ -44,12 +44,12 @@ class PostCard extends Component
     public function mount(Post $post)
     {
         $this->post = $post;
-        
+
         // Auto-show replies for comments that have replies (Facebook-style)
         foreach ($this->post->comments as $comment) {
             if ($comment->replies->where('parent_reply_id', null)->count() > 0) {
                 $this->showReplies[$comment->id] = true;
-                
+
                 // Auto-show nested replies for replies that have nested replies
                 foreach ($comment->replies->where('parent_reply_id', null) as $reply) {
                     if ($reply->childReplies->count() > 0) {
@@ -66,13 +66,13 @@ class PostCard extends Component
             $this->post->unlike(Auth::user());
         } else {
             $this->post->like(Auth::user());
-            
+
             // Dispatch event for real-time notification
             if ($this->post->user_id !== Auth::id()) {
                 event(new PostLiked($this->post, Auth::user()));
             }
         }
-        
+
         $this->dispatch('postLiked');
     }
 
@@ -98,7 +98,7 @@ class PostCard extends Component
 
         $this->newComment = '';
         $this->showComments = true;
-        
+
         $this->dispatch('commentCreated');
     }
 
@@ -125,25 +125,25 @@ class PostCard extends Component
 
         $this->newReply[$commentId] = '';
         $this->showReplies[$commentId] = true;
-        
+
         $this->dispatch('replyCreated');
     }
 
     public function toggleCommentLike($commentId)
     {
         $comment = Comment::find($commentId);
-        
+
         if ($comment->isLikedBy(Auth::user())) {
             $comment->unlike(Auth::user());
         } else {
             $comment->like(Auth::user());
-            
+
             // Dispatch event for real-time notification
             if ($comment->user_id !== Auth::id()) {
                 event(new CommentLiked($comment, Auth::user()));
             }
         }
-        
+
         $this->dispatch('commentCreated');
     }
 
@@ -175,14 +175,14 @@ class PostCard extends Component
 
         $this->newNestedReply[$topLevelParentId] = '';
         $this->showNestedReplies[$topLevelParentId] = true;
-        
+
         $this->dispatch('replyCreated');
     }
 
     public function toggleNestedReplies($replyId)
     {
         $this->showNestedReplies[$replyId] = !($this->showNestedReplies[$replyId] ?? false);
-        
+
         // Auto-populate nested reply with mention if showing nested replies
         if ($this->showNestedReplies[$replyId]) {
             $reply = Reply::find($replyId);
@@ -195,7 +195,7 @@ class PostCard extends Component
     public function toggleReplies($commentId)
     {
         $this->showReplies[$commentId] = !($this->showReplies[$commentId] ?? false);
-        
+
         // Auto-populate reply with mention if showing replies
         if ($this->showReplies[$commentId]) {
             $comment = Comment::find($commentId);
@@ -213,7 +213,7 @@ class PostCard extends Component
     public function startReply($commentId, $userId = null)
     {
         $this->showReplies[$commentId] = true;
-        
+
         // Auto-populate with mention if user ID is provided
         if ($userId) {
             $user = User::find($userId);
@@ -227,7 +227,7 @@ class PostCard extends Component
                 $this->newReply[$commentId] = "@{$comment->user->firstname} {$comment->user->lastname} ";
             }
         }
-        
+
         // Emit event for JavaScript focus
         $this->dispatch('replyStarted');
     }
@@ -235,7 +235,9 @@ class PostCard extends Component
     public function startNestedReply($replyId, $userId = null)
     {
         $reply = Reply::find($replyId);
-        if (!$reply) { return; }
+        if (!$reply) {
+            return;
+        }
 
         // Target the top-level reply container
         $topLevelParentId = $reply->parent_reply_id ? $reply->parent_reply_id : $reply->id;
@@ -247,7 +249,7 @@ class PostCard extends Component
         if ($user && $user->id !== Auth::id()) {
             $this->newNestedReply[$topLevelParentId] = "@{$user->firstname} {$user->lastname} ";
         }
-        
+
         // Emit event for JavaScript focus
         $this->dispatch('nestedReplyStarted');
     }
@@ -268,10 +270,10 @@ class PostCard extends Component
 
         $this->mentionSuggestions = User::where('id', '!=', Auth::id())
             ->when($mentionQuery !== '', function ($q) use ($mentionQuery) {
-                $q->where(function($q2) use ($mentionQuery) {
+                $q->where(function ($q2) use ($mentionQuery) {
                     $q2->where('firstname', 'like', "%{$mentionQuery}%")
-                       ->orWhere('lastname', 'like', "%{$mentionQuery}%")
-                       ->orWhereRaw("CONCAT(firstname, ' ', lastname) LIKE ?", ["%{$mentionQuery}%"]);
+                        ->orWhere('lastname', 'like', "%{$mentionQuery}%")
+                        ->orWhereRaw(User::getFullNameConcatSql() . " LIKE ?", ["%{$mentionQuery}%"]);
                 });
             })
             ->limit(5)
@@ -303,7 +305,7 @@ class PostCard extends Component
         if (!$user) return;
 
         $mentionText = "@{$user->firstname} {$user->lastname}";
-        
+
         // Update the appropriate field
         if ($field === 'comment') {
             $this->newComment = str_replace("@{$this->mentionQuery}", $mentionText, $this->newComment);
@@ -331,11 +333,11 @@ class PostCard extends Component
     {
         // Extract mentions from content using regex
         preg_match_all('/@(\w+\s+\w+)/', $content, $matches);
-        
+
         if (!empty($matches[1])) {
             foreach ($matches[1] as $mention) {
-                $user = User::whereRaw("CONCAT(firstname, ' ', lastname) = ?", [$mention])->first();
-                
+                $user = User::whereRaw(User::getFullNameConcatSql() . " = ?", [$mention])->first();
+
                 if ($user && $user->id !== Auth::id()) {
                     // Create mention record
                     Mention::create([
@@ -369,14 +371,14 @@ class PostCard extends Component
     public function parseMentions($content)
     {
         // Parse mentions and convert them to clickable links with styling
-        return preg_replace_callback('/@(\w+\s+\w+)/', function($matches) {
+        return preg_replace_callback('/@(\w+\s+\w+)/', function ($matches) {
             $mention = $matches[1];
-            $user = User::whereRaw("CONCAT(firstname, ' ', lastname) = ?", [$mention])->first();
-            
+            $user = User::whereRaw(User::getFullNameConcatSql() . " = ?", [$mention])->first();
+
             if ($user) {
                 return '<span class="mention-highlight text-blue-600 dark:text-blue-400 font-medium cursor-pointer hover:underline" title="' . $user->firstname . ' ' . $user->lastname . '">@' . $mention . '</span>';
             }
-            
+
             return $matches[0]; // Return original if user not found
         }, htmlspecialchars($content));
     }
@@ -389,7 +391,7 @@ class PostCard extends Component
         }
 
         $this->post->load(['user', 'comments.user', 'comments.replies.user', 'comments.replies.childReplies.user', 'likes.user']);
-        
+
         return view('livewire.post-card');
     }
 
