@@ -27,7 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::get('confirm-password', ConfirmPassword::class)
         ->name('password.confirm');
 
-    Route::get('Access-Point', Register::class)->name('register');
+    Route::get('access-Point', Register::class)->name('register');
 });
 
 Route::post('logout', App\Livewire\Actions\Logout::class)

@@ -43,7 +43,14 @@ class Login extends Component
         RateLimiter::clear($this->throttleKey());
         Session::regenerate();
 
-        $this->redirectIntended(default: route('index', absolute: false), navigate: true);
+        // Check if user profile is complete before redirecting
+        $user = Auth::user();
+        if ($user && (empty($user->firstname) || empty($user->lastname))) {
+            $this->redirect(route('register'), navigate: false);
+            return;
+        }
+
+        $this->redirectIntended(default: route('index', absolute: false), navigate: false);
     }
 
     /**
@@ -72,6 +79,6 @@ class Login extends Component
      */
     protected function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
+        return Str::transliterate(Str::lower($this->email) . '|' . request()->ip());
     }
 }
