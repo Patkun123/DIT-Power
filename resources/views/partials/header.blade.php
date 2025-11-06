@@ -3,19 +3,19 @@
         <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
             <a href="#" class="flex items-center">
                 <!-- Light mode logo -->
-                <img src="images/DTI_w12.png"
+                <img src="/Images/DTI_w12.png"
                     class="h-14 sm:h-12 block dark:hidden"
                     alt="DTI Wellness (Light)" />
-                <img src="/images/lightmode.png"
+                <img src="/Images/lightmode.png"
                     class="mr-3 h-17 sm:h-16 block dark:hidden"
                     alt="DTI Wellness (Light)" />
 
 
                 <!-- Dark mode logo -->
-                <img src="/images/DTI_w12.png"
+                <img src="/Images/DTI_w12.png"
                     class="h-14 sm:h-12 hidden dark:block"
                     alt="DTI Wellness (Dark)" />
-                <img src="/images/final.png"
+                <img src="/Images/final.png"
                     class="mr-3 h-17 sm:h-16 hidden dark:block"
                     alt="DTI Wellness (Dark)" />
 
