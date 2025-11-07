@@ -20,11 +20,11 @@ return new class extends Migration
             $table->string('gender')->nullable();
             $table->string('civil_status');
             $table->string('career')->nullable();
-            $table->string('level_career');
-            $table->string('nature_of_work');
-            $table->string('function');
-            $table->string('educational_attachment_type');
-            $table->string('educational_attachment');
+            $table->string('level_career')->nullable();
+            $table->string('nature_of_work')->nullable();
+            $table->string('function')->nullable();
+            $table->string('educational_attachment_type')->nullable();
+            $table->string('educational_attachment')->nullable();
             $table->string('post_graduate')->default('none');
             $table->date('birthday')->nullable();
             $table->string('height')->nullable();

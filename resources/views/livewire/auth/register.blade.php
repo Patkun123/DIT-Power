@@ -154,7 +154,6 @@
 
         <!-- Auth Header -->
         <x-auth-header
-
             :title="__('Fill up the Requirements')"
             :description="__('Step ' . $step . ' of 4')" />
 
@@ -207,7 +206,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:input wire:model.defer="firstname" icon="user-circle" :label="__('First Name')" placeholder="First name" required />
                     <flux:input wire:model.defer="lastname" icon="user-circle" :label="__('Last Name')" placeholder="Last name" required />
-                    <flux:select wire:model.defer="gender" placeholder="Select Gender" :label="_('Gender')">
+                    <flux:select wire:model.defer="gender" placeholder="Select Gender" :label="__('Gender')">
                         <flux:select.option>Male</flux:select.option>
                         <flux:select.option>Female</flux:select.option>
                     </flux:select>
@@ -219,7 +218,7 @@
                         :label="__('Phone Number')"
                         placeholder="+63"
                         required />
-                    <flux:select wire:model="civil_status" :label="__('Civil Status')">
+                    <flux:select wire:model.defer="civil_status" :label="__('Civil Status')">
                         <flux:select.option>Married</flux:select.option>
                         <flux:select.option>Single</flux:select.option>
                         <flux:select.option>Widow</flux:select.option>
@@ -232,11 +231,11 @@
                 @endif
                 @if ($step === 2)
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <flux:select wire:model="career" :label="__('Select Career or Non-Career')">
+                    <flux:select wire:model.defer="career" :label="__('Select Career or Non-Career')">
                         <flux:select.option>Career</flux:select.option>
                         <flux:select.option>Non-Career</flux:select.option>
                     </flux:select>
-                    <flux:select wire:model="level_career" :label="__('Select Career Level')">
+                    <flux:select wire:model.defer="level_career" :label="__('Select Career Level')">
                         <flux:select.option>1st</flux:select.option>
                         <flux:select.option>2nd</flux:select.option>
                         <flux:select.option>3rd</flux:select.option>
@@ -245,14 +244,14 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:input type="number" icon="circle-stack" wire:model.defer="height" :label="__('Height')" placeholder="152 (cm)" required />
                     <flux:input wire:model.defer="weight" icon="circle-stack" :label="__('Weight (kg)')" placeholder="52 (kg)" required />
-                    <flux:select wire:model="activity_level" placeholder="Select Activity Level" :label="__('Activity Level')">
+                    <flux:select wire:model.defer="activity_level" placeholder="Select Activity Level" :label="__('Activity Level')">
                         <flux:select.option>Sedentary</flux:select.option>
                         <flux:select.option>Lightly Active</flux:select.option>
                         <flux:select.option>Moderately Active</flux:select.option>
                         <flux:select.option>Very Active</flux:select.option>
                         <flux:select.option>Extra Active</flux:select.option>
                     </flux:select>
-                    <flux:select wire:model="health_goals" placeholder="Select Health Goals" :label="__('Health Goals')">
+                    <flux:select wire:model.defer="health_goals" placeholder="Select Health Goals" :label="__('Health Goals')">
                         <flux:select.option>Weight Loss</flux:select.option>
                         <flux:select.option>Muscle Gain</flux:select.option>
                         <flux:select.option>Maintenance</flux:select.option>
@@ -263,7 +262,7 @@
 
                 @if ($step === 3)
                 <div class="grid grid-cols-1 gap-6">
-                    <flux:radio.group class="grid grid-cols-2 gap-5" wire:model="dietary_preferences" :label="_('Dietary Preferences')">
+                    <flux:radio.group class="grid grid-cols-2 gap-5" wire:model.defer="dietary_preferences" :label="__('Dietary Preferences')">
                         <flux:radio
                             value="Vegetarian"
                             label="Vegetarian"
@@ -299,7 +298,7 @@
                         type="number"
                         wire:model.defer="staff_id"
                         :label="__('DTI ID')"
-                        placeholder="Enter you DTI ID" />
+                        placeholder="Enter your DTI ID" />
                     <flux:input wire:model.defer="position" icon="user-circle" :label="__('Position')" placeholder="Enter your Position" required />
                     <flux:input wire:model.defer="department" icon="user-circle" :label="__('Department')" placeholder="Enter your Department" required />
                     <flux:select wire:model.defer="office" :label="__('Choose Office')" placeholder="Choose Office...">
