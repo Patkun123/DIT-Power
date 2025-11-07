@@ -3,7 +3,7 @@
 namespace App\Livewire\Auth;
 
 use App\Models\dti_id;
-use App\Models\User_Information;
+use App\Models\user_information;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -98,7 +98,7 @@ class Register extends Component
         $user->save();
 
         // Create or update user information
-        User_Information::create([
+        user_information::create([
             'user_id'             => $user->id,
             'phone_number'        => $this->phone_number,
             'gender'              => $this->gender,
@@ -112,25 +112,25 @@ class Register extends Component
         ]);
 
         dti_id::updateOrCreate(
-        // Conditions to find the existing record
-        [
-        'user_id'    => $user->id,
-        'office' => $this->office
-    ],
+            // Conditions to find the existing record
+            [
+                'user_id'    => $user->id,
+                'office' => $this->office
+            ],
 
-        // Values to update if found, or insert if not found
-        [
-            'staff_id' => $this->staff_id,
-            'position'   => $this->position,
-            'department' => $this->department,
-        ]
-    );
+            // Values to update if found, or insert if not found
+            [
+                'staff_id' => $this->staff_id,
+                'position'   => $this->position,
+                'department' => $this->department,
+            ]
+        );
 
 
-    event(new Registered($user));
+        event(new Registered($user));
 
-    $this->redirect(route('index', absolute: false), navigate: true);
-}
+        $this->redirect(route('index', absolute: false), navigate: true);
+    }
 
     protected function validateCurrentStep(): void
     {

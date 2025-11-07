@@ -12,6 +12,6 @@ class dti_id extends Model
         'office',
         'user_id',
         'department',
-        'posiotion',
+        'position',
     ];
 }
