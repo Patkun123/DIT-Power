@@ -14,7 +14,7 @@ class ScrambleWordController extends Controller
         if ($request->filled('edit')) {
             $editing = ScrambleWord::find($request->query('edit'));
         }
-        return view('Auth.Admin.view.manage-scramble-words', compact('words', 'editing'));
+        return view('auth.admin.view.manage-scramble-words', compact('words', 'editing'));
     }
 
     public function store(Request $request)

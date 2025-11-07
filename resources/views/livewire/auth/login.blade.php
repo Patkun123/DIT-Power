@@ -53,7 +53,7 @@
 
             </div>
             <div class="w-1/2 hidden md:block relative shadow-4xl bg-black shadow-gray-300 rounded-r-lg overflow-hidden">
-                <img src="/images/pic/12.jpg" alt="Wellness"
+                <img src="Images/pic/12.jpg" alt="Wellness"
                     class="object-cover opacity-40 w-full h-full">
 
                 <!-- Bottom Text -->

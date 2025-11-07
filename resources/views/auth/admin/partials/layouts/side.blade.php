@@ -39,14 +39,14 @@
         <a href="{{ route('home') }}" class="flex items-center justify-between mr-4">
         <!-- Mobile Logo -->
         <img
-            src="/images/logo1.png"
+            src="/Images/logo1.png"
             class="block md:hidden h-7 mr-3"
             alt="DTI Wellness Mobile Logo"
         />
 
         <!-- Desktop Logo -->
         <img
-            src="/images/lightmode.png"
+            src="/Images/lightmode.png"
             class="hidden absolute md:block h-20 md:ml-10"
             alt="DTI Wellness Desktop Logo"
         />
@@ -80,7 +80,7 @@
             <span class="sr-only">Open user menu</span>
             <img src="{{ auth()->user()->profileimage
             ? asset('storage/' . auth()->user()->profileimage)
-            : asset('images/default.png') }}"
+            : asset('Images/default.png') }}"
             alt="Profile Image"
             class="w-8 h-8 rounded-full">
 

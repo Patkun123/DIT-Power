@@ -43,7 +43,7 @@
                                         @if($player['user']->profileimage)
                                             <img src="{{ asset('storage/' . $player['user']->profileimage) }}" alt="{{ $player['user']->firstname }} {{ $player['user']->lastname }}" class="w-full h-full object-cover">
                                         @else
-                                            <img src="{{ asset('images/default.png') }}" alt="Default Profile" class="w-full h-full object-cover">
+                                            <img src="{{ asset('Images/default.png') }}" alt="Default Profile" class="w-full h-full object-cover">
                                         @endif
                                     </div>
                                     <div>
@@ -94,7 +94,7 @@
             <h2 class="2xl:text-xl text-md font-semibold text-gray-800 dark:text-white flex items-center justify-between">
                 Overall Leaderboard
                 <a href='{{route('leaderboards')}}' class="hover:bg-primary-500 cursor-pointer transition-all hover:-translate-y-1 rounded-full">
-                    <img src="/images/crown.gif" class="w-15 h-15 relative" alt="">
+                    <img src="/Images/crown.gif" class="w-15 h-15 relative" alt="">
                 </a>
             </h2>
             @php
@@ -142,7 +142,7 @@
                         >
                     @else
                         <img
-                            src="{{ asset('images/default.png') }}"
+                            src="{{ asset('Images/default.png') }}"
                             alt="Default Profile"
                             class="w-[36px] h-[36px] 2xl:w-[55px] 2xl:h-[55px] rounded-full object-cover border border-gray-300 dark:border-gray-700"
                         >
@@ -157,7 +157,7 @@
                         </div>
                     </div>
                     <div class="flex items-center justify-center mt-2">
-                        <img src="/images/rewards/silver_cup.png" class="w-10 h-10 2xl:h-20 2xl:w-22 relative" alt="">
+                        <img src="/Images/rewards/silver_cup.png" class="w-10 h-10 2xl:h-20 2xl:w-22 relative" alt="">
                     </div>
                 </div>
 
@@ -172,7 +172,7 @@
                             >
                         @else
                             <img
-                                src="{{ asset('images/default.png') }}"
+                                src="{{ asset('Images/default.png') }}"
                                 alt="Default Profile"
                                 class="w-[36px] h-[36px] 2xl:w-[55px] 2xl:h-[55px] rounded-full object-cover border border-gray-300 dark:border-gray-700"
                             >
@@ -188,7 +188,7 @@
                         </div>
                     </div>
                     <div class="flex items-center justify-center mt-2">
-                        <img src="/images/rewards/gold_cup.png" class="w-10 h-10 2xl:h-20 2xl:w-20 relative" alt="">
+                        <img src="/Images/rewards/gold_cup.png" class="w-10 h-10 2xl:h-20 2xl:w-20 relative" alt="">
                     </div>
                 </div>
 
@@ -203,7 +203,7 @@
                         >
                     @else
                         <img
-                            src="{{ asset('images/default.png') }}"
+                            src="{{ asset('Images/default.png') }}"
                             alt="Default Profile"
                             class="w-[36px] h-[36px] 2xl:w-[55px] 2xl:h-[55px] rounded-full object-cover border border-gray-300 dark:border-gray-700"
                         >
@@ -218,7 +218,7 @@
                         </div>
                     </div>
                     <div class="flex items-center justify-center mt-2">
-                        <img src="/images/rewards/bronze_cup.png" class="w-10 h-10 2xl:h-20 2xl:w-20 relative" alt="">
+                        <img src="/Images/rewards/bronze_cup.png" class="w-10 h-10 2xl:h-20 2xl:w-20 relative" alt="">
                     </div>
                 </div>
             </div>
@@ -385,7 +385,7 @@
 
 <!-- Script for star selection -->
 
-@include('Auth.Users.partials.leaderboard')
+@include('auth.users.partials.leaderboard')
 
 @push('scripts')
 <script>

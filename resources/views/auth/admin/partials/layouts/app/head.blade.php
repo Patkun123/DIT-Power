@@ -31,7 +31,7 @@
         @include('components.loading-screen')
         @include('sweetalert2::index')
         @yield('content')
-        @include('Auth.Admin.partials.modals.user-add')
+        @include('auth.admin.partials.modals.user-add')
         @livewire('admin.question-add')
         @livewire('admin.adduser')
         @livewireScripts()

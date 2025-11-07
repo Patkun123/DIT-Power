@@ -15,8 +15,8 @@ class Userseeder extends Seeder
     public function run(): void
     {
         User::factory()->create([
-            'firstname' => 'Admin',
-            'lastname' => 'Administrator',
+            'firstname' => '',
+            'lastname' => '',
             'email' => 'Admin@dti.gov.ph',
             'role' => "admin",
             'password' => Hash::make('admin123'),

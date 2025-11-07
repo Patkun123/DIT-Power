@@ -21,7 +21,7 @@ class UserInformationController extends Controller
                 ->where('role', '!=', 'admin') // Exclude admins
                 ->get();
 
-        return view('Auth.Admin.view.manage-user', compact('users'));
+        return view('auth.admin.view.manage-user', compact('users'));
     }
 
     /**

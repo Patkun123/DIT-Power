@@ -3,17 +3,17 @@
         <div class="flex flex-wrap  justify-between mt-1 lg:py-2 py-2 items-center mx-auto max-w-screen-1xl">
             <a href="{{route('index')}}" class="flex relative items-center">
                 <!-- Light mode logo -->
-                <img src="images/DTI_w12.png"
+                <img src="Images/DTI_w12.png"
                     class="h-10 xl:h-12 sm:h-12 block dark:hidden"
                     alt="DTI Wellness (Light)" />
-                <img src="/images/lightmode.png"
+                <img src="/Images/lightmode.png"
                     class="mr-3 h-17 sm:h-16 block dark:hidden"
                     alt="DTI Wellness (Light)" />
                 <!-- Dark mode logo -->
-                <img src="/images/DTI_w12.png"
+                <img src="/Images/DTI_w12.png"
                     class="h-10 xl:h-12 hidden dark:block"
                     alt="DTI Wellness (Dark)" />
-                <img src="/images/final.png"
+                <img src="/Images/final.png"
                     class="mr-3 h-17 sm:h-16 hidden dark:block"
                     alt="DTI Wellness (Dark)" />
             </a>
@@ -42,7 +42,7 @@
                         >
                     @else
                         <img
-                            src="{{ asset('images/default.png') }}"
+                            src="{{ asset('Images/default.png') }}"
                             alt="Default Profile"
                             class="w-[36px] h-[36px] rounded-full object-cover border border-gray-300 dark:border-gray-700"
                         >
@@ -283,8 +283,8 @@
         <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
             <div class="flex items-center space-x-3">
                 <!-- Logo -->
-                <img src="images/DTI_w12.png" class="h-8 w-8 dark:hidden" alt="DTI Logo" />
-                <img src="/images/DTI_w12.png" class="h-8 w-8 hidden dark:block" alt="DTI Logo" />
+                <img src="Images/DTI_w12.png" class="h-8 w-8 dark:hidden" alt="DTI Logo" />
+                <img src="/Images/DTI_w12.png" class="h-8 w-8 hidden dark:block" alt="DTI Logo" />
                 <span class="text-lg font-semibold text-gray-800 dark:text-white">DTI Wellness</span>
             </div>
             <!-- Close Button -->
@@ -302,7 +302,7 @@
                 @if(auth()->user()->profileimage)
                     <img src="{{ asset('storage/' . auth()->user()->profileimage) }}" alt="Profile" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300 dark:border-gray-600">
                 @else
-                    <img src="{{ asset('images/default.png') }}" alt="Default Profile" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300 dark:border-gray-600">
+                    <img src="{{ asset('Images/default.png') }}" alt="Default Profile" class="w-12 h-12 rounded-full object-cover border-2 border-gray-300 dark:border-gray-600">
                 @endif
                 <div>
                     <div class="font-medium text-gray-800 dark:text-white">{{ auth()->user()->firstname }} {{ auth()->user()->lastname }}</div>

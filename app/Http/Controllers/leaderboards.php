@@ -11,7 +11,7 @@ class leaderboards extends Controller
      */
     public function index()
     {
-        return view('Auth.Users.view.leaderboard');
+        return view('auth.users.view.leaderboard');
     }
 
     /**

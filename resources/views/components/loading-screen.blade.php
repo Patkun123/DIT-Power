@@ -6,14 +6,14 @@
         <div class="relative">
             <!-- Light mode logo -->
             <div class="block dark:hidden">
-                <img src="/images/DTI_w12.png"
+                <img src="/Images/DTI_w12.png"
                      alt="DTI Logo"
                      class="logo h-16 w-auto loading-logo">
             </div>
 
             <!-- Dark mode logo -->
             <div class="hidden dark:block">
-                <img src="/images/DTI_w12.png"
+                <img src="/Images/DTI_w12.png"
                      alt="DTI Logo"
                      class="logo h-16 w-auto loading-logo">
             </div>

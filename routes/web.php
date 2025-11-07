@@ -122,7 +122,7 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::get('quiz/history', [QuizController::class, 'history'])->name('quiz.history');
 
     // Scramble game (UI similar to quiz)
-    Route::view('scramble', 'Auth.Users.view.scramble')->name('scramble');
+    Route::view('scramble', 'auth.users.view.scramble')->name('scramble');
 
     Route::get('Physical-tools', [ToolsController::class, 'index'])->name('physical.tools');
     Route::post('physical-tools', [ToolsController::class, 'calculate'])->name('calculate.bmi');

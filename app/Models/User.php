@@ -66,7 +66,7 @@ class User extends Authenticatable
 
     public function staff()
     {
-        return $this->hasOne(dti_Id::class, 'user_id', 'id');
+        return $this->hasOne(dti_id::class, 'user_id', 'id');
     }
 
     public function information()
@@ -138,7 +138,7 @@ class User extends Authenticatable
 
     /**
      * Get database-agnostic SQL for concatenating firstname and lastname
-     * 
+     *
      * @return string
      */
     public static function getFullNameConcatSql(): string
