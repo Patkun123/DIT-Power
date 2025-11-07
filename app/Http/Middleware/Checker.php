@@ -20,8 +20,8 @@ class Checker
 
         // If logged in and user profile is incomplete
         if ($user && (empty($user->firstname) || empty($user->lastname))) {
-            // Allow access to profile completion page
-            if (!$request->is('complete-profile')) {
+            // Allow access to profile completion page (access-point)
+            if (!$request->routeIs('register')) {
                 return redirect()->route('register');
             }
         }

@@ -176,6 +176,6 @@ class QuizController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('Auth.Users.view.quiz-history', compact('attempts'));
+        return view('auth.users.view.quiz-history', compact('attempts'));
     }
 }
