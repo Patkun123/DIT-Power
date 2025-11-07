@@ -158,7 +158,7 @@
                         </button>
                     </div>
                 </div>
-                @include('Auth.Users.partials.view-journal')
+                @include('auth.users.partials.view-journal')
 
             @endforeach
         @endif

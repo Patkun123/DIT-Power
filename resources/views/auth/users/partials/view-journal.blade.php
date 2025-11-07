@@ -58,5 +58,5 @@
         </div>
     </div>
 </div>
-@include('Auth.Users.partials.delete-modal')
-@include('Auth.Users.partials.edit-modal')
+@include('auth.users.partials.delete-modal')
+@include('auth.users.partials.edit-modal')
