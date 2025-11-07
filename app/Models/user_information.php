@@ -19,6 +19,13 @@ class user_information extends Model
         'activity_level',
         'health_goals',
         'dietary_preferences',
+        'civil_status',
+        'career',
+        'level_career',
+        'nature_of_work',
+        'function',
+        'educational_attachment_type',
+        'educational_attachment',
     ];
 
     protected $casts = [

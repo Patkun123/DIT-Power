@@ -16,7 +16,6 @@ class Register extends Component
 {
     public string $firstname = '';
     public string $lastname = '';
-    public string $email = '';
     public string $password = '';
     public string $password_confirmation = '';
     public string $role = 'user';
@@ -66,6 +65,11 @@ class Register extends Component
     {
         $user = Auth::user();
 
+        if (!$user) {
+            session()->flash('error', 'You must be logged in to complete registration.');
+            return;
+        }
+
         $validated = $this->validate([
             'firstname' => ['required', 'string', 'max:255'],
             'lastname'  => ['required', 'string', 'max:255'],
@@ -83,7 +87,13 @@ class Register extends Component
             'office'                => ['nullable', 'string'],
             'position'              => ['nullable', 'string'],
             'department'            => ['nullable', 'string'],
-
+            'civil_status'          => ['nullable', 'string'],
+            'career'                => ['nullable', 'string'],
+            'level_career'          => ['nullable', 'string'],
+            'nature_of_work'        => ['nullable', 'string'],
+            'function'              => ['nullable', 'string'],
+            'educational_attachment_type' => ['nullable', 'string'],
+            'educational_attachment'      => ['nullable', 'string'],
         ]);
 
         // If password is filled in, hash it before saving
@@ -98,34 +108,41 @@ class Register extends Component
         $user->save();
 
         // Create or update user information
-        user_information::create([
-            'user_id'             => $user->id,
-            'phone_number'        => $this->phone_number,
-            'gender'              => $this->gender,
-            'birthday'            => $this->birthday,
-            'address'             => $this->address,
-            'height'              => $this->height,
-            'weight'              => $this->weight,
-            'activity_level'      => $this->activity_level,
-            'health_goals'        => $this->health_goals,
-            'dietary_preferences' => $this->dietary_preferences,
-        ]);
+        user_information::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'phone_number'        => $this->phone_number,
+                'gender'              => $this->gender,
+                'birthday'            => $this->birthday,
+                'address'             => $this->address,
+                'height'              => $this->height,
+                'weight'              => $this->weight,
+                'activity_level'      => $this->activity_level,
+                'health_goals'        => $this->health_goals,
+                'dietary_preferences' => $this->dietary_preferences,
+                'civil_status'        => $this->civil_status ?: 'Single',
+                'career'              => $this->career,
+                'level_career'        => $this->level_career ?: '1st',
+                'nature_of_work'      => $this->nature_of_work ?: '',
+                'function'            => $this->function ?: '',
+                'educational_attachment_type' => $this->educational_attachment_type ?: '',
+                'educational_attachment'      => $this->educational_attachment ?: '',
+            ]
+        );
 
         dti_id::updateOrCreate(
             // Conditions to find the existing record
             [
-                'user_id'    => $user->id,
-                'office' => $this->office
+                'user_id' => $user->id,
+                'office'  => $this->office
             ],
-
             // Values to update if found, or insert if not found
             [
-                'staff_id' => $this->staff_id,
+                'staff_id'   => $this->staff_id,
                 'position'   => $this->position,
                 'department' => $this->department,
             ]
         );
-
 
         event(new Registered($user));
 
@@ -142,11 +159,14 @@ class Register extends Component
                 'phone_number'        => ['nullable', 'string'],
                 'gender'              => ['nullable', 'string'],
                 'address'             => ['nullable', 'string'],
+                'civil_status'        => ['nullable', 'string'],
             ]);
         }
 
         if ($this->step === 2) {
             $this->validate([
+                'career'              => ['nullable', 'string'],
+                'level_career'        => ['nullable', 'string'],
                 'height'              => ['nullable', 'string'],
                 'weight'              => ['nullable', 'string'],
                 'activity_level'      => ['nullable', 'string'],
