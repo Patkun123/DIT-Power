@@ -134,8 +134,8 @@ Route::middleware(['auth','check_profile'])->group(function () {
     // Route::view('Policies', 'Auth.users.view.policies')->name('policies');
     // Route::view('Feedbacks', 'Auth.user.view.policies')->name('policies');
 
-    Route::view('Financial-tools','Auth.users.view.financial')->name('financial.tools');
-    Route::view('mental-tools','Auth.users.view.mental')->name('mental.tools');
+    Route::view('Financial-tools','auth.users.view.financial')->name('financial.tools');
+    Route::view('mental-tools','auth.users.view.mental')->name('mental.tools');
     Route::get('emotional-tools',[emotional::class, 'index'])->name('emotional.tools');
     Route::get('social',[SocialController::class, 'index'])->name('social.tools');
     Route::get('social/{post}',[SocialController::class, 'show'])->name('social.show');

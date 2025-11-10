@@ -83,7 +83,7 @@ class UserIndexController extends Controller
 
         $quizCount = $user->quizAttempts()->sum('score');
         $journalCount = $user->journals()->count();
-        $articles = news_article::where('status', 'Published')->latest()->get();
+        $articles = news_article::where('status', 'published')->latest()->get();
 
         return view('auth.users.view.index', compact(
             'articles',
@@ -107,26 +107,26 @@ class UserIndexController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-public function store(Request $request)
-{
-    $validated = $request->validate([
-        'rating' => 'required|integer|min:1|max:5',
-        'message' => 'nullable|string|max:1000',
-    ]);
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'message' => 'nullable|string|max:1000',
+        ]);
 
-    $validated['email'] = auth()->user()->email;
+        $validated['email'] = auth()->user()->email;
 
-    Feedbacks::create($validated);
+        Feedbacks::create($validated);
 
-    // Log feedback activity
-    ActivityService::logFeedbackSent(
-        auth()->id(),
-        $validated['rating'],
-        $validated['email']
-    );
+        // Log feedback activity
+        ActivityService::logFeedbackSent(
+            auth()->id(),
+            $validated['rating'],
+            $validated['email']
+        );
 
-    return redirect()->back()->with('success', 'Thank you for your feedback!');
-}
+        return redirect()->back()->with('success', 'Thank you for your feedback!');
+    }
 
 
     /**
