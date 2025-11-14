@@ -17,8 +17,8 @@ class QuizQuestionFactory extends Factory
     public function definition(): array
     {
         return [
-            "content" => $this->fake->sentence(),
-            "answer" => $this->fake->randomElement(['A', 'B', 'C', 'D']),
+            "content" => fake()->sentence(),
+            "answer" => fake()->randomElement(['A', 'B', 'C', 'D']),
         ];
     }
 }
