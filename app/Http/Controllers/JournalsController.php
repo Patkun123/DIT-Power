@@ -18,7 +18,7 @@ class JournalsController extends Controller
                         ->latest()
                         ->get();
 
-        return view('Auth.Users.view.journal', [
+        return view('auth.users.view.journal', [
             'journals' => $journals,
             'hasEntries' => $journals->isNotEmpty()
         ]);
@@ -117,7 +117,7 @@ class JournalsController extends Controller
         $journal = Journals::findOrFail($id);
         $title = $journal->title;
         $userId = $journal->user_id;
-        
+
         $journal->delete();
 
         // Log journal delete activity

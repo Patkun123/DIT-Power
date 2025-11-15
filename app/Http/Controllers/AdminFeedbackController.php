@@ -41,7 +41,7 @@ class AdminFeedbackController extends Controller
         // Sort functionality
         $sortBy = $request->get('sort_by', 'created_at');
         $sortOrder = $request->get('sort_order', 'desc');
-        
+
         $allowedSortFields = ['created_at', 'rating', 'email'];
         if (in_array($sortBy, $allowedSortFields)) {
             $query->orderBy($sortBy, $sortOrder);
@@ -52,7 +52,7 @@ class AdminFeedbackController extends Controller
         // Get statistics
         $stats = $this->getFeedbackStats();
 
-        return view('Auth.Admin.view.feedbacks', compact('feedbacks', 'stats'));
+        return view('auth.admin.view.feedbacks', compact('feedbacks', 'stats'));
     }
 
     /**
@@ -60,7 +60,7 @@ class AdminFeedbackController extends Controller
      */
     public function show(Feedbacks $feedback)
     {
-        return view('Auth.Admin.view.feedback-detail', compact('feedback'));
+        return view('auth.admin.view.feedback-detail', compact('feedback'));
     }
 
     /**
@@ -69,7 +69,7 @@ class AdminFeedbackController extends Controller
     public function destroy(Feedbacks $feedback)
     {
         $feedback->delete();
-        
+
         return redirect()->route('admin.feedbacks.index')
             ->with('success', 'Feedback deleted successfully.');
     }
@@ -80,7 +80,7 @@ class AdminFeedbackController extends Controller
     private function getFeedbackStats()
     {
         $totalFeedbacks = Feedbacks::count();
-        
+
         // Rating distribution
         $ratingStats = Feedbacks::selectRaw('rating, COUNT(*) as count')
             ->groupBy('rating')
@@ -155,7 +155,7 @@ class AdminFeedbackController extends Controller
 
         $callback = function() use ($feedbacks) {
             $file = fopen('php://output', 'w');
-            
+
             // CSV headers
             fputcsv($file, ['ID', 'Email', 'Rating', 'Message', 'Created At']);
 

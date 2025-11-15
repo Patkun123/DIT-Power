@@ -24,7 +24,7 @@ class emotional extends Controller
 
         $quote = $quotes[array_rand($quotes)];
 
-        return view('Auth.users.view.emotional', compact('quote'));
+        return view('auth.users.view.emotional', compact('quote'));
     }
 
     /**

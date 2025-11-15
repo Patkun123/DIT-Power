@@ -208,7 +208,7 @@ class AdminQuizController extends Controller
     {
         $question->load('choices');
 
-        return view('Auth.Admin.view.question-edit', compact('quiz', 'question'));
+        return view('auth.admin.view.question-edit', compact('quiz', 'question'));
     }
 
     /**
@@ -290,7 +290,7 @@ class AdminQuizController extends Controller
             ->limit(10)
             ->get();
 
-        return view('Auth.Admin.view.quiz-statistics', compact('quiz', 'stats', 'recentAttempts'));
+        return view('auth.admin.view.quiz-statistics', compact('quiz', 'stats', 'recentAttempts'));
     }
 
     /**
@@ -299,7 +299,7 @@ class AdminQuizController extends Controller
     public function sets(Quiz $quiz)
     {
         $sets = $quiz->sets()->orderBy('set_number')->get();
-        return view('Auth.Admin.view.quiz-sets', compact('quiz', 'sets'));
+        return view('auth.admin.view.quiz-sets', compact('quiz', 'sets'));
     }
 
     /**
@@ -307,7 +307,7 @@ class AdminQuizController extends Controller
      */
     public function createSet(Quiz $quiz)
     {
-        return view('Auth.Admin.view.quiz-set-create', compact('quiz'));
+        return view('auth.admin.view.quiz-set-create', compact('quiz'));
     }
 
     /**
@@ -350,7 +350,7 @@ class AdminQuizController extends Controller
      */
     public function editSet(Quiz $quiz, QuizSet $set)
     {
-        return view('Auth.Admin.view.quiz-set-edit', compact('quiz', 'set'));
+        return view('auth.admin.view.quiz-set-edit', compact('quiz', 'set'));
     }
 
     /**

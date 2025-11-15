@@ -12,7 +12,7 @@ class SocialController extends Controller
      */
     public function index()
     {
-        return view('Auth.users.view.social');
+        return view('auth.users.view.social');
     }
 
 
@@ -37,7 +37,7 @@ class SocialController extends Controller
      */
     public function show(Post $post)
     {
-        return view('Auth.users.view.social', compact('post'));
+        return view('auth.users.view.social', compact('post'));
     }
 
 

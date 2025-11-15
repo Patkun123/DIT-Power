@@ -50,7 +50,7 @@ class UserIndexController extends Controller
                 $bestScore = $attempts->max('score');
                 $bestCorrect = $attempts->max('correct');
                 $attemptsCount = $attempts->count();
-                
+
                 return [
                     'user' => $user,
                     'best_score' => $bestScore,
@@ -84,8 +84,8 @@ class UserIndexController extends Controller
         $quizCount = $user->quizAttempts()->sum('score');
         $journalCount = $user->journals()->count();
         $articles = news_article::where('status', 'Published')->latest()->get();
-        
-        return view('Auth.Users.view.index', compact(
+
+        return view('auth.users.view.index', compact(
             'articles',
             'journalCount',
             'topPlayers',

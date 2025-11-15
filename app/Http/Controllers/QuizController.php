@@ -47,10 +47,10 @@ class QuizController extends Controller
             ->limit(10)
             ->get();
 
-        return view('Auth.Users.view.quiz', compact(
-            'activeQuizzes', 
-            'upcomingQuizzes', 
-            'userAttempts', 
+        return view('auth.users.view.quiz', compact(
+            'activeQuizzes',
+            'upcomingQuizzes',
+            'userAttempts',
             'topPlayers'
         ));
     }
@@ -67,12 +67,12 @@ class QuizController extends Controller
 
         // Get questions with choices
         $questions = $quiz->questions()->with('choices')->get();
-        
+
         if ($questions->isEmpty()) {
             return redirect()->route('quiz')->with('error', 'This quiz has no questions yet.');
         }
 
-        return view('Auth.Users.view.quiz-take', compact('quiz', 'questions'));
+        return view('auth.users.view.quiz-take', compact('quiz', 'questions'));
     }
 
     /**
@@ -101,7 +101,7 @@ class QuizController extends Controller
 
         // Get questions with correct answers
         $questions = $quiz->questions()->with('choices')->get();
-        
+
         $score = 0;
         $correct = 0;
         $totalQuestions = $questions->count();
@@ -118,7 +118,7 @@ class QuizController extends Controller
         // Process answers
         foreach ($questions as $question) {
             $userAnswer = $validated['answers'][$question->id] ?? null;
-            
+
             // Create attempt answer record
             QuizAttemptAnswer::create([
                 'attempt_id' => $attempt->id,
@@ -162,8 +162,8 @@ class QuizController extends Controller
         }
 
         $attempt->load(['quiz', 'answers.question.choices']);
-        
-        return view('Auth.Users.view.quiz-result', compact('attempt'));
+
+        return view('auth.users.view.quiz-result', compact('attempt'));
     }
 
     /**
@@ -176,6 +176,6 @@ class QuizController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('Auth.Users.view.quiz-history', compact('attempts'));
+        return view('auth.users.view.quiz-history', compact('attempts'));
     }
 }
