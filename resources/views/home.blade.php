@@ -47,7 +47,7 @@
 <div
     x-data="{
         slides: [
-            { type: 'video', src: 'https://www.youtube.com/embed/jFpSQvYEsn0?autoplay=1&mute=1&enablejsapi=1' },
+            { type: 'video', src: 'https://www.youtube.com/embed/jFpSQvYEsn0?autoplay=1&mute=1&enablejsapi=1&vq=hd1080', videoId: 'jFpSQvYEsn0' },
             { type: 'image', src: '/Images/pic/1.jpg' },
             { type: 'image', src: '/Images/pic/2.jpg' },
             { type: 'image', src: '/Images/pic/3.jpg' },
@@ -55,19 +55,48 @@
         ],
         current: 0,
         interval: null,
+        player: null,
+        ytReady: false,
 
         init() {
-            this.setupAutoSlide();
             this.setupYouTubeAPI();
+            this.setupAutoSlide();
         },
 
         setupYouTubeAPI() {
             if (!window.YT) {
+                window.onYouTubeIframeAPIReady = () => {
+                    this.ytReady = true;
+                    this.initYouTubePlayer();
+                };
                 const tag = document.createElement('script');
                 tag.src = 'https://www.youtube.com/iframe_api';
                 const firstScriptTag = document.getElementsByTagName('script')[0];
                 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            } else {
+                this.ytReady = true;
+                this.$nextTick(() => this.initYouTubePlayer());
             }
+        },
+
+        initYouTubePlayer() {
+            this.$nextTick(() => {
+                const iframe = this.$el.querySelector('iframe');
+                if (iframe && this.ytReady && this.slides[this.current].type === 'video') {
+                    this.player = new YT.Player(iframe, {
+                        events: {
+                            'onStateChange': (event) => {
+                                if (event.data === YT.PlayerState.ENDED) {
+                                    this.next();
+                                }
+                            },
+                            'onReady': (event) => {
+                                event.target.setPlaybackQuality('hd1080');
+                            }
+                        }
+                    });
+                }
+            });
         },
 
         setupAutoSlide() {
@@ -77,8 +106,7 @@
             if (slide.type === 'image') {
                 this.interval = setInterval(() => this.next(), 5000);
             } else if (slide.type === 'video') {
-                // For video, wait longer or rely on manual navigation
-                this.interval = setInterval(() => this.next(), 30000); // 30 seconds
+                this.$nextTick(() => this.initYouTubePlayer());
             }
         },
 
@@ -90,11 +118,19 @@
         },
 
         next() {
+            if (this.player) {
+                this.player.destroy();
+                this.player = null;
+            }
             this.current = (this.current + 1) % this.slides.length;
             this.setupAutoSlide();
         },
 
         prev() {
+            if (this.player) {
+                this.player.destroy();
+                this.player = null;
+            }
             this.current = (this.current - 1 + this.slides.length) % this.slides.length;
             this.setupAutoSlide();
         }
@@ -124,7 +160,8 @@
                 <template x-if="slide.type === 'video'">
                     <div class="w-full h-full">
                         <iframe
-                            x-bind:src="getVisibleIndex(index) === 0 ? slide.src : slide.src.replace('autoplay=1', 'autoplay=0')"
+                            x-bind:src="slide.src"
+                            x-show="getVisibleIndex(index) === 0"
                             class="w-full h-full object-cover rounded-lg"
                             frameborder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
