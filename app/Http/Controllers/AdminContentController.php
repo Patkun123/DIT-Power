@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\AdminContent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use SweetAlert2\Laravel\Swal;
 
 class AdminContentController extends Controller
 {
@@ -74,7 +73,6 @@ class AdminContentController extends Controller
      */
     public function edit(AdminContent $adminContent)
     {
-        $this->authorize('update', $adminContent);
         return view('auth.admin.view.edit-content', ['content' => $adminContent]);
     }
 
@@ -83,8 +81,6 @@ class AdminContentController extends Controller
      */
     public function update(Request $request, AdminContent $adminContent)
     {
-        $this->authorize('update', $adminContent);
-
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:500',
@@ -122,8 +118,6 @@ class AdminContentController extends Controller
      */
     public function destroy(AdminContent $adminContent)
     {
-        $this->authorize('delete', $adminContent);
-
         // Delete image if exists
         if ($adminContent->image_url) {
             $oldPath = str_replace('/storage/', '', $adminContent->image_url);
