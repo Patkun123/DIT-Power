@@ -43,113 +43,120 @@
                         </a>
                     </div>
                 </div>
-                <div
-                    x-data="{
-                        slides: [
-                            { type: 'video', src: '/videos/vid.mp4' },
-                            { type: 'image', src: '/Images/pic/1.jpg' },
-                            { type: 'image', src: '/Images/pic/2.jpg' },
-                            { type: 'image', src: '/Images/pic/3.jpg' },
-                            { type: 'image', src: '/Images/pic/4.jpg' },
-                        ],
-                        current: 0,
-                        interval: null,
+                <!-- Replace the carousel section in your Blade file with this -->
+<div
+    x-data="{
+        slides: [
+            { type: 'video', src: 'https://www.youtube.com/embed/jFpSQvYEsn0?autoplay=1&mute=1&enablejsapi=1' },
+            { type: 'image', src: '/Images/pic/1.jpg' },
+            { type: 'image', src: '/Images/pic/2.jpg' },
+            { type: 'image', src: '/Images/pic/3.jpg' },
+            { type: 'image', src: '/Images/pic/4.jpg' },
+        ],
+        current: 0,
+        interval: null,
 
-                        init() {
-                            this.setupAutoSlide();
-                        },
+        init() {
+            this.setupAutoSlide();
+            this.setupYouTubeAPI();
+        },
 
-                        setupAutoSlide() {
-                            if (this.interval) clearInterval(this.interval);
-                            const slide = this.slides[this.current];
+        setupYouTubeAPI() {
+            if (!window.YT) {
+                const tag = document.createElement('script');
+                tag.src = 'https://www.youtube.com/iframe_api';
+                const firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            }
+        },
 
-                            if (slide.type === 'image') {
-                                this.interval = setInterval(() => this.next(), 5000);
-                            }
+        setupAutoSlide() {
+            if (this.interval) clearInterval(this.interval);
+            const slide = this.slides[this.current];
 
-                            this.$nextTick(() => {
-                                const video = this.$el.querySelector('video');
-                                if (video) {
-                                    video.addEventListener('ended', () => this.next(), { once: true });
-                                }
-                            });
-                        },
+            if (slide.type === 'image') {
+                this.interval = setInterval(() => this.next(), 5000);
+            } else if (slide.type === 'video') {
+                // For video, wait longer or rely on manual navigation
+                this.interval = setInterval(() => this.next(), 30000); // 30 seconds
+            }
+        },
 
-                        getVisibleIndex(index) {
-                            if (index === this.current) return 0;
-                            if (index === (this.current - 1 + this.slides.length) % this.slides.length) return -1;
-                            if (index === (this.current + 1) % this.slides.length) return 1;
-                            return null;
-                        },
+        getVisibleIndex(index) {
+            if (index === this.current) return 0;
+            if (index === (this.current - 1 + this.slides.length) % this.slides.length) return -1;
+            if (index === (this.current + 1) % this.slides.length) return 1;
+            return null;
+        },
 
-                        next() {
-                            this.current = (this.current + 1) % this.slides.length;
-                            this.setupAutoSlide();
-                        },
+        next() {
+            this.current = (this.current + 1) % this.slides.length;
+            this.setupAutoSlide();
+        },
 
-                        prev() {
-                            this.current = (this.current - 1 + this.slides.length) % this.slides.length;
-                            this.setupAutoSlide();
-                        }
-                    }"
-                    x-init="init"
-                    class="relative w-full md:w-190 2xl:w-200 2xl:p-15 lg:p-10 md:px-10 max-w-full px-4 sm:px-6 py-6 overflow-hidden flex items-center justify-center"
-                >
-
-                    <!-- Slides -->
-                    <div class="relative w-full aspect-video flex items-center justify-center max-w-screen-md">
-                        <template x-for="(slide, index) in slides" :key="index">
-                            <div
-                                x-show="getVisibleIndex(index) !== null"
-                                x-transition:enter="transition-all duration-500"
-                                x-transition:enter-start="opacity-0 scale-95"
-                                x-transition:enter-end="opacity-100 scale-100"
-                                x-transition:leave="transition-all duration-500"
-                                x-transition:leave-start="opacity-100 scale-100"
-                                x-transition:leave-end="opacity-0 scale-95"
-                                class="absolute top-0 left-0 w-full h-full transform transition-transform duration-500 rounded-lg shadow-lg"
-                                :class="{
-                                    'z-20 scale-100 opacity-100': getVisibleIndex(index) === 0,
-                                    'z-10 scale-90 opacity-50 -translate-x-full': getVisibleIndex(index) === -1,
-                                    'z-10 scale-90 opacity-50 translate-x-full': getVisibleIndex(index) === 1
-                                }"
-                            >
-                                <!-- Video Slide -->
-                                <template x-if="slide.type === 'video'">
-                                    <video
-                                        x-bind:src="slide.src"
-                                        controls
-                                        muted
-                                        preload="metadata"
-                                        class="w-full h-full object-cover rounded-lg"
-                                    ></video>
-                                </template>
-
-                                <!-- Image Slide -->
-                                <template x-if="slide.type === 'image'">
-                                    <img
-                                        x-bind:src="slide.src"
-                                        alt="Slide"
-                                        class="w-full h-full object-cover rounded-lg"
-                                    />
-                                </template>
-                            </div>
-                        </template>
+        prev() {
+            this.current = (this.current - 1 + this.slides.length) % this.slides.length;
+            this.setupAutoSlide();
+        }
+    }"
+    x-init="init"
+    class="relative w-full md:w-190 2xl:w-200 2xl:p-15 lg:p-10 md:px-10 max-w-full px-4 sm:px-6 py-6 overflow-hidden flex items-center justify-center"
+>
+    <!-- Slides -->
+    <div class="relative w-full aspect-video flex items-center justify-center max-w-screen-md">
+        <template x-for="(slide, index) in slides" :key="index">
+            <div
+                x-show="getVisibleIndex(index) !== null"
+                x-transition:enter="transition-all duration-500"
+                x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="transition-all duration-500"
+                x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95"
+                class="absolute top-0 left-0 w-full h-full transform transition-transform duration-500 rounded-lg shadow-lg"
+                :class="{
+                    'z-20 scale-100 opacity-100': getVisibleIndex(index) === 0,
+                    'z-10 scale-90 opacity-50 -translate-x-full': getVisibleIndex(index) === -1,
+                    'z-10 scale-90 opacity-50 translate-x-full': getVisibleIndex(index) === 1
+                }"
+            >
+                <!-- YouTube Video Slide -->
+                <template x-if="slide.type === 'video'">
+                    <div class="w-full h-full">
+                        <iframe
+                            x-bind:src="getVisibleIndex(index) === 0 ? slide.src : slide.src.replace('autoplay=1', 'autoplay=0')"
+                            class="w-full h-full object-cover rounded-lg"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                        ></iframe>
                     </div>
+                </template>
 
-                    <!-- Left Arrow -->
-                    <button @click="prev" aria-label="Previous slide"
-                        class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 flex items-center justify-center bg-gray-700/80 dark:bg-gray-200/10 hover:bg-gray-700 dark:hover:bg-gray-600 text-white w-10 h-10 sm:w-12 sm:h-12 rounded-full transition z-30">
-                        <flux:icon.arrow-left></flux:icon.arrow-left>
-                    </button>
+                <!-- Image Slide -->
+                <template x-if="slide.type === 'image'">
+                    <img
+                        x-bind:src="slide.src"
+                        alt="Wellness Resource Slide"
+                        class="w-full h-full object-cover rounded-lg"
+                    />
+                </template>
+            </div>
+        </template>
+    </div>
 
-                    <!-- Right Arrow -->
-                    <button @click="next" aria-label="Next slide"
-                        class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 flex items-center justify-center bg-gray-700/80 dark:bg-gray-200/10 hover:bg-gray-700 dark:hover:bg-gray-600 text-white w-10 h-10 sm:w-12 sm:h-12 rounded-full transition z-30">
-                        <flux:icon.arrow-right></flux:icon.arrow-right>
-                    </button>
+    <!-- Left Arrow -->
+    <button @click="prev" aria-label="Previous slide"
+        class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 flex items-center justify-center bg-gray-700/80 dark:bg-gray-200/10 hover:bg-gray-700 dark:hover:bg-gray-600 text-white w-10 h-10 sm:w-12 sm:h-12 rounded-full transition z-30">
+        <flux:icon.arrow-left></flux:icon.arrow-left>
+    </button>
 
-                </div>
+    <!-- Right Arrow -->
+    <button @click="next" aria-label="Next slide"
+        class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 flex items-center justify-center bg-gray-700/80 dark:bg-gray-200/10 hover:bg-gray-700 dark:hover:bg-gray-600 text-white w-10 h-10 sm:w-12 sm:h-12 rounded-full transition z-30">
+        <flux:icon.arrow-right></flux:icon.arrow-right>
+    </button>
+</div>
 
             </div>
         </section>
