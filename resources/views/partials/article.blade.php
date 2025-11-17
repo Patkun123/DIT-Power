@@ -5,13 +5,10 @@
         <div class="max-w-screen-md mb-8 lg:mb-16 mx-auto text-center relative">
             <div class="inline-block relative mb-6">
                 <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-                    Latest Health News
+                DTI 12 Updates
                 </h2>
-                <span class="absolute -left-6 -bottom-1 h-1 w-90 bg-primary-500 dark:bg-primary-400 rounded"></span>
+                <span class="absolute -left-18 -bottom-1 h-1 w-90 bg-primary-500 dark:bg-primary-400 rounded"></span>
             </div>
-            <p class="text-gray-500 sm:text-xl dark:text-gray-400">
-                Comprehensive care tailored to your individual needs
-            </p>
         </div>
         <!-- Flex scroll on mobile, grid on desktop -->
         <div class="flex space-x-10 space-y-6 p-10 overflow-x-auto lg:grid-cols-3">
