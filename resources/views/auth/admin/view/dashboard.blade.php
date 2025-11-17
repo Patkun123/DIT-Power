@@ -126,6 +126,74 @@
       <div
         class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"
       ></div> --}}
+
+      <!-- Upcoming Events Section -->
+      <div class="mt-10 mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Upcoming Events</h2>
+        @if($upcomingEvents->count())
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            @foreach($upcomingEvents as $event)
+              <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                @if($event->image_url)
+                  <img src="{{ $event->image_url }}" alt="{{ $event->title }}" class="w-full h-40 object-cover">
+                @else
+                  <div class="w-full h-40 bg-gradient-to-r from-primary-400 to-primary-600 flex items-center justify-center">
+                    <svg class="w-12 h-12 text-white opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                  </div>
+                @endif
+                <div class="p-4">
+                  <h3 class="font-semibold text-gray-900 dark:text-white truncate">{{ $event->title }}</h3>
+                  <div class="flex items-center text-sm text-gray-600 dark:text-gray-400 mt-2">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    {{ $event->event_date->format('M d, Y') }}
+                  </div>
+                  <div class="flex items-center text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    {{ $event->event_time }}
+                  </div>
+                  <div class="flex items-center text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <span class="truncate">{{ Str::limit($event->location, 20) }}</span>
+                  </div>
+                  <div class="flex items-center justify-between mt-3">
+                    <span class="text-xs font-semibold px-2 py-1 rounded-full
+                      @if($event->status === 'active')
+                        bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300
+                      @elseif($event->status === 'completed')
+                        bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300
+                      @else
+                        bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300
+                      @endif
+                    ">
+                      {{ ucfirst($event->status) }}
+                    </span>
+                    <a href="{{ route('admin.events.edit', $event) }}" class="text-primary-600 hover:text-primary-900 text-sm font-medium">Edit</a>
+                  </div>
+                </div>
+              </div>
+            @endforeach
+          </div>
+        @else
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center">
+            <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <p class="text-gray-600 dark:text-gray-400">No upcoming events scheduled.</p>
+            <a href="{{ route('admin.events.create') }}" class="inline-block mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition">
+              Create Event
+            </a>
+          </div>
+        @endif
+      </div>
       {{-- <div class="grid grid-cols-2 gap-4">
             <div class=" p-4 md:p-6 bg-white dark:bg-gray-800 rounded-lg transition-all hover:-translate-y-2 hover:shadow-primary-500  shadow-md dark:shadow-gray-700  h-auto md:h-auto">
 

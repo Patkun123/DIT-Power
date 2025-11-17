@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\news_article;
+use App\Models\Event;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\QuizAttempt;
@@ -124,6 +125,8 @@ class AdminDashboardController extends Controller
             'recentFeedbacks'  => $recentFeedbacks,
             'monthlyFeedbacks' => $monthlyFeedbacks,
             'analysis'        => $analysis,
+            // upcoming events
+            'upcomingEvents'   => Event::upcoming()->limit(5)->get(),
         ]);
     }
     public function getUsersByRange(Request $request)

@@ -47,10 +47,10 @@
                     x-data="{
                         slides: [
                             { type: 'video', src: '/videos/vid.mp4' },
-                            { type: 'image', src: '/images/pic/1.jpg' },
-                            { type: 'image', src: '/images/pic/2.jpg' },
-                            { type: 'image', src: '/images/pic/3.jpg' },
-                            { type: 'image', src: '/images/pic/4.jpg' },
+                            { type: 'image', src: '/Images/pic/1.jpg' },
+                            { type: 'image', src: '/Images/pic/2.jpg' },
+                            { type: 'image', src: '/Images/pic/3.jpg' },
+                            { type: 'image', src: '/Images/pic/4.jpg' },
                         ],
                         current: 0,
                         interval: null,

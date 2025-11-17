@@ -3,6 +3,9 @@
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminFeedbackController;
 use App\Http\Controllers\AdminQuizController;
+use App\Http\Controllers\AdminContentController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ArticleandNewsController;
 use App\Http\Controllers\emotional;
 use App\Http\Controllers\JournalsController;
@@ -23,9 +26,7 @@ use App\Http\Livewire\FinanceDashboard;
 use App\Http\Controllers\ScrambleWordController;
 use App\Http\Controllers\SocialController;
 
-Route::get('/', function () {
-    return view('home');
-})->middleware([
+Route::get('/', [HomeController::class, 'index'])->middleware([
     'guest',        // Laravel's built-in authentication check
     'check_profile' // Your custom middleware to check if the user profile is complete
 ])->name('home');
@@ -94,6 +95,22 @@ Route::middleware(['auth', 'is_admin:admin'])->group(function () {
     Route::get('feedbacks/{feedback}', [AdminFeedbackController::class, 'show'])->name('admin.feedbacks.show');
     Route::delete('feedbacks/{feedback}', [AdminFeedbackController::class, 'destroy'])->name('admin.feedbacks.destroy');
     Route::get('feedbacks/export/csv', [AdminFeedbackController::class, 'export'])->name('admin.feedbacks.export');
+
+    //Home Page Content Management
+    Route::get('manage-content', [AdminContentController::class, 'index'])->name('admin.content.index');
+    Route::get('manage-content/create', [AdminContentController::class, 'create'])->name('admin.content.create');
+    Route::post('manage-content', [AdminContentController::class, 'store'])->name('admin.content.store');
+    Route::get('manage-content/{adminContent}/edit', [AdminContentController::class, 'edit'])->name('admin.content.edit');
+    Route::put('manage-content/{adminContent}', [AdminContentController::class, 'update'])->name('admin.content.update');
+    Route::delete('manage-content/{adminContent}', [AdminContentController::class, 'destroy'])->name('admin.content.destroy');
+
+    //Events Management
+    Route::get('manage-events', [EventController::class, 'index'])->name('admin.events.index');
+    Route::get('manage-events/create', [EventController::class, 'create'])->name('admin.events.create');
+    Route::post('manage-events', [EventController::class, 'store'])->name('admin.events.store');
+    Route::get('manage-events/{event}/edit', [EventController::class, 'edit'])->name('admin.events.edit');
+    Route::put('manage-events/{event}', [EventController::class, 'update'])->name('admin.events.update');
+    Route::delete('manage-events/{event}', [EventController::class, 'destroy'])->name('admin.events.destroy');
 });
 
 Route::middleware(['auth','check_profile'])->group(function () {
@@ -140,16 +157,6 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::get('social',[SocialController::class, 'index'])->name('social.tools');
     Route::get('social/{post}',[SocialController::class, 'show'])->name('social.show');
     Route::get('leaderboard', [leaderboards::class, 'index'])->name('leaderboards');
-
-    // Quick test route to trigger a realtime broadcast notification for the current user
-    Route::get('notify-test', function() {
-        $user = auth()->user();
-        if (!$user) {
-            abort(403);
-        }
-        $user->notify(new RealtimeTestNotification());
-        return back()->with('status', 'Notification sent');
-    })->name('notify.test');
 
 });
 
