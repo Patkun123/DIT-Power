@@ -16,12 +16,11 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->longText('content');
-            $table->string('image_url')->nullable();
+            $table->longText('image_url')->nullable();
             $table->enum('status', ['draft', 'published', 'archived'])->default('draft');
             $table->foreignId('admin_id')->constrained('users')->onDelete('cascade');
             $table->timestamp('published_at')->nullable();
             $table->timestamps();
-
             $table->index('status');
             $table->index('admin_id');
             $table->index('published_at');
