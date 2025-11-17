@@ -35,6 +35,7 @@
                             <option value="RO">Regional Office</option>
                             <option value="SK">Sultan Kudarat</option>
                             <option value="CP">Cotabato Province</option>
+                            <option value="NC">North Cotabato</option>
                         </select>
                     </div>
 
