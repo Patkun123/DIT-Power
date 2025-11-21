@@ -13,8 +13,10 @@ php artisan storage:link
 ```
 
 **In Forge:**
-- Go to your site's "Deploy Script" section
-- Add this command to your deployment script:
+
+-   Go to your site's "Deploy Script" section
+-   Add this command to your deployment script:
+
 ```bash
 php artisan storage:link --force
 ```
@@ -29,8 +31,10 @@ chmod -R 775 bootstrap/cache
 ```
 
 **In Forge:**
-- Go to your site's "Deploy Script" section
-- Add these commands:
+
+-   Go to your site's "Deploy Script" section
+-   Add these commands:
+
 ```bash
 chmod -R 775 storage
 chmod -R 775 bootstrap/cache
@@ -54,6 +58,7 @@ chmod -R 775 storage/app/public
 Verify your PHP configuration allows file uploads:
 
 **Check current limits:**
+
 ```bash
 php -i | grep upload_max_filesize
 php -i | grep post_max_size
@@ -61,6 +66,7 @@ php -i | grep max_execution_time
 ```
 
 **Recommended settings in `php.ini` or Forge's PHP settings:**
+
 ```ini
 upload_max_filesize = 10M
 post_max_size = 12M
@@ -69,8 +75,9 @@ memory_limit = 256M
 ```
 
 **In Forge:**
-- Go to your server → PHP → Edit PHP Configuration
-- Set these values or add them to your custom php.ini
+
+-   Go to your server → PHP → Edit PHP Configuration
+-   Set these values or add them to your custom php.ini
 
 ### 5. Check Nginx Configuration
 
@@ -133,6 +140,7 @@ If image scanning is causing issues, you can temporarily disable it by modifying
 **Option 1: Make scanning optional via environment variable**
 
 Add to your `.env`:
+
 ```
 IMAGE_SCANNING_ENABLED=true
 ```
@@ -142,6 +150,7 @@ Then modify the service to check this flag.
 **Option 2: Check Laravel logs**
 
 Check for errors in:
+
 ```bash
 tail -f storage/logs/laravel.log
 ```
@@ -149,6 +158,7 @@ tail -f storage/logs/laravel.log
 ### 8. Verify Storage Configuration
 
 Ensure your `.env` file has:
+
 ```
 FILESYSTEM_DISK=public
 APP_URL=https://your-domain.com
@@ -157,6 +167,7 @@ APP_URL=https://your-domain.com
 ### 9. Test Image Upload
 
 After deployment, test by:
+
 1. Uploading a small image (< 1MB)
 2. Check if it appears in `storage/app/public/posts/`
 3. Verify the image is accessible via URL
@@ -164,19 +175,24 @@ After deployment, test by:
 ### 10. Common Issues and Solutions
 
 **Issue: "Image file cannot be accessed"**
-- Solution: Check file permissions and ensure storage symlink exists
+
+-   Solution: Check file permissions and ensure storage symlink exists
 
 **Issue: "File size exceeds maximum"**
-- Solution: Increase `upload_max_filesize` and `post_max_size` in PHP config
+
+-   Solution: Increase `upload_max_filesize` and `post_max_size` in PHP config
 
 **Issue: "Storage symlink already exists"**
-- Solution: Remove old symlink: `rm public/storage` then run `php artisan storage:link --force`
+
+-   Solution: Remove old symlink: `rm public/storage` then run `php artisan storage:link --force`
 
 **Issue: "Permission denied"**
-- Solution: Fix ownership: `chown -R forge:www-data storage`
+
+-   Solution: Fix ownership: `chown -R forge:www-data storage`
 
 **Issue: Images upload but don't display**
-- Solution: Check storage symlink and verify `APP_URL` in `.env` matches your domain
+
+-   Solution: Check storage symlink and verify `APP_URL` in `.env` matches your domain
 
 ### 11. Quick Fix Script
 
@@ -197,12 +213,13 @@ php artisan view:clear
 ## Need More Help?
 
 Check Laravel logs:
+
 ```bash
 tail -f storage/logs/laravel.log
 ```
 
 Check Nginx error logs:
+
 ```bash
 tail -f /var/log/nginx/error.log
 ```
-

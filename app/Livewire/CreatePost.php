@@ -131,22 +131,29 @@ class CreatePost extends Component
                 }
             }
 
-        $post = Post::create([
-            'user_id' => Auth::id(),
-            'content' => $this->content,
-            'image' => $imagePath,
-        ]);
+            $post = Post::create([
+                'user_id' => Auth::id(),
+                'content' => $this->content,
+                'image' => $imagePath,
+            ]);
 
-        // Process mentions in post content
-        $this->processMentions($this->content, $post, 'post');
+            // Process mentions in post content
+            $this->processMentions($this->content, $post, 'post');
 
-        // Dispatch event for real-time updates
-        $this->dispatch('postCreated');
+            // Dispatch event for real-time updates
+            $this->dispatch('postCreated');
 
-        // Reset form
-        $this->reset(['content', 'image', 'showImagePreview']);
+            // Reset form
+            $this->reset(['content', 'image', 'showImagePreview']);
 
-        session()->flash('message', 'Post created successfully!');
+            session()->flash('message', 'Post created successfully!');
+        } catch (\Exception $e) {
+            Log::error('Post creation failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            $this->addError('content', 'Failed to create post. Please try again.');
+        }
     }
 
     // Mention functionality methods
