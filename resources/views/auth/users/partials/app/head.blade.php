@@ -30,6 +30,7 @@
 
 <body class="dark:bg-gray-900 bg-gray-100">
     @include('components.loading-screen')
+    @include('sweetalert2::index')
     @include('auth.users.partials.header')
     <section class="mt-16 lg:mt-20">
         @yield('content')

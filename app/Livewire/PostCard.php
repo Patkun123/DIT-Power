@@ -400,44 +400,50 @@ class PostCard extends Component
         // Authorization: owner or admin only
         $user = Auth::user();
         if (!$user || ($user->id !== $this->post->user_id)) {
-            return; // silently ignore
+            $this->dispatch('deleteError', message: 'You are not authorized to delete this post.');
+            return;
         }
 
-        // Delete post image if exists
-        if (!empty($this->post->image)) {
-            Storage::disk('public')->delete($this->post->image);
-        }
-
-        // Cleanup related data (mentions, likes, comments, replies)
-        \App\Models\Mention::where('post_id', $this->post->id)->delete();
-
-        // Delete likes on post
-        if (method_exists($this->post, 'likes')) {
-            $this->post->likes()->delete();
-        }
-
-        // Delete comments, their likes and replies
-        $this->post->comments()->each(function ($comment) {
-            if (method_exists($comment, 'likes')) {
-                $comment->likes()->delete();
+        try {
+            // Delete post image if exists
+            if (!empty($this->post->image)) {
+                Storage::disk('public')->delete($this->post->image);
             }
-            // Delete replies and nested replies
-            $comment->replies()->each(function ($reply) {
-                // Delete child replies
-                if (method_exists($reply, 'childReplies')) {
-                    $reply->childReplies()->delete();
+
+            // Cleanup related data (mentions, likes, comments, replies)
+            \App\Models\Mention::where('post_id', $this->post->id)->delete();
+
+            // Delete likes on post
+            if (method_exists($this->post, 'likes')) {
+                $this->post->likes()->delete();
+            }
+
+            // Delete comments, their likes and replies
+            $this->post->comments()->each(function ($comment) {
+                if (method_exists($comment, 'likes')) {
+                    $comment->likes()->delete();
                 }
+                // Delete replies and nested replies
+                $comment->replies()->each(function ($reply) {
+                    // Delete child replies
+                    if (method_exists($reply, 'childReplies')) {
+                        $reply->childReplies()->delete();
+                    }
+                });
+                $comment->replies()->delete();
+                $comment->delete();
             });
-            $comment->replies()->delete();
-            $comment->delete();
-        });
 
-        // Finally delete the post
-        $postId = $this->post->id;
-        $this->post->delete();
+            // Finally delete the post
+            $postId = $this->post->id;
+            $this->post->delete();
 
-        $this->deleted = true;
-        $this->dispatch('postDeleted', id: $postId);
+            $this->deleted = true;
+            $this->dispatch('postDeleted', id: $postId);
+            $this->dispatch('deleteSuccess', message: 'Post deleted successfully!');
+        } catch (\Exception $e) {
+            $this->dispatch('deleteError', message: 'Failed to delete post. Please try again.');
+        }
     }
 
     public function startEdit(): void

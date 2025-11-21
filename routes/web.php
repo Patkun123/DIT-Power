@@ -154,8 +154,34 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::view('Financial-tools','auth.users.view.financial')->name('financial.tools');
     Route::view('mental-tools','auth.users.view.mental')->name('mental.tools');
     Route::get('emotional-tools',[emotional::class, 'index'])->name('emotional.tools');
+    
+    // Social Tools Routes
     Route::get('social',[SocialController::class, 'index'])->name('social.tools');
     Route::get('social/{post}',[SocialController::class, 'show'])->name('social.show');
+    
+    // Social Posts
+    Route::post('social/posts', [SocialController::class, 'storePost'])->name('social.posts.store');
+    Route::put('social/posts/{post}', [SocialController::class, 'updatePost'])->name('social.posts.update');
+    Route::delete('social/posts/{post}', [SocialController::class, 'deletePost'])->name('social.posts.destroy');
+    Route::post('social/posts/{post}/like', [SocialController::class, 'toggleLike'])->name('social.posts.like');
+    
+    // Social Comments
+    Route::post('social/posts/{post}/comments', [SocialController::class, 'storeComment'])->name('social.comments.store');
+    Route::delete('social/comments/{comment}', [SocialController::class, 'deleteComment'])->name('social.comments.destroy');
+    Route::post('social/comments/{comment}/like', [SocialController::class, 'toggleCommentLike'])->name('social.comments.like');
+    
+    // Social Replies
+    Route::post('social/comments/{comment}/replies', [SocialController::class, 'storeReply'])->name('social.replies.store');
+    Route::delete('social/replies/{reply}', [SocialController::class, 'deleteReply'])->name('social.replies.destroy');
+    Route::post('social/replies/{reply}/like', [SocialController::class, 'toggleReplyLike'])->name('social.replies.like');
+    
+    // Global Chat
+    Route::post('social/chat/messages', [SocialController::class, 'sendMessage'])->name('social.chat.send');
+    Route::delete('social/chat/messages/{message}', [SocialController::class, 'deleteMessage'])->name('social.chat.destroy');
+    
+    // Mentions
+    Route::get('social/mentions', [SocialController::class, 'getMentions'])->name('social.mentions');
+    
     Route::get('leaderboard', [leaderboards::class, 'index'])->name('leaderboards');
 
 });

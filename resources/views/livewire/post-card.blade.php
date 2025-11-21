@@ -1,3 +1,7 @@
+@if($deleted || !$post || !$post->user)
+    {{-- Post deleted or invalid - render nothing --}}
+    <div></div>
+@else
 <div id="post-{{ $post->id }}" class="p-4">
     <!-- Facebook-style Post Header -->
     <div class="flex items-center justify-between mb-3">
@@ -39,7 +43,7 @@
             <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-40 sm:w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg overflow-hidden z-20">
                 @if(auth()->check() && auth()->id() === $post->user_id)
                     <button wire:click="startEdit" class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">Edit post</button>
-                    <button wire:click="deletePost" class="w-full text-left px-3 py-2 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30">Delete post</button>
+                    <button onclick="confirmDelete({{ $post->id }})" class="w-full text-left px-3 py-2 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30">Delete post</button>
                 @else
                     <button class="w-full text-left px-3 py-2 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30">Report</button>
                 @endif
@@ -407,8 +411,11 @@
         </div>
     @endif
 </div>
+@endif
+
 @push('scripts')
 <script>
+    // Scroll to anchor functionality
     function scrollToAnchor() {
         if (!window.location.hash) return;
 
@@ -438,6 +445,51 @@
     document.addEventListener("DOMContentLoaded", scrollToAnchor);
     document.addEventListener("livewire:update", scrollToAnchor);
     document.addEventListener("livewire:navigated", scrollToAnchor);
+
+    // Delete confirmation with SweetAlert2
+    function confirmDelete(postId) {
+        Swal.fire({
+            title: 'Delete Post?',
+            text: "This action cannot be undone. All comments and likes will be deleted.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true,
+            focusCancel: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Call Livewire method to delete
+                Livewire.find(document.querySelector(`#post-${postId}`).closest('[wire\\:id]').getAttribute('wire:id'))
+                    .call('deletePost');
+            }
+        });
+    }
+
+    // Listen for delete success event
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('deleteSuccess', (event) => {
+            Swal.fire({
+                title: 'Deleted!',
+                text: event.message || 'Post has been deleted successfully.',
+                icon: 'success',
+                confirmButtonColor: '#3b82f6',
+                timer: 3000,
+                timerProgressBar: true
+            });
+        });
+
+        Livewire.on('deleteError', (event) => {
+            Swal.fire({
+                title: 'Error!',
+                text: event.message || 'Failed to delete post.',
+                icon: 'error',
+                confirmButtonColor: '#3b82f6'
+            });
+        });
+    });
 </script>
 
 @endpush
