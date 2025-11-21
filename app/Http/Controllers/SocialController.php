@@ -15,6 +15,7 @@ use App\Events\CommentCreated;
 use App\Events\CommentLiked;
 use App\Events\ReplyCreated;
 use App\Services\ChatNotificationService;
+use App\Services\ImageScanService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -41,7 +42,17 @@ class SocialController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('posts', 'public');
+            $imageFile = $request->file('image');
+            
+            // Scan the image for security threats
+            $scanService = new ImageScanService();
+            $scanResult = $scanService->scanImage($imageFile);
+            
+            if (!$scanResult['success']) {
+                return back()->withErrors(['image' => $scanResult['message']])->withInput();
+            }
+            
+            $imagePath = $imageFile->store('posts', 'public');
         }
 
         $post = Post::create([

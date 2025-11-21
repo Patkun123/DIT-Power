@@ -5,10 +5,12 @@ namespace App\Livewire;
 use App\Models\Post;
 use App\Models\Mention;
 use App\Events\PostCreated;
+use App\Services\ImageScanService;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class CreatePost extends Component
 {
@@ -39,18 +41,95 @@ class CreatePost extends Component
 
     public function updatedImage()
     {
-        $this->validateOnly('image');
-        $this->showImagePreview = true;
+        try {
+            $this->validateOnly('image');
+            
+            // Scan the image for security threats
+            if ($this->image) {
+                try {
+                    $scanService = new ImageScanService();
+                    $scanResult = $scanService->scanImage($this->image);
+                    
+                    if (!$scanResult['success']) {
+                        Log::warning('Image scan failed during upload', [
+                            'error' => $scanResult['message'],
+                            'file' => $this->image->getClientOriginalName(),
+                        ]);
+                        $this->addError('image', $scanResult['message']);
+                        $this->image = null;
+                        $this->showImagePreview = false;
+                        return;
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Image scanning exception', [
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString(),
+                    ]);
+                    // In case of scanning errors, allow upload but log the issue
+                    // You can change this to block uploads if needed
+                    $this->addError('image', 'Image validation encountered an error. Please try again.');
+                    $this->image = null;
+                    $this->showImagePreview = false;
+                    return;
+                }
+            }
+            
+            $this->showImagePreview = true;
+        } catch (\Exception $e) {
+            Log::error('Image upload validation failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            $this->addError('image', 'Failed to process image. Please try again.');
+            $this->image = null;
+            $this->showImagePreview = false;
+        }
     }
 
     public function createPost()
     {
-        $this->validate();
+        try {
+            $this->validate();
 
-        $imagePath = null;
-        if ($this->image) {
-            $imagePath = $this->image->store('posts', 'public');
-        }
+            // Scan image before storing
+            $imagePath = null;
+            if ($this->image) {
+                try {
+                    $scanService = new ImageScanService();
+                    $scanResult = $scanService->scanImage($this->image);
+                    
+                    if (!$scanResult['success']) {
+                        Log::warning('Image scan failed during post creation', [
+                            'error' => $scanResult['message'],
+                            'file' => $this->image->getClientOriginalName(),
+                        ]);
+                        $this->addError('image', $scanResult['message']);
+                        return;
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Image scanning exception during post creation', [
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString(),
+                    ]);
+                    $this->addError('image', 'Image validation encountered an error. Please try again.');
+                    return;
+                }
+                
+                try {
+                    $imagePath = $this->image->store('posts', 'public');
+                    if (!$imagePath) {
+                        throw new \Exception('Failed to store image');
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Image storage failed', [
+                        'error' => $e->getMessage(),
+                        'file' => $this->image->getClientOriginalName(),
+                        'trace' => $e->getTraceAsString(),
+                    ]);
+                    $this->addError('image', 'Failed to save image. Please check storage permissions.');
+                    return;
+                }
+            }
 
         $post = Post::create([
             'user_id' => Auth::id(),
