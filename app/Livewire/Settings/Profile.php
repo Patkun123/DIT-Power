@@ -45,6 +45,14 @@ class Profile extends Component
     public ?string $level_career = null;
     public ?string $years_in_dti = null;
 
+    public function updatedBirthday($value)
+    {
+        // Normalize empty string to null for date validation
+        if ($value === '' || $value === null) {
+            $this->birthday = null;
+        }
+    }
+
     public function mount(): void
     {
         $user = Auth::user()->load('information', 'staff');
@@ -88,6 +96,11 @@ class Profile extends Component
     public function updateProfileInformation(): void
     {
         $user = Auth::user();
+
+        // Normalize empty birthday string to null
+        if ($this->birthday === '') {
+            $this->birthday = null;
+        }
 
         $validated = $this->validate([
             'firstname'    => ['nullable', 'string', 'max:255'],
@@ -142,7 +155,7 @@ class Profile extends Component
             [
                 'phone_number' => $this->phone_number,
                 'gender' => $this->gender,
-                'birthday' => $this->birthday,
+                'birthday' => !empty($this->birthday) ? $this->birthday : null,
                 'address' => $this->address,
                 'civil_status' => $this->civil_status ?: 'Single',
                 'height' => $this->height,

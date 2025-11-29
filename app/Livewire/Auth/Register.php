@@ -50,6 +50,14 @@ class Register extends Component
 
     public int $step = 1;
 
+    public function updatedBirthday($value)
+    {
+        // Normalize empty string to null for date validation
+        if ($value === '' || $value === null) {
+            $this->birthday = null;
+        }
+    }
+
     public function nextStep(): void
     {
         $this->validateCurrentStep();
@@ -71,6 +79,11 @@ class Register extends Component
             if (!$user) {
                 session()->flash('error', 'You must be logged in to complete registration.');
                 return;
+            }
+
+            // Normalize empty birthday string to null
+            if ($this->birthday === '') {
+                $this->birthday = null;
             }
 
             $validated = $this->validate([
@@ -169,11 +182,16 @@ class Register extends Component
 
     protected function validateCurrentStep(): void
     {
+        // Normalize empty birthday string to null
+        if ($this->birthday === '') {
+            $this->birthday = null;
+        }
+
         if ($this->step === 1) {
             $this->validate([
                 'firstname' => ['required', 'string', 'max:255'],
                 'lastname'  => ['required', 'string', 'max:255'],
-                'birthday'            => ['nullable', 'date'],
+                'birthday'            => ['nullable', 'date', 'date_format:Y-m-d'],
                 'phone_number'        => ['nullable', 'string'],
                 'gender'              => ['nullable', 'string'],
                 'address'             => ['nullable', 'string'],
