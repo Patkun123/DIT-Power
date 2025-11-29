@@ -43,13 +43,13 @@ class CreatePost extends Component
     {
         try {
             $this->validateOnly('image');
-            
+
             // Scan the image for security threats
             if ($this->image) {
                 try {
                     $scanService = new ImageScanService();
                     $scanResult = $scanService->scanImage($this->image);
-                    
+
                     if (!$scanResult['success']) {
                         Log::warning('Image scan failed during upload', [
                             'error' => $scanResult['message'],
@@ -73,7 +73,7 @@ class CreatePost extends Component
                     return;
                 }
             }
-            
+
             $this->showImagePreview = true;
         } catch (\Exception $e) {
             Log::error('Image upload validation failed', [
@@ -97,7 +97,7 @@ class CreatePost extends Component
                 try {
                     $scanService = new ImageScanService();
                     $scanResult = $scanService->scanImage($this->image);
-                    
+
                     if (!$scanResult['success']) {
                         Log::warning('Image scan failed during post creation', [
                             'error' => $scanResult['message'],
@@ -114,19 +114,47 @@ class CreatePost extends Component
                     $this->addError('image', 'Image validation encountered an error. Please try again.');
                     return;
                 }
-                
+
                 try {
-                    $imagePath = $this->image->store('posts', 'public');
-                    if (!$imagePath) {
-                        throw new \Exception('Failed to store image');
+                    // Ensure public/posts directory exists
+                    $publicPath = public_path('posts');
+                    if (!file_exists($publicPath)) {
+                        if (!mkdir($publicPath, 0755, true)) {
+                            throw new \Exception('Failed to create posts directory. Please check permissions.');
+                        }
+                    }
+
+                    // Check if directory is writable
+                    if (!is_writable($publicPath)) {
+                        throw new \Exception('Posts directory is not writable. Please check permissions.');
+                    }
+
+                    // Generate unique filename
+                    $filename = time() . '_' . uniqid() . '.' . $this->image->getClientOriginalExtension();
+                    $imagePath = 'posts/' . $filename;
+                    $fullPath = $publicPath . DIRECTORY_SEPARATOR . $filename;
+
+                    // For Livewire uploads, get the real path and copy the file
+                    $tempPath = $this->image->getRealPath();
+                    if (!$tempPath || !file_exists($tempPath)) {
+                        throw new \Exception('Temporary file not found. Please try uploading again.');
+                    }
+
+                    if (!copy($tempPath, $fullPath)) {
+                        throw new \Exception('Failed to copy image to public directory. Please check permissions.');
                     }
                 } catch (\Exception $e) {
+                    $publicPath = $publicPath ?? 'not set';
+                    $tempPath = $tempPath ?? 'not set';
                     Log::error('Image storage failed', [
                         'error' => $e->getMessage(),
                         'file' => $this->image->getClientOriginalName(),
                         'trace' => $e->getTraceAsString(),
+                        'public_path' => $publicPath,
+                        'temp_path' => $tempPath,
+                        'public_writable' => isset($publicPath) && $publicPath !== 'not set' ? is_writable($publicPath) : 'unknown',
                     ]);
-                    $this->addError('image', 'Failed to save image. Please check storage permissions.');
+                    $this->addError('image', 'Failed to save image: ' . $e->getMessage());
                     return;
                 }
             }

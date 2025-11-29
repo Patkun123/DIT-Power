@@ -22,6 +22,7 @@ class user_information extends Model
         'civil_status',
         'career',
         'level_career',
+        'years_in_dti',
         'nature_of_work',
         'function',
         'educational_attachment_type',

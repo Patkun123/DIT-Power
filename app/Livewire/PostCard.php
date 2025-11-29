@@ -11,16 +11,23 @@ use App\Events\PostLiked;
 use App\Events\CommentLiked;
 use App\Events\CommentCreated;
 use App\Events\ReplyCreated;
+use App\Services\ImageScanService;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class PostCard extends Component
 {
+    use WithFileUploads;
+
     public Post $post;
     public bool $deleted = false;
     public bool $isEditing = false;
     public string $editContent = '';
+    public $editImage;
+    public $showEditImagePreview = false;
     public $newComment = '';
     public $newReply = [];
     public $newNestedReply = [];
@@ -407,7 +414,10 @@ class PostCard extends Component
         try {
             // Delete post image if exists
             if (!empty($this->post->image)) {
-                Storage::disk('public')->delete($this->post->image);
+                $imagePath = public_path($this->post->image);
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
             }
 
             // Cleanup related data (mentions, likes, comments, replies)
@@ -453,6 +463,8 @@ class PostCard extends Component
             return;
         }
         $this->editContent = $this->post->content ?? '';
+        $this->editImage = null;
+        $this->showEditImagePreview = false;
         $this->isEditing = true;
     }
 
@@ -460,6 +472,68 @@ class PostCard extends Component
     {
         $this->isEditing = false;
         $this->editContent = '';
+        $this->editImage = null;
+        $this->showEditImagePreview = false;
+    }
+
+    public function updatedEditImage()
+    {
+        try {
+            $this->validateOnly('editImage', [
+                'editImage' => 'nullable|image|max:8048',
+            ]);
+            
+            // Scan the image for security threats
+            if ($this->editImage) {
+                try {
+                    $scanService = new ImageScanService();
+                    $scanResult = $scanService->scanImage($this->editImage);
+                    
+                    if (!$scanResult['success']) {
+                        Log::warning('Image scan failed during edit', [
+                            'error' => $scanResult['message'],
+                            'file' => $this->editImage->getClientOriginalName(),
+                        ]);
+                        $this->addError('editImage', $scanResult['message']);
+                        $this->editImage = null;
+                        $this->showEditImagePreview = false;
+                        return;
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Image scanning exception during edit', [
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString(),
+                    ]);
+                    $this->addError('editImage', 'Image validation encountered an error. Please try again.');
+                    $this->editImage = null;
+                    $this->showEditImagePreview = false;
+                    return;
+                }
+            }
+            
+            $this->showEditImagePreview = true;
+        } catch (\Exception $e) {
+            Log::error('Image upload validation failed during edit', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            $this->addError('editImage', 'Failed to process image. Please try again.');
+            $this->editImage = null;
+            $this->showEditImagePreview = false;
+        }
+    }
+
+    public function removeEditImage(): void
+    {
+        // If there's a new image being uploaded, remove it
+        if ($this->editImage) {
+            $this->editImage = null;
+            $this->showEditImagePreview = false;
+        } else {
+            // If there's an existing image, mark it for deletion
+            $this->post->image = null;
+            $this->post->save();
+        }
     }
 
     public function updatePost(): void
@@ -471,7 +545,70 @@ class PostCard extends Component
 
         $this->validate([
             'editContent' => 'required|string|max:1000',
+            'editImage' => 'nullable|image|max:8048',
         ]);
+
+        // Handle image upload if new image is provided
+        if ($this->editImage) {
+            try {
+                // Delete old image if exists
+                if (!empty($this->post->image)) {
+                    $oldImagePath = public_path($this->post->image);
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
+                }
+
+                // Ensure public/posts directory exists
+                $publicPath = public_path('posts');
+                if (!file_exists($publicPath)) {
+                    if (!mkdir($publicPath, 0755, true)) {
+                        throw new \Exception('Failed to create posts directory. Please check permissions.');
+                    }
+                }
+                
+                // Check if directory is writable
+                if (!is_writable($publicPath)) {
+                    throw new \Exception('Posts directory is not writable. Please check permissions.');
+                }
+                
+                // Generate unique filename
+                $filename = time() . '_' . uniqid() . '.' . $this->editImage->getClientOriginalExtension();
+                $imagePath = 'posts/' . $filename;
+                $fullPath = $publicPath . DIRECTORY_SEPARATOR . $filename;
+                
+                // For Livewire uploads, get the real path and copy the file
+                $tempPath = $this->editImage->getRealPath();
+                if (!$tempPath || !file_exists($tempPath)) {
+                    throw new \Exception('Temporary file not found. Please try uploading again.');
+                }
+                
+                if (!copy($tempPath, $fullPath)) {
+                    throw new \Exception('Failed to copy image to public directory. Please check permissions.');
+                }
+                
+                // Update post image
+                $this->post->image = $imagePath;
+            } catch (\Exception $e) {
+                Log::error('Image storage failed during post update', [
+                    'error' => $e->getMessage(),
+                    'file' => $this->editImage->getClientOriginalName(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
+                $this->addError('editImage', 'Failed to save image. Please check storage permissions.');
+                return;
+            }
+        }
+        
+        // Handle image removal if image was set to null
+        $originalImage = $this->post->getOriginal('image');
+        if (empty($this->post->image) && !empty($originalImage) && !$this->editImage) {
+            // Delete the old image file
+            $oldImagePath = public_path($originalImage);
+            if (file_exists($oldImagePath)) {
+                unlink($oldImagePath);
+            }
+        }
 
         // Update content
         $this->post->content = $this->editContent;
@@ -482,6 +619,8 @@ class PostCard extends Component
         $this->processMentions($this->editContent, $this->post, 'post');
 
         $this->isEditing = false;
+        $this->editImage = null;
+        $this->showEditImagePreview = false;
         $this->dispatch('postUpdated', id: $this->post->id);
     }
 }

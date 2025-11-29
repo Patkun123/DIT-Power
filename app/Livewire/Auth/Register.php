@@ -29,22 +29,24 @@ class Register extends Component
     public string $educational_attachment = '';
 
     public ?string $phone_number = null;
-    public ?string $gender = null;
+    public ?string $gender = '';
     public ?string $birthday = null;
     public ?string $address = null;
     public ?string $height = null;
     public ?string $weight = null;
-    public ?string $activity_level = null;
-    public ?string $health_goals = null;
-    public ?string $dietary_preferences = null;
+    public ?string $activity_level = '';
+    public ?string $health_goals = '';
+    public ?string $dietary_preferences = '';
 
     public ?string $staff_id = null;
 
-    public ?string $office = null;
+    public ?string $office = '';
 
     public ?string $position = null;
 
     public ?string $department = null;
+
+    public ?string $years_in_dti = null;
 
     public int $step = 1;
 
@@ -91,10 +93,12 @@ class Register extends Component
                 'civil_status'          => ['nullable', 'string'],
                 'career'                => ['nullable', 'string'],
                 'level_career'          => ['nullable', 'string'],
+                'years_in_dti'          => ['nullable', 'string'],
                 'nature_of_work'        => ['nullable', 'string'],
                 'function'              => ['nullable', 'string'],
                 'educational_attachment_type' => ['nullable', 'string'],
                 'educational_attachment'      => ['nullable', 'string'],
+                'years_in_dti'          => ['nullable', 'string'],
             ]);
 
             // If password is filled in, hash it before saving
@@ -112,22 +116,23 @@ class Register extends Component
             user_information::updateOrCreate(
                 ['user_id' => $user->id],
                 [
-                    'phone_number'        => $this->phone_number,
-                    'gender'              => $this->gender,
-                    'birthday'            => $this->birthday,
-                    'address'             => $this->address,
-                    'height'              => $this->height,
-                    'weight'              => $this->weight,
-                    'activity_level'      => $this->activity_level,
-                    'health_goals'        => $this->health_goals,
-                    'dietary_preferences' => $this->dietary_preferences,
-                    'civil_status'        => $this->civil_status ?: 'Single',
-                    'career'              => $this->career,
-                    'level_career'        => $this->level_career ?: '1st',
-                    'nature_of_work'      => $this->nature_of_work ?: '',
-                    'function'            => $this->function ?: '',
-                    'educational_attachment_type' => $this->educational_attachment_type ?: '',
-                    'educational_attachment'      => $this->educational_attachment ?: '',
+                    'phone_number'        => !empty($this->phone_number) ? $this->phone_number : null,
+                    'gender'              => !empty($this->gender) ? $this->gender : null,
+                    'birthday'            => !empty($this->birthday) ? $this->birthday : null,
+                    'address'             => !empty($this->address) ? $this->address : null,
+                    'height'              => !empty($this->height) ? $this->height : null,
+                    'weight'              => !empty($this->weight) ? $this->weight : null,
+                    'activity_level'      => !empty($this->activity_level) ? $this->activity_level : null,
+                    'health_goals'        => !empty($this->health_goals) ? $this->health_goals : null,
+                    'dietary_preferences' => !empty($this->dietary_preferences) ? $this->dietary_preferences : null,
+                    'civil_status'        => !empty($this->civil_status) ? $this->civil_status : 'Single',
+                    'career'              => !empty($this->career) ? $this->career : null,
+                    'level_career'        => !empty($this->level_career) ? $this->level_career : '1st',
+                    'nature_of_work'      => !empty($this->nature_of_work) ? $this->nature_of_work : null,
+                    'function'            => !empty($this->function) ? $this->function : null,
+                    'educational_attachment_type' => !empty($this->educational_attachment_type) ? $this->educational_attachment_type : null,
+                    'educational_attachment'      => !empty($this->educational_attachment) ? $this->educational_attachment : null,
+                    'years_in_dti'        => !empty($this->years_in_dti) ? $this->years_in_dti : null,
                 ]
             );
 
@@ -178,17 +183,22 @@ class Register extends Component
 
         if ($this->step === 2) {
             $this->validate([
-                'career'              => ['nullable', 'string'],
+                'staff_id'            => ['required', 'string', 'max:255'],
+                'nature_of_work'      => ['nullable', 'string'],
                 'level_career'        => ['nullable', 'string'],
-                'height'              => ['nullable', 'string'],
-                'weight'              => ['nullable', 'string'],
-                'activity_level'      => ['nullable', 'string'],
-                'health_goals'        => ['nullable', 'string'],
+                'years_in_dti'        => ['nullable', 'string'],
+                'office'              => ['nullable', 'string'],
+                'position'            => ['nullable', 'string'],
+                'department'          => ['nullable', 'string'],
             ]);
         }
 
         if ($this->step === 3) {
             $this->validate([
+                'height'              => ['nullable', 'string'],
+                'weight'              => ['nullable', 'string'],
+                'activity_level'      => ['nullable', 'string'],
+                'health_goals'        => ['nullable', 'string'],
                 'dietary_preferences' => ['nullable', 'string'],
             ]);
         }

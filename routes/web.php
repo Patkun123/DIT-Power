@@ -22,7 +22,6 @@ use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use Illuminate\Support\Facades\Route;
 use App\Notifications\RealtimeTestNotification;
-use App\Http\Livewire\FinanceDashboard;
 use App\Http\Controllers\ScrambleWordController;
 use App\Http\Controllers\SocialController;
 

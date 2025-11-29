@@ -52,7 +52,18 @@ class SocialController extends Controller
                 return back()->withErrors(['image' => $scanResult['message']])->withInput();
             }
             
-            $imagePath = $imageFile->store('posts', 'public');
+            // Ensure public/posts directory exists
+            $publicPath = public_path('posts');
+            if (!file_exists($publicPath)) {
+                mkdir($publicPath, 0755, true);
+            }
+            
+            // Generate unique filename
+            $filename = time() . '_' . uniqid() . '.' . $imageFile->getClientOriginalExtension();
+            $imagePath = 'posts/' . $filename;
+            
+            // Move file to public/posts directory
+            $imageFile->move($publicPath, $filename);
         }
 
         $post = Post::create([
@@ -92,7 +103,10 @@ class SocialController extends Controller
         }
 
         if (!empty($post->image)) {
-            Storage::disk('public')->delete($post->image);
+            $imagePath = public_path($post->image);
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
         }
 
         Mention::where('post_id', $post->id)->delete();

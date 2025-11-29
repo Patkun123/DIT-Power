@@ -60,6 +60,56 @@
                           rows="4"
                           maxlength="1000"
                           placeholder="Update your post..."></textarea>
+                
+                <!-- Current Image Display -->
+                @if($post->image && !$showEditImagePreview && !$editImage)
+                    <div class="relative mt-2">
+                        <img src="{{ asset($post->image) }}" 
+                             alt="Current post image" 
+                             class="w-full max-h-96 object-cover rounded-lg">
+                        <button type="button" wire:click="removeEditImage" 
+                                class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                @endif
+
+                <!-- New Image Preview -->
+                @if($showEditImagePreview && $editImage)
+                    <div class="relative mt-2">
+                        <img src="{{ $editImage->temporaryUrl() }}" 
+                             alt="New image preview" 
+                             class="w-full max-h-96 object-cover rounded-lg">
+                        <button wire:click="removeEditImage" 
+                                class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                @endif
+
+                <!-- Image Upload Input -->
+                <div class="mt-2">
+                    <label class="block">
+                        <input type="file" 
+                               wire:model="editImage" 
+                               accept="image/*" 
+                               class="hidden">
+                        <span class="inline-flex items-center px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            {{ $post->image ? 'Change Image' : 'Add Image' }}
+                        </span>
+                    </label>
+                    @error('editImage') 
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <div class="flex items-center gap-2 flex-wrap">
                     <button wire:click="updatePost" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors">Save</button>
                     <button wire:click="cancelEdit" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">Cancel</button>
@@ -69,7 +119,7 @@
             <p class="text-gray-900 dark:text-white whitespace-pre-wrap leading-relaxed">{!! $this->parseMentions($post->content) !!}</p>
             @if($post->image)
                 <div class="mt-3">
-                    <img src="{{ asset('storage/' . $post->image) }}"
+                    <img src="{{ asset($post->image) }}"
                          alt="Post image"
                          class="w-full max-h-96 object-cover rounded-lg cursor-pointer hover:opacity-95 transition-opacity">
                 </div>
