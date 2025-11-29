@@ -28,12 +28,11 @@ class CreatePost extends Component
     public $currentMentionField = '';
 
     protected $rules = [
-        'content' => 'required|string|max:1000',
+        'content' => 'nullable|string|max:1000',
         'image' => 'nullable|image|max:8048',
     ];
 
     protected $messages = [
-        'content.required' => 'Post content is required.',
         'content.max' => 'Post content cannot exceed 1000 characters.',
         'image.image' => 'File must be an image.',
         'image.max' => 'Image size cannot exceed 2MB.',
@@ -89,6 +88,12 @@ class CreatePost extends Component
     public function createPost()
     {
         try {
+            // Custom validation: at least content or image must be provided
+            if (empty(trim($this->content)) && !$this->image) {
+                $this->addError('content', 'Please provide either post content or an image.');
+                return;
+            }
+
             $this->validate();
 
             // Scan image before storing
@@ -134,25 +139,32 @@ class CreatePost extends Component
                     $imagePath = 'posts/' . $filename;
                     $fullPath = $publicPath . DIRECTORY_SEPARATOR . $filename;
 
-                    // For Livewire uploads, get the real path and copy the file
-                    $tempPath = $this->image->getRealPath();
-                    if (!$tempPath || !file_exists($tempPath)) {
-                        throw new \Exception('Temporary file not found. Please try uploading again.');
-                    }
-
-                    if (!copy($tempPath, $fullPath)) {
-                        throw new \Exception('Failed to copy image to public directory. Please check permissions.');
+                    // Use Livewire's storePubliclyAs to store in storage first (more reliable)
+                    // Then copy to public directory for direct access
+                    $storedPath = $this->image->storePubliclyAs('posts', $filename, 'public');
+                    
+                    if ($storedPath) {
+                        // Copy from storage to public directory
+                        $storagePath = storage_path('app/public/posts/' . $filename);
+                        if (file_exists($storagePath)) {
+                            if (!copy($storagePath, $fullPath)) {
+                                Log::warning('Could not copy from storage to public, trying direct method');
+                                // Fallback to direct method
+                                $this->saveImageDirectly($fullPath);
+                            }
+                        } else {
+                            // Storage path doesn't exist, try direct method
+                            $this->saveImageDirectly($fullPath);
+                        }
+                    } else {
+                        // storePubliclyAs failed, try direct method
+                        $this->saveImageDirectly($fullPath);
                     }
                 } catch (\Exception $e) {
-                    $publicPath = $publicPath ?? 'not set';
-                    $tempPath = $tempPath ?? 'not set';
                     Log::error('Image storage failed', [
                         'error' => $e->getMessage(),
                         'file' => $this->image->getClientOriginalName(),
                         'trace' => $e->getTraceAsString(),
-                        'public_path' => $publicPath,
-                        'temp_path' => $tempPath,
-                        'public_writable' => isset($publicPath) && $publicPath !== 'not set' ? is_writable($publicPath) : 'unknown',
                     ]);
                     $this->addError('image', 'Failed to save image: ' . $e->getMessage());
                     return;
@@ -161,12 +173,14 @@ class CreatePost extends Component
 
             $post = Post::create([
                 'user_id' => Auth::id(),
-                'content' => $this->content,
+                'content' => trim($this->content) ?: null,
                 'image' => $imagePath,
             ]);
 
-            // Process mentions in post content
-            $this->processMentions($this->content, $post, 'post');
+            // Process mentions in post content (only if content exists)
+            if (!empty(trim($this->content))) {
+                $this->processMentions($this->content, $post, 'post');
+            }
 
             // Dispatch event for real-time updates
             $this->dispatch('postCreated');
@@ -286,6 +300,32 @@ class CreatePost extends Component
                         'mention_id' => $post->id,
                     ],
                 ]);
+            }
+        }
+    }
+
+    private function saveImageDirectly($fullPath)
+    {
+        // Try multiple methods to get the file content
+        $tempPath = $this->image->getRealPath();
+        
+        if (!$tempPath || !file_exists($tempPath)) {
+            $tempPath = $this->image->getPathname();
+        }
+        
+        if (!$tempPath || !file_exists($tempPath)) {
+            $tempPath = method_exists($this->image, 'path') ? $this->image->path() : null;
+        }
+        
+        if ($tempPath && file_exists($tempPath)) {
+            if (!copy($tempPath, $fullPath)) {
+                throw new \Exception('Failed to copy image to public directory.');
+            }
+        } else {
+            // Last resort: read content directly
+            $fileContent = file_get_contents($this->image->getRealPath() ?: $this->image->path());
+            if ($fileContent === false || file_put_contents($fullPath, $fileContent) === false) {
+                throw new \Exception('Failed to save image file.');
             }
         }
     }
