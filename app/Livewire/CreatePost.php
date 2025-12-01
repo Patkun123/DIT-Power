@@ -18,6 +18,7 @@ class CreatePost extends Component
     public $content = '';
     public $image;
     public $showImagePreview = false;
+    public $showModal = false;
 
     // Mention functionality state
     public $mentionQuery = '';
@@ -110,8 +111,9 @@ class CreatePost extends Component
             // Dispatch Livewire event
             $this->dispatch('postCreated');
 
-            // Reset form
+            // Reset form and close modal
             $this->reset(['content', 'image', 'showImagePreview']);
+            $this->showModal = false;
 
             session()->flash('message', 'Post created successfully!');
 
@@ -259,6 +261,17 @@ class CreatePost extends Component
     {
         $this->image = null;
         $this->showImagePreview = false;
+    }
+
+    public function openModal()
+    {
+        $this->showModal = true;
+    }
+
+    public function closeModal()
+    {
+        $this->showModal = false;
+        $this->reset(['content', 'image', 'showImagePreview', 'mentionQuery', 'showMentionSuggestions']);
     }
 
     public function render()
