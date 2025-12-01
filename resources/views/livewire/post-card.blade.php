@@ -1,3 +1,7 @@
+<div>
+@php
+    $canManagePost = auth()->check() && (auth()->id() === $post->user_id || auth()->user()->role === 'admin');
+@endphp
 @if(!$deleted)
 <div class="p-4">
     {{-- Post Header --}}
@@ -39,7 +43,7 @@
                 </div>
             </div>
         </div>
-        @if($post->user_id === auth()->id())
+        @if($canManagePost)
             <div class="relative" x-data="{ open: false }">
                 <button @click="open = !open" 
                         class="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500 dark:text-gray-400">
@@ -57,9 +61,9 @@
                         Edit Post
                     </button>
                     <button wire:click="deletePost" 
-                            wire:confirm="Are you sure you want to delete this post?"
                             @click="open = false"
-                            class="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            wire:loading.attr="disabled"
+                            class="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-60">
                         Delete Post
                     </button>
                 </div>
@@ -371,3 +375,4 @@
     @endif
 </div>
 @endif
+</div>

@@ -76,7 +76,7 @@ class SocialController extends Controller
 
     public function deletePost(Post $post)
     {
-        if (Auth::id() !== $post->user_id) {
+        if (!$this->userCanManagePost($post)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -354,5 +354,16 @@ class SocialController extends Controller
                 }
             }
         }
+    }
+
+    private function userCanManagePost(Post $post): bool
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return false;
+        }
+
+        return $user->id === $post->user_id || $user->role === 'admin';
     }
 }

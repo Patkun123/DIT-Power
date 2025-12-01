@@ -17,6 +17,7 @@ class SocialFeed extends Component
         'postLiked' => '$refresh',
         'commentCreated' => '$refresh',
         'replyCreated' => '$refresh',
+        'postDeleted' => '$refresh',
     ];
 
     public function loadMore()

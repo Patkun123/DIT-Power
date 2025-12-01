@@ -368,6 +368,17 @@ class PostCard extends Component
         }
     }
 
+    private function userCanManagePost(?User $user = null): bool
+    {
+        $user ??= Auth::user();
+
+        if (!$user) {
+            return false;
+        }
+
+        return $user->id === $this->post->user_id || $user->role === 'admin';
+    }
+
     public function parseMentions($content)
     {
         // Parse mentions and convert them to clickable links with styling
@@ -398,8 +409,7 @@ class PostCard extends Component
     public function deletePost(): void
     {
         // Authorization: owner or admin only
-        $user = Auth::user();
-        if (!$user || ($user->id !== $this->post->user_id)) {
+        if (!$this->userCanManagePost()) {
             $this->dispatch('deleteError', message: 'You are not authorized to delete this post.');
             return;
         }
@@ -448,8 +458,7 @@ class PostCard extends Component
 
     public function startEdit(): void
     {
-        $user = Auth::user();
-        if (!$user || ($user->id !== $this->post->user_id)) {
+        if (!$this->userCanManagePost()) {
             return;
         }
         $this->editContent = $this->post->content ?? '';
@@ -464,8 +473,7 @@ class PostCard extends Component
 
     public function updatePost(): void
     {
-        $user = Auth::user();
-        if (!$user || ($user->id !== $this->post->user_id)) {
+        if (!$this->userCanManagePost()) {
             return;
         }
 
