@@ -44,7 +44,21 @@
             </div>
         </div>
         @if($canManagePost)
-            <div class="relative" x-data="{ open: false }">
+            <div class="relative" x-data="{
+                open: false,
+                showDeleteModal: false,
+                openDeleteModal() {
+                    this.showDeleteModal = true;
+                    this.open = false;
+                },
+                closeDeleteModal() {
+                    this.showDeleteModal = false;
+                },
+                confirmDelete() {
+                    $wire.deletePost();
+                    this.showDeleteModal = false;
+                }
+            }">
                 <button @click="open = !open" 
                         class="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500 dark:text-gray-400">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -60,12 +74,48 @@
                             class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                         Edit Post
                     </button>
-                    <button wire:click="deletePost" 
-                            @click="open = false"
-                            wire:loading.attr="disabled"
+                    <button type="button"
+                            @click="openDeleteModal()"
                             class="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-60">
                         Delete Post
                     </button>
+                </div>
+
+                {{-- Delete Confirmation Modal --}}
+                <div x-cloak
+                     x-show="showDeleteModal"
+                     x-transition.opacity
+                     class="fixed inset-0 z-50 flex items-center justify-center px-4">
+                    <div class="absolute inset-0 bg-black bg-opacity-40" @click="closeDeleteModal()"></div>
+                    <div x-show="showDeleteModal"
+                         x-transition.scale
+                         class="relative w-full max-w-sm bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-6 space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 005.656 0M9 10h.01M15 10h.01M7 21h10a2 2 0 002-2V7.414a2 2 0 00-.586-1.414l-3.414-3.414A2 2 0 0013.586 2H7a2 2 0 00-2 2v15a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Delete post?</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">This action cannot be undone. The post and all related comments will be permanently removed.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-end space-x-3">
+                            <button type="button"
+                                    @click="closeDeleteModal()"
+                                    class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+                                Cancel
+                            </button>
+                            <button type="button"
+                                    @click="confirmDelete()"
+                                    wire:loading.attr="disabled"
+                                    wire:target="deletePost"
+                                    class="px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg disabled:opacity-60">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         @endif
