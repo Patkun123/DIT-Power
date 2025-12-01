@@ -159,7 +159,7 @@
 
         <!-- Step Progress Tracker -->
         <ol class="grid grid-cols-2 sm:grid-cols-1 mt-8 ml-3 sm:mt-10 lg:grid-cols-4 gap-6 w-full">
-            @foreach ([1 => 'Account', 2 => 'Profile', 3 => 'Preferences', 4 => 'Password'] as $i => $label)
+            @foreach ([1 => 'Account', 2 => 'HR Profile', 3 => 'Health Profile', 4 => 'Password'] as $i => $label)
             <li class="flex items-center space-x-2.5 rtl:space-x-reverse text-sm
                     @if($step === $i) text-primary-600 dark:text-primary-500
                     @elseif($step > $i)  text-primary-700 dark:text-primary-400
@@ -187,9 +187,9 @@
                 <span>
                     <h3 class="font-medium leading-tight">{{ $label }}</h3>
                     <p class="text-xs">
-                        @if($i === 1) Start your account setup
-                        @elseif($i === 2) Complete your Health profile
-                        @elseif($i === 3) Choose your preferences
+                        @if($i === 1) Personal Details
+                        @elseif($i === 2) Career Information
+                        @elseif($i === 3) Health Profile
                         @elseif($i === 4) Secure with a password
                         @endif
                     </p>
@@ -201,6 +201,19 @@
         <!-- Form Card -->
         <div class="dark:bg-gray-900 bg-gray-100 p-6 space-y-10">
             <x-auth-session-status class="text-center" :status="session('status')" />
+
+            @if (session()->has('success'))
+                <div class="p-4 mb-4 text-sm text-green-800 bg-green-50 dark:bg-green-900/20 dark:text-green-200 border border-green-200 dark:border-green-800 rounded-lg">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session()->has('error'))
+                <div class="p-4 mb-4 text-sm text-red-800 bg-red-50 dark:bg-red-900/20 dark:text-red-200 border border-red-200 dark:border-red-800 rounded-lg">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             <form wire:submit.prevent="{{ $step === 4 ? 'register' : 'nextStep' }}" class="space-y-6">
                 @if ($step === 1)
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -230,17 +243,46 @@
                 </div>
                 @endif
                 @if ($step === 2)
+                <!-- HR Profile - Career Information -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <flux:select wire:model.defer="career" :label="__('Select Career or Non-Career')">
+                    <flux:input
+                        type="text"
+                        wire:model.defer="staff_id"
+                        icon="identification"
+                        :label="__('DTI ID Number')"
+                        placeholder="Enter your DTI ID"
+                        required />
+                    <flux:select wire:model.defer="career" :label="__('Nature of Appointment')" required>
                         <flux:select.option>Career</flux:select.option>
                         <flux:select.option>Non-Career</flux:select.option>
                     </flux:select>
-                    <flux:select wire:model.defer="level_career" :label="__('Select Career Level')">
+                    <flux:select wire:model.defer="level_career" :label="__('Level')">
                         <flux:select.option>1st</flux:select.option>
                         <flux:select.option>2nd</flux:select.option>
                         <flux:select.option>3rd</flux:select.option>
                     </flux:select>
+                    <flux:input
+                        type="text"
+                        wire:model.defer="years_in_dti"
+                        icon="calendar"
+                        :label="__('Years in DTI')"
+                        placeholder="e.g., 5 years"
+                    />
+                    <flux:select wire:model.defer="office" :label="__('Office')" placeholder="Choose Office..." required>
+                        <flux:select.option>General Santos City</flux:select.option>
+                        <flux:select.option>Sarangani Province</flux:select.option>
+                        <flux:select.option>South Cotabato</flux:select.option>
+                        <flux:select.option>Regional Office</flux:select.option>
+                        <flux:select.option>Sultan Kudarat</flux:select.option>
+                        <flux:select.option>Cotabato Province</flux:select.option>
+                    </flux:select>
+                    <flux:input wire:model.defer="position" icon="user-circle" :label="__('Position')" placeholder="Enter your Position" required />
+                    <flux:input wire:model.defer="department" icon="user-circle" :label="__('Department')" placeholder="Enter your Department" required />
                 </div>
+                @endif
+
+                @if ($step === 3)
+                <!-- Health Profile -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:input type="number" icon="circle-stack" wire:model.defer="height" :label="__('Height')" placeholder="152 (cm)" required />
                     <flux:input wire:model.defer="weight" icon="circle-stack" :label="__('Weight (kg)')" placeholder="52 (kg)" required />
@@ -251,18 +293,15 @@
                         <flux:select.option>Very Active</flux:select.option>
                         <flux:select.option>Extra Active</flux:select.option>
                     </flux:select>
-                    <flux:select wire:model.defer="health_goals" placeholder="Select Health Goals" :label="__('Health Goals')">
+                    <flux:select wire:model.defer="health_goals" placeholder="Select Health Goals" :label="__('Health Goal')">
                         <flux:select.option>Weight Loss</flux:select.option>
                         <flux:select.option>Muscle Gain</flux:select.option>
                         <flux:select.option>Maintenance</flux:select.option>
                         <flux:select.option>General Fitness</flux:select.option>
                     </flux:select>
                 </div>
-                @endif
-
-                @if ($step === 3)
-                <div class="grid grid-cols-1 gap-6">
-                    <flux:radio.group class="grid grid-cols-2 gap-5" wire:model.defer="dietary_preferences" :label="__('Dietary Preferences')">
+                <div class="grid grid-cols-1 gap-6 mt-6">
+                    <flux:radio.group class="grid grid-cols-2 gap-5" wire:model.defer="dietary_preferences" :label="__('Preferences')">
                         <flux:radio
                             value="Vegetarian"
                             label="Vegetarian"
@@ -293,32 +332,30 @@
                 @endif
 
                 @if ($step === 4)
+                <!-- Password -->
+                @php
+                    $userHasPassword = auth()->check() && !empty(auth()->user()->password);
+                @endphp
+                @if($userHasPassword)
+                <div class="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                    <p class="text-sm text-blue-800 dark:text-blue-200">
+                        <strong>Note:</strong> You already have a password. Leave these fields blank to keep your current password, or enter a new password to change it.
+                    </p>
+                </div>
+                @endif
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <flux:input
-                        type="number"
-                        wire:model.defer="staff_id"
-                        :label="__('DTI ID')"
-                        placeholder="Enter your DTI ID" />
-                    <flux:input wire:model.defer="position" icon="user-circle" :label="__('Position')" placeholder="Enter your Position" required />
-                    <flux:input wire:model.defer="department" icon="user-circle" :label="__('Department')" placeholder="Enter your Department" required />
-                    <flux:select wire:model.defer="office" :label="__('Choose Office')" placeholder="Choose Office...">
-                        <flux:select.option>General Santos City</flux:select.option>
-                        <flux:select.option>Sarangani Province</flux:select.option>
-                        <flux:select.option>South Cotabato</flux:select.option>
-                        <flux:select.option>Regional Office</flux:select.option>
-                        <flux:select.option>Sultan Kudarat</flux:select.option>
-                        <flux:select.option>Cotabato Province</flux:select.option>
-                    </flux:select>
                     <flux:input
                         type="password"
                         wire:model.defer="password"
-                        :label="__('New Password')"
-                        placeholder="Enter new password" />
+                        :label="__($userHasPassword ? 'Password (Optional)' : 'Password')"
+                        placeholder="Enter password"
+                        :required="!$userHasPassword" />
                     <flux:input
                         type="password"
                         wire:model.defer="password_confirmation"
-                        :label="__('Confirm Password')"
-                        placeholder="Re-enter password" />
+                        :label="__($userHasPassword ? 'Confirm Password (Optional)' : 'Confirm Password')"
+                        placeholder="Re-enter password"
+                        :required="!$userHasPassword" />
                 </div>
                 @endif
 
