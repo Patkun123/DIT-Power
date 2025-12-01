@@ -9,6 +9,7 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class CreatePost extends Component
 {
@@ -27,47 +28,111 @@ class CreatePost extends Component
 
     protected $rules = [
         'content' => 'required|string|max:1000',
-        'image' => 'nullable|image|max:8048',
+        'image' => 'nullable|image|max:8192',
     ];
 
     protected $messages = [
         'content.required' => 'Post content is required.',
         'content.max' => 'Post content cannot exceed 1000 characters.',
         'image.image' => 'File must be an image.',
-        'image.max' => 'Image size cannot exceed 2MB.',
+        'image.max' => 'Image size cannot exceed 8MB.',
     ];
+
+    public function hydrate()
+    {
+        // Verify image is still valid after component rehydration
+        if ($this->image && !$this->image->isValid()) {
+            $this->image = null;
+            $this->showImagePreview = false;
+        }
+    }
 
     public function updatedImage()
     {
-        $this->validateOnly('image');
-        $this->showImagePreview = true;
+        try {
+            $this->validateOnly('image');
+            $this->showImagePreview = true;
+        } catch (\Exception $e) {
+            Log::error('Image validation failed', [
+                'error' => $e->getMessage()
+            ]);
+            $this->addError('image', 'Failed to upload image: ' . $e->getMessage());
+            $this->image = null;
+            $this->showImagePreview = false;
+        }
     }
 
     public function createPost()
     {
-        $this->validate();
+        try {
+            Log::info('Starting post creation', [
+                'user_id' => Auth::id(),
+                'has_image' => !is_null($this->image)
+            ]);
 
-        $imagePath = null;
-        if ($this->image) {
-            $imagePath = $this->image->store('posts', 'public');
+            $this->validate();
+
+            $imagePath = null;
+            if ($this->image) {
+                Log::info('Attempting to store image', [
+                    'original_name' => $this->image->getClientOriginalName(),
+                    'size' => $this->image->getSize(),
+                    'mime' => $this->image->getMimeType()
+                ]);
+
+                $imagePath = $this->image->store('posts', 'public');
+
+                // Verify the file was actually stored
+                if (!Storage::disk('public')->exists($imagePath)) {
+                    throw new \Exception('Image storage verification failed');
+                }
+
+                Log::info('Image stored successfully', ['path' => $imagePath]);
+            }
+
+            // Sanitize content
+            $sanitizedContent = strip_tags($this->content);
+
+            $post = Post::create([
+                'user_id' => Auth::id(),
+                'content' => $sanitizedContent,
+                'image' => $imagePath,
+            ]);
+
+            Log::info('Post created successfully', ['post_id' => $post->id]);
+
+            // Process mentions in post content
+            $this->processMentions($sanitizedContent, $post, 'post');
+
+            // Broadcast event for real-time updates
+            broadcast(new PostCreated($post))->toOthers();
+
+            // Dispatch Livewire event
+            $this->dispatch('postCreated');
+
+            // Reset form
+            $this->reset(['content', 'image', 'showImagePreview']);
+
+            session()->flash('message', 'Post created successfully!');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::warning('Validation failed', ['errors' => $e->errors()]);
+            throw $e; // Re-throw to show validation errors
+
+        } catch (\Exception $e) {
+            Log::error('Post creation failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            // Clean up uploaded image if post creation failed
+            if (isset($imagePath) && $imagePath) {
+                Storage::disk('public')->delete($imagePath);
+            }
+
+            session()->flash('error', 'Failed to create post. Please try again.');
+            $this->addError('general', 'An error occurred: ' . $e->getMessage());
         }
-
-        $post = Post::create([
-            'user_id' => Auth::id(),
-            'content' => $this->content,
-            'image' => $imagePath,
-        ]);
-
-        // Process mentions in post content
-        $this->processMentions($this->content, $post, 'post');
-
-        // Dispatch event for real-time updates
-        $this->dispatch('postCreated');
-
-        // Reset form
-        $this->reset(['content', 'image', 'showImagePreview']);
-
-        session()->flash('message', 'Post created successfully!');
     }
 
     // Mention functionality methods
@@ -84,7 +149,8 @@ class CreatePost extends Component
         $this->currentMentionField = $field;
         $this->selectedMentionIndex = -1;
 
-        $this->mentionSuggestions = \App\Models\User::where('id', '!=', Auth::id())
+        $this->mentionSuggestions = \App\Models\User::with('staff') // Eager load to prevent N+1
+            ->where('id', '!=', Auth::id())
             ->when($mentionQuery !== '', function ($q) use ($mentionQuery) {
                 $q->where(function ($q2) use ($mentionQuery) {
                     $q2->where('firstname', 'like', "%{$mentionQuery}%")
@@ -122,7 +188,12 @@ class CreatePost extends Component
         $mentionText = "@{$user->firstname} {$user->lastname}";
 
         if ($field === 'post') {
-            $this->content = str_replace("@{$this->mentionQuery}", $mentionText, $this->content);
+            // Replace the last @mention query with the selected user
+            $pos = strrpos($this->content, '@');
+            if ($pos !== false) {
+                $before = substr($this->content, 0, $pos);
+                $this->content = $before . $mentionText . ' ';
+            }
         }
 
         $this->showMentionSuggestions = false;
@@ -139,15 +210,23 @@ class CreatePost extends Component
 
     private function processMentions($content, Post $post, string $type)
     {
-        // Extract mentions from content using regex (First Last)
-        preg_match_all('/@(\w+\s+\w+)/', $content, $matches);
+        // Extract mentions from content - matches @Firstname Lastname format
+        preg_match_all('/@([A-Za-z]+\s+[A-Za-z]+)/', $content, $matches);
         if (empty($matches[1])) {
             return;
         }
 
+        $processedUsers = []; // Prevent duplicate mentions
+
         foreach ($matches[1] as $mention) {
-            $user = \App\Models\User::whereRaw(\App\Models\User::getFullNameConcatSql() . " = ?", [$mention])->first();
-            if ($user && $user->id !== Auth::id()) {
+            $user = \App\Models\User::whereRaw(
+                \App\Models\User::getFullNameConcatSql() . " = ?",
+                [trim($mention)]
+            )->first();
+
+            if ($user && $user->id !== Auth::id() && !in_array($user->id, $processedUsers)) {
+                $processedUsers[] = $user->id;
+
                 // Create mention record
                 Mention::create([
                     'user_id' => $user->id,
