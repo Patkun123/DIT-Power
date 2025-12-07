@@ -21,6 +21,30 @@
                 overflow-x: hidden;
                 scroll-behavior: smooth;
             }
+            .minimized-video {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 320px;
+                height: 180px;
+                z-index: 9999;
+                background: #000;
+                border-radius: 12px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                overflow: hidden;
+                transition: all 0.3s ease;
+            }
+            .minimized-video:hover {
+                box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+            }
+            @media (max-width: 640px) {
+                .minimized-video {
+                    width: 240px;
+                    height: 135px;
+                    bottom: 10px;
+                    right: 10px;
+                }
+            }
         </style>
     </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen w-full">
@@ -45,97 +69,8 @@
                 </div>
                 <!-- Replace the carousel section in your Blade file with this -->
                 <div
-                    x-data="{
-                        slides: [
-                            { type: 'video', src: 'https://www.youtube.com/embed/jFpSQvYEsn0?autoplay=1&mute=1&enablejsapi=1&vq=hd1080', videoId: 'jFpSQvYEsn0' },
-                            { type: 'image', src: '/Images/pic/1.jpg' },
-                            { type: 'image', src: '/Images/pic/2.jpg' },
-                            { type: 'image', src: '/Images/pic/3.jpg' },
-                            { type: 'image', src: '/Images/pic/4.jpg' },
-                        ],
-                        current: 0,
-                        interval: null,
-                        player: null,
-                        ytReady: false,
-
-                        init() {
-                            this.setupYouTubeAPI();
-                            this.setupAutoSlide();
-                        },
-
-                        setupYouTubeAPI() {
-                            if (!window.YT) {
-                                window.onYouTubeIframeAPIReady = () => {
-                                    this.ytReady = true;
-                                    this.initYouTubePlayer();
-                                };
-                                const tag = document.createElement('script');
-                                tag.src = 'https://www.youtube.com/iframe_api';
-                                const firstScriptTag = document.getElementsByTagName('script')[0];
-                                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-                            } else {
-                                this.ytReady = true;
-                                this.$nextTick(() => this.initYouTubePlayer());
-                            }
-                        },
-
-                        initYouTubePlayer() {
-                            this.$nextTick(() => {
-                                const iframe = this.$el.querySelector('iframe');
-                                if (iframe && this.ytReady && this.slides[this.current].type === 'video') {
-                                    this.player = new YT.Player(iframe, {
-                                        events: {
-                                            'onStateChange': (event) => {
-                                                if (event.data === YT.PlayerState.ENDED) {
-                                                    this.next();
-                                                }
-                                            },
-                                            'onReady': (event) => {
-                                                event.target.setPlaybackQuality('hd1080');
-                                            }
-                                        }
-                                    });
-                                }
-                            });
-                        },
-
-                        setupAutoSlide() {
-                            if (this.interval) clearInterval(this.interval);
-                            const slide = this.slides[this.current];
-
-                            if (slide.type === 'image') {
-                                this.interval = setInterval(() => this.next(), 5000);
-                            } else if (slide.type === 'video') {
-                                this.$nextTick(() => this.initYouTubePlayer());
-                            }
-                        },
-
-                        getVisibleIndex(index) {
-                            if (index === this.current) return 0;
-                            if (index === (this.current - 1 + this.slides.length) % this.slides.length) return -1;
-                            if (index === (this.current + 1) % this.slides.length) return 1;
-                            return null;
-                        },
-
-                        next() {
-                            if (this.player) {
-                                this.player.destroy();
-                                this.player = null;
-                            }
-                            this.current = (this.current + 1) % this.slides.length;
-                            this.setupAutoSlide();
-                        },
-
-                        prev() {
-                            if (this.player) {
-                                this.player.destroy();
-                                this.player = null;
-                            }
-                            this.current = (this.current - 1 + this.slides.length) % this.slides.length;
-                            this.setupAutoSlide();
-                        }
-                    }"
-                    x-init="init"
+                    x-data="videoSlider()"
+                    x-ref="videoSlider"
                     class="relative w-full md:w-190 2xl:w-200 2xl:p-15 lg:p-10 md:px-10 max-w-full px-4 sm:px-6 py-6 overflow-hidden flex items-center justify-center"
                 >
                     <!-- Slides -->
@@ -149,7 +84,7 @@
                                 x-transition:leave="transition-all duration-500"
                                 x-transition:leave-start="opacity-100 scale-100"
                                 x-transition:leave-end="opacity-0 scale-95"
-                                class="absolute top-0 left-0 w-full h-full transform transition-transform duration-500 rounded-lg shadow-lg"
+                                class="absolute top-0 left-0 w-full h-full transform transition-transform duration-500 rounded-lg shadow-lg overflow-hidden"
                                 :class="{
                                     'z-20 scale-100 opacity-100': getVisibleIndex(index) === 0,
                                     'z-10 scale-90 opacity-50 -translate-x-full': getVisibleIndex(index) === -1,
@@ -160,12 +95,13 @@
                                 <template x-if="slide.type === 'video'">
                                     <div class="w-full h-full">
                                         <iframe
-                                            x-bind:src="slide.src"
-                                            x-show="getVisibleIndex(index) === 0"
+                                            :id="'yt-player-' + index"
+                                            x-bind:src="getVisibleIndex(index) === 0 ? slide.src : ''"
                                             class="w-full h-full object-cover rounded-lg"
                                             frameborder="0"
                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                             allowfullscreen
+                                            loading="lazy"
                                         ></iframe>
                                     </div>
                                 </template>
@@ -176,6 +112,7 @@
                                         x-bind:src="slide.src"
                                         alt="Wellness Resource Slide"
                                         class="w-full h-full object-cover rounded-lg"
+                                        loading="lazy"
                                     />
                                 </template>
                             </div>
@@ -196,6 +133,59 @@
                 </div>
             </div>
         </section>
+
+        <!-- Minimized Floating Video Player -->
+        <div 
+            x-data="{}"
+            x-show="window.videoSliderInstance && window.videoSliderInstance.isMinimized && window.videoSliderInstance.minimizedVideo"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-90 translate-y-4"
+            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+            x-transition:leave-end="opacity-0 scale-90 translate-y-4"
+            class="minimized-video"
+            @click.self="window.videoSliderInstance && window.videoSliderInstance.restoreVideo()"
+        >
+            <div class="relative w-full h-full">
+                <!-- Video Controls Header -->
+                <div class="absolute top-0 left-0 right-0 z-10 flex items-center justify-between p-2 bg-gradient-to-b from-black/60 to-transparent">
+                    <span class="text-white text-xs font-medium truncate flex-1">Video Playing</span>
+                    <div class="flex items-center space-x-1">
+                        <button 
+                            @click="window.videoSliderInstance && window.videoSliderInstance.restoreVideo()"
+                            class="p-1.5 rounded-full hover:bg-white/20 transition-colors"
+                            title="Restore"
+                        >
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                            </svg>
+                        </button>
+                        <button 
+                            @click="window.videoSliderInstance && window.videoSliderInstance.closeMinimized()"
+                            class="p-1.5 rounded-full hover:bg-white/20 transition-colors"
+                            title="Close"
+                        >
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Minimized Video Iframe -->
+                <template x-if="window.videoSliderInstance && window.videoSliderInstance.minimizedVideo">
+                    <iframe
+                        :src="window.videoSliderInstance.minimizedVideo.src"
+                        class="w-full h-full"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen
+                    ></iframe>
+                </template>
+            </div>
+        </div>
+
         <section class="text-gray-600 body-font dark:bg-gray-800 bg-white dark:text-gray-50" id="news">
             @include('partials.article')
         </section>
@@ -206,6 +196,186 @@
             document.addEventListener('DOMContentLoaded', () => {
                 lucide.createIcons();
             });
+
+            // Video Slider Alpine.js Component
+            function videoSlider() {
+                return {
+                    slides: [
+                        { type: 'video', src: 'https://www.youtube.com/embed/OlY6HjxoGQw?autoplay=1&mute=1&enablejsapi=1&vq=hd1080&loop=1&playlist=OlY6HjxoGQw', videoId: 'OlY6HjxoGQw' },
+                        { type: 'video', src: 'https://www.youtube.com/embed/jFpSQvYEsn0?autoplay=1&mute=1&enablejsapi=1&vq=hd1080&loop=1&playlist=jFpSQvYEsn0', videoId: 'jFpSQvYEsn0' },
+                        { type: 'image', src: '/Images/pic/1.jpg' },
+                        { type: 'image', src: '/Images/pic/2.jpg' },
+                        { type: 'image', src: '/Images/pic/3.jpg' },
+                    ],
+                    current: 0,
+                    interval: null,
+                    players: {},
+                    ytReady: false,
+                    minimizedVideo: null,
+                    isMinimized: false,
+                    sliderElement: null,
+
+                    init() {
+                        this.setupYouTubeAPI();
+                        this.setupAutoSlide();
+                        this.setupScrollDetection();
+                        this.sliderElement = this.$el;
+                        // Store reference globally for minimized player access
+                        window.videoSliderInstance = this;
+                    },
+
+                    setupScrollDetection() {
+                        let ticking = false;
+                        window.addEventListener('scroll', () => {
+                            if (!ticking) {
+                                window.requestAnimationFrame(() => {
+                                    this.handleScroll();
+                                    ticking = false;
+                                });
+                                ticking = true;
+                            }
+                        });
+                    },
+
+                    handleScroll() {
+                        if (!this.sliderElement) return;
+                        
+                        const slide = this.slides[this.current];
+                        if (slide.type !== 'video') {
+                            this.isMinimized = false;
+                            this.minimizedVideo = null;
+                            return;
+                        }
+
+                        const rect = this.sliderElement.getBoundingClientRect();
+                        const isOutOfView = rect.bottom < 0 || rect.top > window.innerHeight;
+                        
+                        if (isOutOfView && !this.isMinimized) {
+                            this.minimizeVideo();
+                        } else if (!isOutOfView && this.isMinimized) {
+                            this.restoreVideo();
+                        }
+                    },
+
+                    minimizeVideo() {
+                        const slide = this.slides[this.current];
+                        if (slide.type === 'video') {
+                            this.isMinimized = true;
+                            this.minimizedVideo = {
+                                src: slide.src,
+                                videoId: slide.videoId,
+                                index: this.current
+                            };
+                        }
+                    },
+
+                    restoreVideo() {
+                        this.isMinimized = false;
+                        this.minimizedVideo = null;
+                        // Scroll back to video
+                        if (this.sliderElement) {
+                            this.sliderElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    },
+
+                    closeMinimized() {
+                        const currentPlayer = this.players[this.current];
+                        if (currentPlayer) {
+                            try {
+                                currentPlayer.pauseVideo();
+                            } catch (e) {
+                                console.error('Error pausing video:', e);
+                            }
+                        }
+                        this.restoreVideo();
+                    },
+
+                    setupYouTubeAPI() {
+                        if (!window.YT) {
+                            window.onYouTubeIframeAPIReady = () => {
+                                this.ytReady = true;
+                                this.$nextTick(() => this.initYouTubePlayer());
+                            };
+                            const tag = document.createElement('script');
+                            tag.src = 'https://www.youtube.com/iframe_api';
+                            const firstScriptTag = document.getElementsByTagName('script')[0];
+                            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+                        } else {
+                            this.ytReady = true;
+                            this.$nextTick(() => this.initYouTubePlayer());
+                        }
+                    },
+
+                    initYouTubePlayer() {
+                        const slide = this.slides[this.current];
+                        if (slide.type === 'video' && this.ytReady) {
+                            this.$nextTick(() => {
+                                const iframeId = 'yt-player-' + this.current;
+                                const iframe = this.$el.querySelector('#' + iframeId);
+                                if (iframe && !this.players[this.current]) {
+                                    try {
+                                        this.players[this.current] = new YT.Player(iframeId, {
+                                            events: {
+                                                'onStateChange': (event) => {
+                                                    if (event.data === YT.PlayerState.ENDED) {
+                                                        this.next();
+                                                    }
+                                                },
+                                                'onReady': (event) => {
+                                                    event.target.setPlaybackQuality('hd1080');
+                                                }
+                                            }
+                                        });
+                                    } catch (e) {
+                                        console.error('YouTube player init error:', e);
+                                    }
+                                }
+                            });
+                        }
+                    },
+
+                    setupAutoSlide() {
+                        if (this.interval) clearInterval(this.interval);
+                        const slide = this.slides[this.current];
+
+                        if (slide.type === 'image') {
+                            this.interval = setInterval(() => this.next(), 5000);
+                        } else if (slide.type === 'video') {
+                            this.initYouTubePlayer();
+                        }
+                    },
+
+                    getVisibleIndex(index) {
+                        if (index === this.current) return 0;
+                        if (index === (this.current - 1 + this.slides.length) % this.slides.length) return -1;
+                        if (index === (this.current + 1) % this.slides.length) return 1;
+                        return null;
+                    },
+
+                    stopCurrentPlayer() {
+                        const currentPlayer = this.players[this.current];
+                        if (currentPlayer) {
+                            try {
+                                currentPlayer.stopVideo();
+                            } catch (e) {
+                                console.error('Error stopping video:', e);
+                            }
+                        }
+                    },
+
+                    next() {
+                        this.stopCurrentPlayer();
+                        this.current = (this.current + 1) % this.slides.length;
+                        this.setupAutoSlide();
+                    },
+
+                    prev() {
+                        this.stopCurrentPlayer();
+                        this.current = (this.current - 1 + this.slides.length) % this.slides.length;
+                        this.setupAutoSlide();
+                    }
+                }
+            }
         </script>
     </body>
 </html>

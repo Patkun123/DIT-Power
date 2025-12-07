@@ -152,8 +152,16 @@ Route::middleware(['auth','check_profile'])->group(function () {
     // Route::view('Feedbacks', 'Auth.user.view.policies')->name('policies');
 
     Route::view('Financial-tools','auth.users.view.financial')->name('financial.tools');
-    Route::view('mental-tools','auth.users.view.mental')->name('mental.tools');
+    Route::get('mental-tools',[emotional::class, 'index'])->name('mental.tools');
     Route::get('emotional-tools',[emotional::class, 'index'])->name('emotional.tools');
+    
+    // Mental & Emotional Well-being API Routes
+    Route::post('mental-tools/mood', [emotional::class, 'storeMood'])->name('mental.tools.mood');
+    Route::post('mental-tools/gratitude', [emotional::class, 'storeGratitude'])->name('mental.tools.gratitude');
+    Route::delete('mental-tools/gratitude/{id}', [emotional::class, 'deleteGratitude'])->name('mental.tools.gratitude.delete');
+    Route::post('mental-tools/stress', [emotional::class, 'storeStress'])->name('mental.tools.stress');
+    Route::post('mental-tools/self-care', [emotional::class, 'storeSelfCare'])->name('mental.tools.selfcare');
+    Route::post('mental-tools/reflection', [emotional::class, 'storeReflection'])->name('mental.tools.reflection');
     
     // Social Tools Routes
     Route::get('social',[SocialController::class, 'index'])->name('social.tools');

@@ -168,6 +168,7 @@ $nextRound = function () use ($shuffleWord, $getRandomWord) {
                 <div class="bg-primary-100 h-28 w-28 mx-auto flex flex-col justify-center rounded-full mb-4">
                     <div class="text-primary-700 font-black text-2xl">+10</div>
                 </div>
+
             </div>
             <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-1">Great job!</h2>
             <p class="text-gray-500 dark:text-gray-400">Word: <span class="font-semibold">{{ $target }}</span></p>
@@ -179,5 +180,6 @@ $nextRound = function () use ($shuffleWord, $getRandomWord) {
         </div>
     @endif
 </div>
+
 
 

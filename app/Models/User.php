@@ -132,9 +132,8 @@ class User extends Authenticatable
             return asset('storage/' . $this->profileimage);
         }
 
-        // Generate initials-based avatar as fallback
-        $initials = strtoupper(substr($this->firstname, 0, 1) . substr($this->lastname, 0, 1));
-        return "https://ui-avatars.com/api/?name={$initials}&background=random&color=fff&size=100&bold=true";
+        // Use default profile image like in header
+        return asset('Images/default.png');
     }
 
     /**

@@ -10,8 +10,7 @@
             <a href="{{ route('settings.profile') }}" class="flex-shrink-0">
                 <img class="h-10 w-10 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600 cursor-pointer hover:opacity-90 transition-opacity"
                      src="{{ $post->user->profile_image_url }}"
-                     alt="{{ $post->user->firstname }} {{ $post->user->lastname }}"
-                     onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($post->user->firstname . ' ' . $post->user->lastname) }}&background=random&color=fff&size=100&bold=true'">
+                     alt="{{ $post->user->firstname }} {{ $post->user->lastname }}">
             </a>
             <div class="flex-1 min-w-0">
                 <div class="flex items-center space-x-1 flex-wrap">
@@ -204,8 +203,7 @@
                     <div class="flex items-start space-x-2">
                         <img class="h-8 w-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600 flex-shrink-0"
                              src="{{ auth()->user()->profile_image_url }}"
-                             alt="{{ auth()->user()->firstname }} {{ auth()->user()->lastname }}"
-                             onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->firstname . ' ' . auth()->user()->lastname) }}&background=random&color=fff&size=100&bold=true'">
+                             alt="{{ auth()->user()->firstname }} {{ auth()->user()->lastname }}">
                         <div class="flex-1 relative">
                             <div class="bg-gray-100 dark:bg-gray-700 rounded-2xl px-3 py-2 focus-within:ring-2 focus-within:ring-blue-500 transition-all">
                                 <textarea wire:model="newComment"
@@ -225,7 +223,7 @@
                                         <button type="button"
                                                 wire:click="selectMention({{ $user->id }}, 'comment')"
                                                 class="w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 {{ $selectedMentionIndex === $index ? 'bg-blue-50 dark:bg-blue-900/60' : '' }}">
-                                            <img class="h-8 w-8 rounded-full object-cover"
+                                            <img class="h-8 w-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600"
                                                  src="{{ $user->profile_image_url }}"
                                                  alt="{{ $user->firstname }} {{ $user->lastname }}">
                                             <div class="min-w-0 flex-1">
@@ -251,8 +249,7 @@
                         <a href="{{ route('settings.profile') }}" class="flex-shrink-0">
                             <img class="h-8 w-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600 cursor-pointer hover:opacity-90 transition-opacity"
                                  src="{{ $comment->user->profile_image_url }}"
-                                 alt="{{ $comment->user->firstname }} {{ $comment->user->lastname }}"
-                                 onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($comment->user->firstname . ' ' . $comment->user->lastname) }}&background=random&color=fff&size=100&bold=true'">
+                                 alt="{{ $comment->user->firstname }} {{ $comment->user->lastname }}">
                         </a>
                         <div class="flex-1 min-w-0">
                             <div class="bg-gray-100 dark:bg-gray-700 rounded-2xl px-3 py-2">
@@ -332,8 +329,7 @@
                                             <a href="{{ route('settings.profile') }}" class="flex-shrink-0">
                                                 <img class="h-7 w-7 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600 cursor-pointer hover:opacity-90 transition-opacity"
                                                      src="{{ $reply->user->profile_image_url }}"
-                                                     alt="{{ $reply->user->firstname }} {{ $reply->user->lastname }}"
-                                                     onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($reply->user->firstname . ' ' . $reply->user->lastname) }}&background=random&color=fff&size=100&bold=true'">
+                                                     alt="{{ $reply->user->firstname }} {{ $reply->user->lastname }}">
                                             </a>
                                             <div class="flex-1 min-w-0">
                                                 <div class="bg-gray-100 dark:bg-gray-700 rounded-2xl px-3 py-2">
@@ -394,8 +390,7 @@
                                                                 <a href="{{ route('settings.profile') }}" class="flex-shrink-0">
                                                                     <img class="h-6 w-6 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600 cursor-pointer hover:opacity-90 transition-opacity"
                                                                          src="{{ $nestedReply->user->profile_image_url }}"
-                                                                         alt="{{ $nestedReply->user->firstname }} {{ $nestedReply->user->lastname }}"
-                                                                         onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($nestedReply->user->firstname . ' ' . $nestedReply->user->lastname) }}&background=random&color=fff&size=100&bold=true'">
+                                                                         alt="{{ $nestedReply->user->firstname }} {{ $nestedReply->user->lastname }}">
                                                                 </a>
                                                                 <div class="flex-1 min-w-0">
                                                                     <div class="bg-gray-100 dark:bg-gray-700 rounded-2xl px-3 py-2">
