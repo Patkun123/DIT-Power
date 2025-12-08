@@ -267,7 +267,7 @@
                             id="dropdownNavbarLink"
                             data-dropdown-toggle="dropdownNavbar"
                             class="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group
-                                   @if(request()->routeIs('physical.tools') || request()->routeIs('mental.tools') || request()->routeIs('emotional.tools') || request()->routeIs('financial.tools') || request()->routeIs('nutrition'))
+                                   @if(request()->routeIs('physical.tools') || request()->routeIs('mental.tools') || request()->routeIs('emotional.tools') || request()->routeIs('financial.tools') || request()->routeIs('social.wellbeing.tools') || request()->routeIs('nutrition'))
                                        text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20
                                    @else
                                        text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-600 dark:hover:text-primary-400
@@ -326,6 +326,20 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
                                         <span class="font-medium">Financial Well-being</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{route('social.wellbeing.tools')}}"
+                                        class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group
+                                              @if(request()->routeIs('social.wellbeing.tools'))
+                                                  bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400
+                                              @else
+                                                  text-gray-700 dark:text-gray-300
+                                              @endif">
+                                        <svg class="w-4 h-4 text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                        <span class="font-medium">Social Well-being</span>
                                     </a>
                                 </li>
                                 {{-- <li>
@@ -465,11 +479,11 @@
                         </svg>
                         <span class="font-medium">Well-being Tools</span>
                     </span>
-                    <svg id="mobile-dd-tools-arrow" class="w-4 h-4 text-gray-500 dark:text-gray-400 transform transition-transform duration-200 {{ (request()->routeIs('physical.tools') || request()->routeIs('mental.tools') || request()->routeIs('emotional.tools') || request()->routeIs('financial.tools') || request()->routeIs('nutrition')) ? 'rotate-180' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg id="mobile-dd-tools-arrow" class="w-4 h-4 text-gray-500 dark:text-gray-400 transform transition-transform duration-200 {{ (request()->routeIs('physical.tools') || request()->routeIs('mental.tools') || request()->routeIs('emotional.tools') || request()->routeIs('financial.tools') || request()->routeIs('social.wellbeing.tools') || request()->routeIs('nutrition')) ? 'rotate-180' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6" />
                     </svg>
                 </button>
-                <div id="mobile-dd-tools" class="ml-9 space-y-1 {{ (request()->routeIs('physical.tools') || request()->routeIs('mental.tools') || request()->routeIs('emotional.tools') || request()->routeIs('financial.tools') || request()->routeIs('nutrition')) ? '' : 'hidden' }}">
+                <div id="mobile-dd-tools" class="ml-9 space-y-1 {{ (request()->routeIs('physical.tools') || request()->routeIs('mental.tools') || request()->routeIs('emotional.tools') || request()->routeIs('financial.tools') || request()->routeIs('social.wellbeing.tools') || request()->routeIs('nutrition')) ? '' : 'hidden' }}">
                     <a href="{{ route('physical.tools') }}" class="block p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors {{ request()->routeIs('physical.tools') ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300' : 'text-gray-600 dark:text-gray-400' }}">
                         Physical Well-Being
                     </a>
@@ -478,6 +492,9 @@
                     </a>
                     <a href="{{ route('financial.tools') }}" class="block p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors {{ request()->routeIs('financial.tools') ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300' : 'text-gray-600 dark:text-gray-400' }}">
                         Financial Well-being
+                    </a>
+                    <a href="{{ route('social.wellbeing.tools') }}" class="block p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors {{ request()->routeIs('social.wellbeing.tools') ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300' : 'text-gray-600 dark:text-gray-400' }}">
+                        Social Well-being
                     </a>
                     {{-- <a href="{{ route('nutrition') }}" class="block p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors {{ request()->routeIs('nutrition') ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300' : 'text-gray-600 dark:text-gray-400' }}">
                         Nutrition

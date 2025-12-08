@@ -154,6 +154,7 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::view('Financial-tools','auth.users.view.financial')->name('financial.tools');
     Route::get('mental-tools',[emotional::class, 'index'])->name('mental.tools');
     Route::get('emotional-tools',[emotional::class, 'index'])->name('emotional.tools');
+    Route::get('social-wellbeing-tools',[ToolsController::class, 'socialWellbeing'])->name('social.wellbeing.tools');
     
     // Mental & Emotional Well-being API Routes
     Route::post('mental-tools/mood', [emotional::class, 'storeMood'])->name('mental.tools.mood');
