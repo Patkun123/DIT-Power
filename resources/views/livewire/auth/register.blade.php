@@ -347,13 +347,13 @@
                     <flux:input
                         type="password"
                         wire:model.defer="password"
-                        :label="__($userHasPassword ? 'Password (Optional)' : 'Password')"
+                        :label="__($userHasPassword ? 'Password' : 'Password')"
                         placeholder="Enter password"
                         :required="!$userHasPassword" />
                     <flux:input
                         type="password"
                         wire:model.defer="password_confirmation"
-                        :label="__($userHasPassword ? 'Confirm Password (Optional)' : 'Confirm Password')"
+                        :label="__($userHasPassword ? 'Confirm Password ' : 'Confirm Password')"
                         placeholder="Re-enter password"
                         :required="!$userHasPassword" />
                 </div>

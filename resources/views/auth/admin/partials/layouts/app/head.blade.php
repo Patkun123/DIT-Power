@@ -26,7 +26,7 @@
             }
         </script>
     </head>
-    <Body>
+    <Body class="min-h-screen bg-gray-100 dark:bg-gray-900">
         @include('components.loading-screen')
         @include('sweetalert2::index')
         @yield('content')
