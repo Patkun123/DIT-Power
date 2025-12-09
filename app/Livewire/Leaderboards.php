@@ -63,34 +63,33 @@ class Leaderboards extends Component
             return collect();
         }
 
-        // Get overall leaderboard for the current active quiz only
-        return QuizAttempt::select('user_id', 'score', 'correct', 'set')
-            ->with('user:id,firstname,lastname,profileimage')
+        // Aggregate per user (no pre-limit) to avoid cutting off top scorers
+        return QuizAttempt::select('user_id')
+            ->selectRaw('SUM(score) as total_score')
+            ->selectRaw('SUM(correct) as total_correct')
+            ->selectRaw('COUNT(*) as attempts_count')
             ->where('quiz_id', $activeQuiz->id)
             ->whereNotNull('set')
             ->whereIn('set', ['1', '2', '3'])
-            ->orderBy('score', 'desc')
-            ->orderBy('correct', 'desc')
-            ->limit(10)
-            ->get()
             ->groupBy('user_id')
-            ->map(function ($attempts) {
-                $user = $attempts->first()->user;
-                $totalScore = $attempts->sum('score');
-                $totalCorrect = $attempts->sum('correct');
-                $attemptsCount = $attempts->count();
-                
+            ->orderByDesc('total_score')
+            ->orderByDesc('total_correct')
+            ->limit(5)
+            ->with('user:id,firstname,lastname,profileimage')
+            ->get()
+            ->map(function ($entry) {
+                $entry->average_score = $entry->attempts_count > 0
+                    ? round($entry->total_score / $entry->attempts_count, 2)
+                    : 0;
+
                 return [
-                    'user' => $user,
-                    'total_score' => $totalScore,
-                    'total_correct' => $totalCorrect,
-                    'attempts_count' => $attemptsCount,
-                    'average_score' => $attemptsCount > 0 ? round($totalScore / $attemptsCount, 2) : 0
+                    'user' => $entry->user,
+                    'total_score' => $entry->total_score,
+                    'total_correct' => $entry->total_correct,
+                    'attempts_count' => $entry->attempts_count,
+                    'average_score' => $entry->average_score,
                 ];
-            })
-            ->sortByDesc('total_score')
-            ->take(5)
-            ->values();
+            });
     }
 
     private function getDailyLeaderboard($set)
