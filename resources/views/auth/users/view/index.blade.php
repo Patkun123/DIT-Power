@@ -700,7 +700,7 @@
                                                 <h3 class="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm uppercase tracking-wide">Email</h3>
                                             </div>
                                             <a href="mailto:dti@gmail.com" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 text-xs sm:text-sm font-medium pl-6 sm:pl-7 transition-colors break-all">
-                                                dti@gmail.com
+                                                r12.afmdsupply@gmail.com
                                             </a>
                                         </div>
                                         <div class="space-y-1 sm:space-y-2">
@@ -708,9 +708,9 @@
                                                 <svg class="w-4 h-4 sm:w-5 sm:h-5 text-primary-600 dark:text-primary-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                                                 </svg>
-                                                <h3 class="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm uppercase tracking-wide">Phone</h3>
+                                                <h3 class="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm uppercase tracking-wide">Telephone</h3>
                                             </div>
-                                            <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 pl-6 sm:pl-7">123-456-7890</p>
+                                            <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 pl-6 sm:pl-7">083-228-8556</p>
                                         </div>
                                     </div>
                                 </div>
