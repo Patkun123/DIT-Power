@@ -75,9 +75,14 @@ use function Livewire\Volt\{state};
 
     <!-- Overall Leaderboard -->
     <div class="bg-white 2xl:h-110 dark:bg-gray-800 p-6 rounded-xl shadow-md dark:shadow-gray-950 shadow-gray-400">
-        <h2 class="2xl:text-xl text-md font-semibold text-gray-800 dark:text-white mb-6">
-            Current Quiz Overall Leaderboard
-        </h2>
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h2 class="2xl:text-xl text-md font-semibold text-gray-800 dark:text-white">
+                    Today's Overall Leaderboard
+                </h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ $today }}</p>
+            </div>
+        </div>
 
         <div class="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory px-4 py-6
                     lg:grid lg:grid-cols-5 lg:gap-3 lg:justify-items-center lg:overflow-visible">
@@ -119,7 +124,7 @@ use function Livewire\Volt\{state};
                             Loading...
                         </div>
                     @else
-                        No active quiz or no attempts yet. Be the first to take a quiz!
+                        No quiz attempts today yet. Be the first to take a quiz and appear on the leaderboard!
                     @endif
                 </div>
             @endforelse
@@ -533,7 +538,7 @@ use function Livewire\Volt\{state};
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             <span class="text-blue-800 dark:text-blue-200">
-                <strong>Note:</strong> Mini games leaderboards are excluded from daily rankings as they are separate from the main quiz sets. Daily leaderboards reset every day at midnight and only show scores from quiz sets 1, 2, and 3.
+                <strong>Note:</strong> Today's overall leaderboard shows cumulative scores from all quiz attempts made today in sets 1, 2, and 3. Mini games are excluded from rankings to ensure fair competition. Leaderboards reset every day at midnight.
             </span>
         </div>
     </div>

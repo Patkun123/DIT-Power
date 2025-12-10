@@ -34,7 +34,7 @@ class Leaderboards extends Component
         $this->isLoading = true;
 
         try {
-            // Overall leaderboard (current active quiz only) - exclude null sets (mini games)
+            // Overall leaderboard (today only) - exclude null sets (mini games)
             $this->overallLeaderboard = $this->getCurrentQuizOverallLeaderboard();
 
             // Daily leaderboards for each set (excluding mini games)
@@ -52,25 +52,14 @@ class Leaderboards extends Component
 
     private function getCurrentQuizOverallLeaderboard()
     {
-        // Get the current active quiz
-        $activeQuiz = \App\Models\Quiz::where('status', 'active')
-            ->where('start_date', '<=', Carbon::now())
-            ->where('end_date', '>=', Carbon::now())
-            ->first();
-
-        if (!$activeQuiz) {
-            // If no active quiz, return empty collection
-            return collect();
-        }
-
-        // Aggregate per user (no pre-limit) to avoid cutting off top scorers
+        // Today's overall leaderboard - aggregate all attempts from today
         return QuizAttempt::select('user_id')
             ->selectRaw('SUM(score) as total_score')
             ->selectRaw('SUM(correct) as total_correct')
             ->selectRaw('COUNT(*) as attempts_count')
-            ->where('quiz_id', $activeQuiz->id)
             ->whereNotNull('set')
             ->whereIn('set', ['1', '2', '3'])
+            ->whereDate('created_at', $this->today)
             ->groupBy('user_id')
             ->orderByDesc('total_score')
             ->orderByDesc('total_correct')
