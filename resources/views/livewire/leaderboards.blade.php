@@ -100,7 +100,7 @@ use function Livewire\Volt\{state};
                         @if(($entry['user']->profileimage ?? null))
                             <img src="{{ asset('storage/' . $entry['user']->profileimage) }}" alt="{{ $entry['user']->firstname }} {{ $entry['user']->lastname }}" class="w-full h-full object-cover">
                         @else
-                            <img src="{{ asset('images/default.png') }}" alt="Default Profile" class="w-full h-full object-cover">
+                            <img src="{{ asset('Images/default.png') }}" alt="Default Profile" class="w-full h-full object-cover">
                         @endif
                     </div>
                     <div class="font-semibold 2xl:text-md text-sm text-white">
@@ -208,7 +208,7 @@ use function Livewire\Volt\{state};
                                 @if(($entry['user']->profileimage ?? null))
                                     <img src="{{ asset('storage/' . $entry['user']->profileimage) }}" alt="{{ $entry['user']->firstname }} {{ $entry['user']->lastname }}" class="w-full h-full object-cover">
                                 @else
-                                    <img src="{{ asset('images/default.png') }}" alt="Default Profile" class="w-full h-full object-cover">
+                                    <img src="{{ asset('Images/default.png') }}" alt="Default Profile" class="w-full h-full object-cover">
                                 @endif
                             </div>
                             <div>
