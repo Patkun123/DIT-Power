@@ -364,24 +364,24 @@
                     </div>
                 </div>
 
-                <!-- Daily Top 3 -->
+                <!-- Overall Leaderboard -->
                 <div class="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-amber-900/20 dark:via-orange-900/20 dark:to-yellow-900/20 rounded-xl p-6 border border-amber-100 dark:border-amber-800/50 shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div class="flex items-center justify-between mb-5">
                         <h3 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
                             <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
                             </svg>
-                            Today's Top Performers
+                            Overall Leaderboard
                         </h3>
-                        @if($dailyTopPlayers->count() > 0)
+                        @if($overallTopPlayers->count() > 0)
                         <span class="px-2.5 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 text-xs font-semibold rounded-full">
-                            Top 3
+                            Top {{ $overallTopPlayers->count() }}
                         </span>
                         @endif
                     </div>
-                    @if($dailyTopPlayers->count() > 0)
+                    @if($overallTopPlayers->count() > 0)
                     <div class="space-y-3">
-                        @foreach($dailyTopPlayers as $index => $player)
+                        @foreach($overallTopPlayers as $index => $player)
                         @php
                         $rankColors = [
                         1 => ['bg' => 'bg-yellow-100 dark:bg-yellow-900/30', 'text' => 'text-yellow-700 dark:text-yellow-300', 'border' => 'border-yellow-300 dark:border-yellow-700', 'icon' => '🥇'],
@@ -450,7 +450,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
                         </div>
-                        <p class="text-gray-600 dark:text-gray-400 font-medium mb-1">No quiz attempts today yet</p>
+                        <p class="text-gray-600 dark:text-gray-400 font-medium mb-1">No quiz attempts yet</p>
                         <p class="text-sm text-gray-500 dark:text-gray-500">Be the first to take a quiz and appear on the leaderboard!</p>
                     </div>
                     @endif
@@ -466,9 +466,9 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="text-sm font-medium text-blue-900 dark:text-blue-200 mb-1">About Daily Reports</p>
+                        <p class="text-sm font-medium text-blue-900 dark:text-blue-200 mb-1">About Leaderboards</p>
                         <p class="text-sm text-blue-800 dark:text-blue-300">
-                            Daily reports only include quiz sets 1, 2, and 3. Mini games are excluded from rankings to ensure fair competition.
+                            The overall leaderboard shows cumulative scores from all quiz sets 1, 2, and 3. Mini games are excluded from rankings to ensure fair competition.
                         </p>
                     </div>
                 </div>

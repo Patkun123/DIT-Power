@@ -23,7 +23,7 @@ class UserIndexController extends Controller
         $todayDate = Carbon::today();
         $today = Carbon::now()->format('F d, Y');
 
-        // Overall leaderboard (all time)
+        // Overall leaderboard (all time) - Top 3 for podium display
         $topPlayers = QuizAttempt::select('user_id')
             ->selectRaw('SUM(score) as best_score')
             ->with('user')
@@ -34,32 +34,28 @@ class UserIndexController extends Controller
             ->limit(3)
             ->get();
 
-        // Daily leaderboard for today
-        $dailyTopPlayers = QuizAttempt::select('user_id', 'score', 'correct', 'set')
+        // Overall leaderboard (all time) - Extended for daily report section
+        $overallTopPlayers = QuizAttempt::select('user_id')
+            ->selectRaw('SUM(score) as total_score')
+            ->selectRaw('SUM(correct) as total_correct')
+            ->selectRaw('COUNT(*) as attempts_count')
             ->with('user:id,firstname,lastname,profileimage')
             ->whereNotNull('set')
             ->whereIn('set', ['1', '2', '3'])
-            ->whereDate('created_at', $todayDate)
-            ->orderBy('score', 'desc')
-            ->orderBy('correct', 'desc')
+            ->groupBy('user_id')
+            ->orderByDesc('total_score')
+            ->orderByDesc('total_correct')
             ->limit(10)
             ->get()
-            ->groupBy('user_id')
-            ->map(function ($attempts) {
-                $user = $attempts->first()->user;
-                $bestScore = $attempts->max('score');
-                $bestCorrect = $attempts->max('correct');
-                $attemptsCount = $attempts->count();
-
+            ->map(function ($entry) {
                 return [
-                    'user' => $user,
-                    'best_score' => $bestScore,
-                    'best_correct' => $bestCorrect,
-                    'attempts_count' => $attemptsCount
+                    'user' => $entry->user,
+                    'best_score' => $entry->total_score,
+                    'best_correct' => $entry->total_correct,
+                    'attempts_count' => $entry->attempts_count,
                 ];
             })
-            ->sortByDesc('best_score')
-            ->take(3)
+            ->take(5)
             ->values();
 
         // Daily stats for the current user
@@ -90,7 +86,7 @@ class UserIndexController extends Controller
             'journalCount',
             'topPlayers',
             'quizCount',
-            'dailyTopPlayers',
+            'overallTopPlayers',
             'userDailyStats',
             'today'
         ));

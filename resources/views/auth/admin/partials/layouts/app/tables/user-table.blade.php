@@ -1,6 +1,6 @@
             <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
                 <div class="w-full md:w-1/2">
-                    <form class="flex items-center">
+                    <form class="flex items-center" onsubmit="event.preventDefault(); return false;">
                         <label for="simple-search" class="sr-only">Search</label>
                         <div class="relative w-full">
                             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -8,7 +8,7 @@
                                     <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
                                 </svg>
                             </div>
-                            <input type="text" id="simple-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Search" required="">
+                            <input type="text" id="simple-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Search by name, email, office, or DTI ID..." onkeyup="filterUserTable()" oninput="filterUserTable()">
                         </div>
                     </form>
                 </div>
@@ -78,7 +78,7 @@
                 </div>
             </div>
             <div class="overflow-auto h-full pb-20">
-                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <table id="user-table" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" class="px-4 py-3">No.</th>
@@ -207,7 +207,7 @@
                                 </div>
                             </div>
                         @empty
-                            <tr>
+                            <tr class="no-results-row">
                                 <td colspan="6" class="text-center px-4 py-3 text-gray-500 dark:text-gray-400">No users found.</td>
                             </tr>
                         @endforelse
@@ -215,4 +215,59 @@
                 </table>
             </div>
 
+<script>
+function filterUserTable() {
+    const input = document.getElementById('simple-search');
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById('user-table');
+    const tbody = table.getElementsByTagName('tbody')[0];
+    const rows = tbody.getElementsByTagName('tr');
+    const noResultsRow = tbody.querySelector('.no-results-row');
+
+    let visibleCount = 0;
+
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        
+        // Skip the "No users found" row
+        if (row.classList.contains('no-results-row')) {
+            continue;
+        }
+        
+        // Get all text content from the row
+        const cells = row.getElementsByTagName('td');
+        let text = '';
+        
+        // Collect text from all cells (name, email, office, DTI ID)
+        for (let j = 0; j < cells.length; j++) {
+            if (cells[j]) {
+                text += cells[j].textContent || cells[j].innerText;
+            }
+        }
+        
+        // Also check the name in the <th> tag
+        const th = row.querySelector('th');
+        if (th) {
+            text += th.textContent || th.innerText;
+        }
+        
+        // Show or hide the row based on whether it matches the filter
+        if (text.toLowerCase().indexOf(filter) > -1) {
+            row.style.display = '';
+            visibleCount++;
+        } else {
+            row.style.display = 'none';
+        }
+    }
+    
+    // Show "No users found" message if all rows are hidden and there's a search term
+    if (noResultsRow) {
+        if (visibleCount === 0 && filter !== '') {
+            noResultsRow.style.display = '';
+        } else {
+            noResultsRow.style.display = 'none';
+        }
+    }
+}
+</script>
 
