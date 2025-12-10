@@ -182,8 +182,22 @@
         <!-- Recent Attempts -->
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700">
             <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Recent Attempts</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Latest quiz attempts by users</p>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Recent Attempts</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Latest quiz attempts by users</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <label for="sort-select" class="text-sm font-medium text-gray-700 dark:text-gray-300">Sort by:</label>
+                        <select id="sort-select" 
+                                onchange="window.location.href='{{ route('admin.quizzes.statistics', $quiz) }}?sort=' + this.value"
+                                class="block px-3 py-2 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                            <option value="latest" {{ ($sortBy ?? 'latest') === 'latest' ? 'selected' : '' }}>Latest First</option>
+                            <option value="highest" {{ ($sortBy ?? 'latest') === 'highest' ? 'selected' : '' }}>Highest to Lowest</option>
+                            <option value="overall_highest" {{ ($sortBy ?? 'latest') === 'overall_highest' ? 'selected' : '' }}>Overall Highest to Lowest</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
             <div class="overflow-x-auto">
