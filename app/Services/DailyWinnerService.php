@@ -23,7 +23,7 @@ class DailyWinnerService
         try {
             DB::beginTransaction();
             
-            // Calculate overall winner (all-time cumulative)
+            // Calculate overall winner (that day's cumulative scores only)
             $overallWinner = $this->calculateOverallWinner($dateString);
             if ($overallWinner) {
                 $winners['overall'] = $overallWinner;
@@ -48,31 +48,19 @@ class DailyWinnerService
     }
     
     /**
-     * Calculate overall winner (for the current active quiz only)
+     * Calculate overall winner (based on that day's cumulative scores only)
      */
     private function calculateOverallWinner($date): ?DailyWinner
     {
-        // Get the active quiz for this date
-        $activeQuiz = \App\Models\Quiz::where('status', 'active')
-            ->where('start_date', '<=', $date)
-            ->where('end_date', '>=', $date)
-            ->first();
-
-        if (!$activeQuiz) {
-            // If no active quiz, return null
-            return null;
-        }
-
-        // Get the user with highest cumulative score for the current active quiz
+        // Get the user with highest cumulative score for that specific day
         $topUser = QuizAttempt::select('user_id')
             ->selectRaw('SUM(score) as total_score')
             ->selectRaw('SUM(correct) as total_correct')
             ->selectRaw('COUNT(*) as attempts_count')
             ->with('user:id,firstname,lastname')
-            ->where('quiz_id', $activeQuiz->id)
             ->whereNotNull('set')
             ->whereIn('set', ['1', '2', '3'])
-            ->whereDate('created_at', '<=', $date)
+            ->whereDate('created_at', $date)
             ->groupBy('user_id')
             ->orderByDesc('total_score')
             ->orderByDesc('total_correct')
