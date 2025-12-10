@@ -23,18 +23,19 @@ class UserIndexController extends Controller
         $todayDate = Carbon::today();
         $today = Carbon::now()->format('F d, Y');
 
-        // Overall leaderboard (all time) - Top 3 for podium display
+        // Overall leaderboard (today only) - Top 3 for podium display
         $topPlayers = QuizAttempt::select('user_id')
             ->selectRaw('SUM(score) as best_score')
             ->with('user')
             ->whereNotNull('set')
             ->whereIn('set', ['1', '2', '3'])
+            ->whereDate('created_at', $todayDate)
             ->groupBy('user_id')
             ->orderByDesc('best_score')
             ->limit(3)
             ->get();
 
-        // Overall leaderboard (all time) - Extended for daily report section
+        // Overall leaderboard (today only) - Extended for daily report section
         $overallTopPlayers = QuizAttempt::select('user_id')
             ->selectRaw('SUM(score) as total_score')
             ->selectRaw('SUM(correct) as total_correct')
@@ -42,6 +43,7 @@ class UserIndexController extends Controller
             ->with('user:id,firstname,lastname,profileimage')
             ->whereNotNull('set')
             ->whereIn('set', ['1', '2', '3'])
+            ->whereDate('created_at', $todayDate)
             ->groupBy('user_id')
             ->orderByDesc('total_score')
             ->orderByDesc('total_correct')

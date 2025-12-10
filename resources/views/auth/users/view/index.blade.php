@@ -17,7 +17,10 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
                         </svg>
                     </div>
-                    <h2 class="text-lg sm:text-xl 2xl:text-xl font-bold text-white">Overall Leaderboard</h2>
+                    <div>
+                        <h2 class="text-lg sm:text-xl 2xl:text-xl font-bold text-white">Today's Overall Leaderboard</h2>
+                        <p class="text-xs sm:text-sm text-primary-100 mt-0.5">{{ $today }}</p>
+                    </div>
                 </div>
             </div>
 
@@ -371,13 +374,16 @@
                             <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
                             </svg>
-                            Overall Leaderboard
+                            Today's Overall Leaderboard
                         </h3>
-                        @if($overallTopPlayers->count() > 0)
-                        <span class="px-2.5 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 text-xs font-semibold rounded-full">
-                            Top {{ $overallTopPlayers->count() }}
-                        </span>
-                        @endif
+                        <div class="flex items-center gap-2">
+                            @if($overallTopPlayers->count() > 0)
+                            <span class="px-2.5 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 text-xs font-semibold rounded-full">
+                                Top {{ $overallTopPlayers->count() }}
+                            </span>
+                            @endif
+                            <span class="text-xs text-gray-600 dark:text-gray-400">{{ $today }}</span>
+                        </div>
                     </div>
                     @if($overallTopPlayers->count() > 0)
                     <div class="space-y-3">
@@ -466,9 +472,9 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="text-sm font-medium text-blue-900 dark:text-blue-200 mb-1">About Leaderboards</p>
+                        <p class="text-sm font-medium text-blue-900 dark:text-blue-200 mb-1">About Today's Leaderboard</p>
                         <p class="text-sm text-blue-800 dark:text-blue-300">
-                            The overall leaderboard shows cumulative scores from all quiz sets 1, 2, and 3. Mini games are excluded from rankings to ensure fair competition.
+                            Today's overall leaderboard shows cumulative scores from all quiz attempts made today in sets 1, 2, and 3. Mini games are excluded from rankings to ensure fair competition.
                         </p>
                     </div>
                 </div>
