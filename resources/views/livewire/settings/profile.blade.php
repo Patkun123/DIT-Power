@@ -114,7 +114,10 @@
 
         <form wire:submit="updateProfileInformation" class="w-full">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-                <!-- Modern Avatar Card -->
+
+                <!-- ============================================= -->
+                <!-- MODERNIZED Profile Picture Card                -->
+                <!-- ============================================= -->
                 <div class="bg-white dark:bg-gray-800 rounded-3xl border border-gray-200/60 dark:border-gray-700/60 p-7 lg:p-9 shadow-xl hover:shadow-2xl transition-all duration-300 backdrop-blur-sm bg-white/95 dark:bg-gray-800/95">
                     <div class="flex items-center gap-3 mb-3">
                         <div class="p-2 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700 shadow-lg">
@@ -124,37 +127,86 @@
                         </div>
                         <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100">Profile Picture</h3>
                     </div>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 font-medium">PNG/JPG up to 2MB. Square images look best.</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-7 font-medium">PNG or JPG, up to 2MB. Square images look best.</p>
+
+                    @php
+                        $hasCustomImage = auth()->user()->profileimage;
+                        $currentImage = $hasCustomImage ? asset('storage/' . auth()->user()->profileimage) : asset('images/default.png');
+                        $previewSrc = (is_object($profileImage) && method_exists($profileImage, 'temporaryUrl'))
+                            ? $profileImage->temporaryUrl()
+                            : $currentImage;
+                    @endphp
 
                     <div class="flex flex-col items-center gap-5">
-                        <!-- Current/Preview Image -->
-                        @php
-                        $currentImage = auth()->user()->profileimage ? asset('storage/' . auth()->user()->profileimage) : asset('images/default.png');
-                        @endphp
-                        <div class="relative group">
-                            <div class="absolute inset-0 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 opacity-0 group-hover:opacity-30 transition-opacity duration-300 blur-xl"></div>
-                            <img
-                                src="{{ (is_object($profileImage) && method_exists($profileImage, 'temporaryUrl')) ? $profileImage->temporaryUrl() : $currentImage }}"
-                                alt="Profile Preview"
-                                class="relative w-28 h-28 rounded-full object-cover border-4 border-gray-200 dark:border-gray-700 shadow-2xl transition-all duration-300 group-hover:scale-110 group-hover:border-primary-400 dark:group-hover:border-primary-500">
+                        <!-- Avatar with in-place edit affordance -->
+                        <label for="profileImageInput" class="relative group cursor-pointer block">
+                            <!-- glow ring -->
+                            <div class="absolute -inset-1.5 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 opacity-0 group-hover:opacity-40 blur-lg transition-opacity duration-300"></div>
+
+                            <div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 dark:border-gray-700 shadow-2xl transition-all duration-300 group-hover:border-primary-400 dark:group-hover:border-primary-500">
+                                <img
+                                    wire:loading.class="opacity-40 scale-105"
+                                    wire:target="profileImage"
+                                    src="{{ $previewSrc }}"
+                                    alt="Profile Preview"
+                                    class="w-full h-full object-cover transition-all duration-300">
+
+                                <!-- hover overlay -->
+                                <div class="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-gray-900/0 group-hover:bg-gray-900/55 transition-all duration-300 opacity-0 group-hover:opacity-100">
+                                    <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
+                                        <circle cx="12" cy="13" r="4" />
+                                    </svg>
+                                    <span class="text-[11px] font-semibold text-white">Change</span>
+                                </div>
+
+                                <!-- uploading spinner -->
+                                <div wire:loading wire:target="profileImage" class="absolute inset-0 flex items-center justify-center bg-gray-900/50">
+                                    <svg class="w-7 h-7 text-white animate-spin" viewBox="0 0 24 24" fill="none">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- camera badge -->
+                            <span class="absolute bottom-1 right-1 flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700 border-3 border-white dark:border-gray-800 shadow-lg transition-transform duration-200 group-hover:scale-110">
+                                <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
+                                    <circle cx="12" cy="13" r="4" />
+                                </svg>
+                            </span>
+                        </label>
+
+                        <input id="profileImageInput" type="file" class="hidden" wire:model="profileImage" accept="image/png,image/jpeg">
+
+                        <div class="flex items-center gap-4">
+                            <label for="profileImageInput" class="text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 cursor-pointer transition-colors">
+                                Upload new photo
+                            </label>
+
+                            @if ($hasCustomImage)
+                                <span class="text-gray-300 dark:text-gray-600">|</span>
+                                <button
+                                    type="button"
+                                    wire:click="removeProfileImage"
+                                    wire:confirm="Remove your profile picture?"
+                                    class="text-sm font-semibold text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 transition-colors">
+                                    Remove
+                                </button>
+                            @endif
                         </div>
 
-                        <div class="w-full">
-                            <label for="profileImageInput" class="inline-flex items-center justify-center gap-2.5 w-full px-5 py-3 text-sm font-semibold rounded-xl cursor-pointer bg-gradient-to-r from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700 text-white hover:from-primary-600 hover:to-primary-700 dark:hover:from-primary-700 dark:hover:to-primary-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" />
-                                </svg>
-                                Change photo
-                            </label>
-                            <input id="profileImageInput" type="file" class="hidden" wire:model="profileImage" accept="image/*">
-                            @error('profileImage')
-                            <div class="mt-3 p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 shadow-sm">
-                                <p class="text-xs text-red-600 dark:text-red-400 font-medium">{{ $message }}</p>
-                            </div>
-                            @enderror
+                        @error('profileImage')
+                        <div class="w-full p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 shadow-sm">
+                            <p class="text-xs text-red-600 dark:text-red-400 font-medium text-center">{{ $message }}</p>
                         </div>
+                        @enderror
                     </div>
                 </div>
+                <!-- ============================================= -->
+                <!-- END Modernized Profile Picture Card             -->
+                <!-- ============================================= -->
 
                 <!-- Modern Details Card -->
                 <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-3xl border border-gray-200/60 dark:border-gray-700/60 p-7 lg:p-9 shadow-xl hover:shadow-2xl transition-all duration-300 backdrop-blur-sm bg-white/95 dark:bg-gray-800/95">
