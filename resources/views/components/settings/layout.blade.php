@@ -1,420 +1,142 @@
-<section class="w-full">
-    <x-settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
-
-        <!-- Mini Profile Card -->
-        <div class="mb-8 bg-white dark:bg-gray-800 rounded-3xl border border-gray-200/60 dark:border-gray-700/60 p-7 lg:p-9 shadow-xl hover:shadow-2xl transition-all duration-300 backdrop-blur-sm bg-white/95 dark:bg-gray-800/95">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="p-2 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700 shadow-lg">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
+<div class="w-full">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 px-4 md:px-6 lg:px-8 xl:px-12 py-8 lg:py-10">
+        <!-- Modern Sidebar for Desktop -->
+        <aside class="md:col-span-3 lg:col-span-3 xl:col-span-2 hidden md:block">
+            <div class="sticky top-32 lg:top-36">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl border border-gray-200/60 dark:border-gray-700/60 shadow-xl hover:shadow-2xl transition-all duration-300 p-6 lg:p-7 backdrop-blur-sm bg-white/95 dark:bg-gray-800/95">
+                    <div class="mb-6">
+                        <div class="flex items-center gap-3 px-2">
+                            <div class="p-2 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700 shadow-lg">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">Settings</h3>
+                        </div>
+                    </div>
+                    <nav class="space-y-2.5">
+                        <a href="{{ route('settings.profile') }}" wire:navigate class="flex items-center gap-3.5 px-4 py-3.5 lg:py-4 rounded-2xl transition-all duration-200 group {{ request()->routeIs('settings.profile') ? 'bg-gradient-to-r from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700 text-white font-semibold shadow-lg shadow-primary-500/30 scale-105' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:translate-x-1 hover:shadow-md' }}">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            <span class="text-sm font-semibold">{{ __('Profile') }}</span>
+                        </a>
+                        <a href="{{ route('settings.password') }}" wire:navigate class="flex items-center gap-3.5 px-4 py-3.5 lg:py-4 rounded-2xl transition-all duration-200 group {{ request()->routeIs('settings.password') ? 'bg-gradient-to-r from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700 text-white font-semibold shadow-lg shadow-primary-500/30 scale-105' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:translate-x-1 hover:shadow-md' }}">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                            <span class="text-sm font-semibold">{{ __('Password') }}</span>
+                        </a>
+                        <a href="{{ route('settings.appearance') }}" wire:navigate class="flex items-center gap-3.5 px-4 py-3.5 lg:py-4 rounded-2xl transition-all duration-200 group {{ request()->routeIs('settings.appearance') ? 'bg-gradient-to-r from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700 text-white font-semibold shadow-lg shadow-primary-500/30 scale-105' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:translate-x-1 hover:shadow-md' }}">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+                            </svg>
+                            <span class="text-sm font-semibold">{{ __('Appearance') }}</span>
+                        </a>
+                    </nav>
                 </div>
-                <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">Account Overview</h3>
+            </div>
+        </aside>
+
+        <!-- Modern Content Area -->
+        <main class="md:col-span-9 lg:col-span-9 xl:col-span-10">
+            <!-- Facebook/Meta style back button -->
+            <div class="mb-6">
+                <a href="{{ route('index') }}" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200">
+                    <svg class="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </a>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Personal Details -->
-                <div class="space-y-3">
-                    <h4 class="text-sm font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Personal Details</h4>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex items-start gap-2">
-                            <span class="text-gray-500 dark:text-gray-400 font-medium min-w-[100px]">Name:</span>
-                            <span class="text-gray-800 dark:text-gray-200 font-semibold">{{ $firstname }} {{ $lastname }}</span>
-                        </div>
-                        <div class="flex items-start gap-2">
-                            <span class="text-gray-500 dark:text-gray-400 font-medium min-w-[100px]">Email:</span>
-                            <span class="text-gray-800 dark:text-gray-200">{{ $email }}</span>
-                        </div>
-                        <div class="flex items-start gap-2">
-                            <span class="text-gray-500 dark:text-gray-400 font-medium min-w-[100px]">Phone:</span>
-                            <span class="text-gray-800 dark:text-gray-200">{{ $phone_number ?? 'Not set' }}</span>
-                        </div>
-                        <div class="flex items-start gap-2">
-                            <span class="text-gray-500 dark:text-gray-400 font-medium min-w-[100px]">Gender:</span>
-                            <span class="text-gray-800 dark:text-gray-200">{{ $gender ?? 'Not set' }}</span>
-                        </div>
-                        <div class="flex items-start gap-2">
-                            <span class="text-gray-500 dark:text-gray-400 font-medium min-w-[100px]">Birthday:</span>
-                            <span class="text-gray-800 dark:text-gray-200">{{ $birthday ? \Carbon\Carbon::parse($birthday)->format('M d, Y') : 'Not set' }}</span>
-                        </div>
-                        <div class="flex items-start gap-2">
-                            <span class="text-gray-500 dark:text-gray-400 font-medium min-w-[100px]">Address:</span>
-                            <span class="text-gray-800 dark:text-gray-200">{{ $address ?? 'Not set' }}</span>
-                        </div>
-                        <div class="flex items-start gap-2">
-                            <span class="text-gray-500 dark:text-gray-400 font-medium min-w-[100px]">Civil Status:</span>
-                            <span class="text-gray-800 dark:text-gray-200">{{ $civil_status ?? 'Not set' }}</span>
-                        </div>
+            <div class="hidden md:block mb-10 lg:mb-12">
+                <div class="flex items-center gap-5 mb-4">
+                    <div class="p-4 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700 shadow-xl shadow-primary-500/20">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <flux:heading class="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-gray-100 dark:via-gray-200 dark:to-gray-100 bg-clip-text text-transparent">{{ $heading ?? '' }}</flux:heading>
+                        <flux:subheading class="text-base lg:text-lg mt-2.5 text-gray-600 dark:text-gray-400 font-medium">{{ $subheading ?? '' }}</flux:subheading>
                     </div>
                 </div>
+            </div>
+            <div class="w-full max-w-5xl xl:max-w-6xl">
+                {{ $slot }}
+            </div>
+        </main>
+    </div>
 
-                <!-- Career Information -->
-                <div class="space-y-3">
-                    <h4 class="text-sm font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Career Information</h4>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex items-start gap-2">
-                            <span class="text-gray-500 dark:text-gray-400 font-medium min-w-[100px]">DTI ID:</span>
-                            <span class="text-gray-800 dark:text-gray-200 font-semibold">{{ $staff_id ?? 'Not set' }}</span>
+    <!-- Modern mobile drawer for settings navigation -->
+    <div id="settings-mobile-drawer" class="fixed inset-0 z-40 hidden md:hidden">
+        <div id="settings-mobile-backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-300"></div>
+        <div class="fixed left-0 top-0 h-full w-80 bg-white dark:bg-gray-800 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out" id="settings-mobile-panel">
+            <div class="p-6 border-b border-gray-200/60 dark:border-gray-700/60 bg-gradient-to-br from-primary-500/10 via-primary-50 to-white dark:from-primary-900/30 dark:via-gray-800 dark:to-gray-900">
+                <div class="flex items-center justify-between mb-5">
+                    <div class="flex items-center gap-3.5">
+                        <div class="p-2.5 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700 shadow-lg">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
                         </div>
-                        <div class="flex items-start gap-2">
-                            <span class="text-gray-500 dark:text-gray-400 font-medium min-w-[100px]">Office:</span>
-                            <span class="text-gray-800 dark:text-gray-200">{{ $office ?? 'Not set' }}</span>
-                        </div>
-                        <div class="flex items-start gap-2">
-                            <span class="text-gray-500 dark:text-gray-400 font-medium min-w-[100px]">Position:</span>
-                            <span class="text-gray-800 dark:text-gray-200">{{ $position ?? 'Not set' }}</span>
-                        </div>
-                        <div class="flex items-start gap-2">
-                            <span class="text-gray-500 dark:text-gray-400 font-medium min-w-[100px]">Department:</span>
-                            <span class="text-gray-800 dark:text-gray-200">{{ $department ?? 'Not set' }}</span>
-                        </div>
-                        <div class="flex items-start gap-2">
-                            <span class="text-gray-500 dark:text-gray-400 font-medium min-w-[100px]">Nature of Work:</span>
-                            <span class="text-gray-800 dark:text-gray-200">{{ $nature_of_work ?? 'Not set' }}</span>
-                        </div>
-                        <div class="flex items-start gap-2">
-                            <span class="text-gray-500 dark:text-gray-400 font-medium min-w-[100px]">Level:</span>
-                            <span class="text-gray-800 dark:text-gray-200">{{ $level_career ?? 'Not set' }}</span>
-                        </div>
-                        <div class="flex items-start gap-2">
-                            <span class="text-gray-500 dark:text-gray-400 font-medium min-w-[100px]">Years in DTI:</span>
-                            <span class="text-gray-800 dark:text-gray-200">{{ $years_in_dti ?? 'Not set' }}</span>
+                        <div>
+                            <div class="text-base font-bold text-gray-800 dark:text-gray-100">Settings</div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ $heading ?? '' }}</div>
                         </div>
                     </div>
+                    <button id="settings-mobile-close" class="p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 border border-gray-200 dark:border-gray-700">
+                        <svg class="w-6 h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
                 </div>
-
-                <!-- Health Information -->
-                <div class="space-y-3">
-                    <h4 class="text-sm font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Health Information</h4>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex items-start gap-2">
-                            <span class="text-gray-500 dark:text-gray-400 font-medium min-w-[100px]">Height:</span>
-                            <span class="text-gray-800 dark:text-gray-200">{{ $height ? $height . ' cm' : 'Not set' }}</span>
-                        </div>
-                        <div class="flex items-start gap-2">
-                            <span class="text-gray-500 dark:text-gray-400 font-medium min-w-[100px]">Weight:</span>
-                            <span class="text-gray-800 dark:text-gray-200">{{ $weight ? $weight . ' kg' : 'Not set' }}</span>
-                        </div>
-                        <div class="flex items-start gap-2">
-                            <span class="text-gray-500 dark:text-gray-400 font-medium min-w-[100px]">Activity Level:</span>
-                            <span class="text-gray-800 dark:text-gray-200">{{ $activity_level ?? 'Not set' }}</span>
-                        </div>
-                        <div class="flex items-start gap-2">
-                            <span class="text-gray-500 dark:text-gray-400 font-medium min-w-[100px]">Health Goals:</span>
-                            <span class="text-gray-800 dark:text-gray-200">{{ $health_goals ?? 'Not set' }}</span>
-                        </div>
-                        <div class="flex items-start gap-2">
-                            <span class="text-gray-500 dark:text-gray-400 font-medium min-w-[100px]">Dietary Pref:</span>
-                            <span class="text-gray-800 dark:text-gray-200">{{ $dietary_preferences ?? 'Not set' }}</span>
-                        </div>
-                    </div>
-                </div>
+            </div>
+            <div class="p-5">
+                <nav class="space-y-2.5">
+                    <a href="{{ route('settings.profile') }}" wire:navigate class="flex items-center gap-3.5 px-4 py-3.5 rounded-2xl transition-all duration-200 {{ request()->routeIs('settings.profile') ? 'bg-gradient-to-r from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700 text-white font-semibold shadow-lg shadow-primary-500/30' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 border border-gray-200 dark:border-gray-700' }}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                        <span class="text-sm font-semibold">{{ __('Profile') }}</span>
+                    </a>
+                    <a href="{{ route('settings.password') }}" wire:navigate class="flex items-center gap-3.5 px-4 py-3.5 rounded-2xl transition-all duration-200 {{ request()->routeIs('settings.password') ? 'bg-gradient-to-r from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700 text-white font-semibold shadow-lg shadow-primary-500/30' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 border border-gray-200 dark:border-gray-700' }}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                        <span class="text-sm font-semibold">{{ __('Password') }}</span>
+                    </a>
+                    <a href="{{ route('settings.appearance') }}" wire:navigate class="flex items-center gap-3.5 px-4 py-3.5 rounded-2xl transition-all duration-200 {{ request()->routeIs('settings.appearance') ? 'bg-gradient-to-r from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700 text-white font-semibold shadow-lg shadow-primary-500/30' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 border border-gray-200 dark:border-gray-700' }}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+                        </svg>
+                        <span class="text-sm font-semibold">{{ __('Appearance') }}</span>
+                    </a>
+                </nav>
             </div>
         </div>
+    </div>
+</div>
 
-        <form wire:submit="updateProfileInformation" class="w-full">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const openBtn = document.getElementById('settings-mobile-open');
+    const drawer = document.getElementById('settings-mobile-drawer');
+    const panel = document.getElementById('settings-mobile-panel');
+    const backdrop = document.getElementById('settings-mobile-backdrop');
+    const closeBtn = document.getElementById('settings-mobile-close');
 
-                <!-- ============================================= -->
-                <!-- MODERNIZED Profile Picture Card                -->
-                <!-- ============================================= -->
-                <div class="bg-white dark:bg-gray-800 rounded-3xl border border-gray-200/60 dark:border-gray-700/60 p-7 lg:p-9 shadow-xl hover:shadow-2xl transition-all duration-300 backdrop-blur-sm bg-white/95 dark:bg-gray-800/95">
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="p-2 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700 shadow-lg">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100">Profile Picture</h3>
-                    </div>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-7 font-medium">PNG or JPG, up to 2MB. Square images look best.</p>
+    function openDrawer() {
+        drawer.classList.remove('hidden');
+        requestAnimationFrame(() => panel.classList.remove('-translate-x-full'));
+    }
+    function closeDrawer() {
+        panel.classList.add('-translate-x-full');
+        setTimeout(() => drawer.classList.add('hidden'), 300);
+    }
 
-                    @php
-                        $hasCustomImage = auth()->user()->profileimage;
-                        $currentImage = $hasCustomImage ? asset('storage/' . auth()->user()->profileimage) : asset('images/default.png');
-                        $previewSrc = (is_object($profileImage) && method_exists($profileImage, 'temporaryUrl'))
-                            ? $profileImage->temporaryUrl()
-                            : $currentImage;
-                    @endphp
-
-                    <div class="flex flex-col items-center gap-5">
-                        <!-- Avatar with in-place edit affordance -->
-                        <label for="profileImageInput" class="relative group cursor-pointer block">
-                            <!-- glow ring -->
-                            <div class="absolute -inset-1.5 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 opacity-0 group-hover:opacity-40 blur-lg transition-opacity duration-300"></div>
-
-                            <div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 dark:border-gray-700 shadow-2xl transition-all duration-300 group-hover:border-primary-400 dark:group-hover:border-primary-500">
-                                <img
-                                    wire:loading.class="opacity-40 scale-105"
-                                    wire:target="profileImage"
-                                    src="{{ $previewSrc }}"
-                                    alt="Profile Preview"
-                                    class="w-full h-full object-cover transition-all duration-300">
-
-                                <!-- hover overlay -->
-                                <div class="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-gray-900/0 group-hover:bg-gray-900/55 transition-all duration-300 opacity-0 group-hover:opacity-100">
-                                    <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
-                                        <circle cx="12" cy="13" r="4" />
-                                    </svg>
-                                    <span class="text-[11px] font-semibold text-white">Change</span>
-                                </div>
-
-                                <!-- uploading spinner -->
-                                <div wire:loading wire:target="profileImage" class="absolute inset-0 flex items-center justify-center bg-gray-900/50">
-                                    <svg class="w-7 h-7 text-white animate-spin" viewBox="0 0 24 24" fill="none">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-
-                            <!-- camera badge -->
-                            <span class="absolute bottom-1 right-1 flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700 border-3 border-white dark:border-gray-800 shadow-lg transition-transform duration-200 group-hover:scale-110">
-                                <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
-                                    <circle cx="12" cy="13" r="4" />
-                                </svg>
-                            </span>
-                        </label>
-
-                        <input id="profileImageInput" type="file" class="hidden" wire:model="profileImage" accept="image/png,image/jpeg">
-
-                        <div class="flex items-center gap-4">
-                            <label for="profileImageInput" class="text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 cursor-pointer transition-colors">
-                                Upload new photo
-                            </label>
-
-                            @if ($hasCustomImage)
-                                <span class="text-gray-300 dark:text-gray-600">|</span>
-                                <button
-                                    type="button"
-                                    wire:click="removeProfileImage"
-                                    wire:confirm="Remove your profile picture?"
-                                    class="text-sm font-semibold text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 transition-colors">
-                                    Remove
-                                </button>
-                            @endif
-                        </div>
-
-                        @error('profileImage')
-                        <div class="w-full p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 shadow-sm">
-                            <p class="text-xs text-red-600 dark:text-red-400 font-medium text-center">{{ $message }}</p>
-                        </div>
-                        @enderror
-                    </div>
-                </div>
-                <!-- ============================================= -->
-                <!-- END Modernized Profile Picture Card             -->
-                <!-- ============================================= -->
-
-                <!-- Modern Details Card -->
-                <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-3xl border border-gray-200/60 dark:border-gray-700/60 p-7 lg:p-9 shadow-xl hover:shadow-2xl transition-all duration-300 backdrop-blur-sm bg-white/95 dark:bg-gray-800/95">
-                    <div class="flex items-center gap-3 mb-7">
-                        <div class="p-2 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700 shadow-lg">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100">Personal Information</h3>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">First name</label>
-                            <flux:input wire:model="firstname" type="text" placeholder="Juan" autocomplete="given-name" class="rounded-xl" />
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Last name</label>
-                            <flux:input wire:model="lastname" type="text" placeholder="Dela Cruz" autocomplete="family-name" class="rounded-xl" />
-                        </div>
-
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Email</label>
-                            <flux:input wire:model="email" type="email" placeholder="you@example.com" autocomplete="email" class="rounded-xl" />
-                            @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! auth()->user()->hasVerifiedEmail())
-                            <div class="mt-4 p-4 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 shadow-sm">
-                                <div class="flex items-start gap-3">
-                                    <div class="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex-shrink-0">
-                                        <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                        </svg>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-bold text-amber-800 dark:text-amber-300">Email not verified</p>
-                                        <p class="text-xs text-amber-600 dark:text-amber-400 mt-1.5 font-medium">Your email address is unverified.</p>
-                                        <flux:link class="text-xs mt-3 inline-block cursor-pointer font-semibold hover:underline" wire:click.prevent="resendVerificationNotification">
-                                            Click here to re-send the verification email.
-                                        </flux:link>
-                                        @if (session('status') === 'verification-link-sent')
-                                        <div class="mt-3 p-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 shadow-sm">
-                                            <p class="text-xs font-semibold text-green-700 dark:text-green-300">✓ A new verification link has been sent to your email address.</p>
-                                        </div>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                            @endif
-                        </div>
-
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">About you</label>
-                            <textarea wire:model="bio" rows="4" class="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm text-gray-800 dark:text-gray-100 px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 shadow-sm" placeholder="Tell us about yourself..."></textarea>
-                            @error('bio')
-                            <div class="mt-3 p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 shadow-sm">
-                                <p class="text-xs text-red-600 dark:text-red-400 font-medium">{{ $message }}</p>
-                            </div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- Personal Information Section -->
-                    <div class="mt-8 pt-7 border-t border-gray-200/60 dark:border-gray-700/60">
-                        <h4 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-6">Personal Information</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Phone Number</label>
-                                <flux:input wire:model="phone_number" type="tel" placeholder="+63" class="rounded-xl" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Gender</label>
-                                <flux:select wire:model="gender" placeholder="Select Gender" class="rounded-xl">
-                                    <flux:select.option>Male</flux:select.option>
-                                    <flux:select.option>Female</flux:select.option>
-                                </flux:select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Birthday</label>
-                                <flux:input wire:model="birthday" type="date" max="2999-12-31" class="rounded-xl" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Civil Status</label>
-                                <flux:select wire:model="civil_status" class="rounded-xl">
-                                    <flux:select.option>Single</flux:select.option>
-                                    <flux:select.option>Married</flux:select.option>
-                                    <flux:select.option>Widow</flux:select.option>
-                                    <flux:select.option value="solo_parent">Solo Parent</flux:select.option>
-                                </flux:select>
-                            </div>
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Address</label>
-                                <flux:input wire:model="address" type="text" placeholder="Enter your address" class="rounded-xl" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Career Information Section -->
-                    <div class="mt-8 pt-7 border-t border-gray-200/60 dark:border-gray-700/60">
-                        <h4 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-6">Career Information</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">DTI ID Number</label>
-                                <flux:input wire:model="staff_id" type="text" placeholder="Enter DTI ID" class="rounded-xl" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Office</label>
-                                <flux:select wire:model="office" placeholder="Choose Office" class="rounded-xl">
-                                    <flux:select.option>General Santos City</flux:select.option>
-                                    <flux:select.option>Sarangani Province</flux:select.option>
-                                    <flux:select.option>South Cotabato</flux:select.option>
-                                    <flux:select.option>Regional Office</flux:select.option>
-                                    <flux:select.option>Sultan Kudarat</flux:select.option>
-                                    <flux:select.option>Cotabato Province</flux:select.option>
-                                </flux:select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Position</label>
-                                <flux:input wire:model="position" type="text" placeholder="Enter position" class="rounded-xl" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Department</label>
-                                <flux:input wire:model="department" type="text" placeholder="Enter department" class="rounded-xl" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Nature of Appointment</label>
-                                <flux:select wire:model="nature_of_work" placeholder="Select" class="rounded-xl">
-                                    <flux:select.option>Career</flux:select.option>
-                                    <flux:select.option>Non-Career</flux:select.option>
-                                    <flux:select.option>Contractual</flux:select.option>
-                                    <flux:select.option>Job Order</flux:select.option>
-                                    <flux:select.option>Casual</flux:select.option>
-                                </flux:select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Level</label>
-                                <flux:select wire:model="level_career" placeholder="Select Level" class="rounded-xl">
-                                    <flux:select.option>1st</flux:select.option>
-                                    <flux:select.option>2nd</flux:select.option>
-                                    <flux:select.option>3rd</flux:select.option>
-                                </flux:select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Years in DTI</label>
-                                <flux:input wire:model="years_in_dti" type="number" placeholder="Enter years" min="0" class="rounded-xl" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Health Information Section -->
-                    <div class="mt-8 pt-7 border-t border-gray-200/60 dark:border-gray-700/60">
-                        <h4 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-6">Health Information</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Height (cm)</label>
-                                <flux:input wire:model="height" type="number" placeholder="152" class="rounded-xl" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Weight (kg)</label>
-                                <flux:input wire:model="weight" type="number" placeholder="52" class="rounded-xl" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Activity Level</label>
-                                <flux:select wire:model="activity_level" placeholder="Select Activity Level" class="rounded-xl">
-                                    <flux:select.option>Sedentary</flux:select.option>
-                                    <flux:select.option>Lightly Active</flux:select.option>
-                                    <flux:select.option>Moderately Active</flux:select.option>
-                                    <flux:select.option>Very Active</flux:select.option>
-                                    <flux:select.option>Extra Active</flux:select.option>
-                                </flux:select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Health Goals</label>
-                                <flux:select wire:model="health_goals" placeholder="Select Health Goal" class="rounded-xl">
-                                    <flux:select.option>Weight Loss</flux:select.option>
-                                    <flux:select.option>Muscle Gain</flux:select.option>
-                                    <flux:select.option>Maintenance</flux:select.option>
-                                    <flux:select.option>General Fitness</flux:select.option>
-                                </flux:select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Dietary Preferences</label>
-                                <flux:select wire:model="dietary_preferences" placeholder="Select Preferences" class="rounded-xl">
-                                    <flux:select.option>Vegetarian</flux:select.option>
-                                    <flux:select.option>Gluten-Free</flux:select.option>
-                                    <flux:select.option>Vegan</flux:select.option>
-                                    <flux:select.option>Dairy-Free</flux:select.option>
-                                    <flux:select.option>Balanced</flux:select.option>
-                                    <flux:select.option>Meat-Based</flux:select.option>
-                                </flux:select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center gap-4 mt-10 pt-7 border-t border-gray-200/60 dark:border-gray-700/60">
-                        <flux:button variant="primary" color="lime" type="submit" class="px-7 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 font-semibold">
-                            Save
-                        </flux:button>
-                        <x-action-message class="me-3 flex items-center gap-2.5 text-sm text-green-600 dark:text-green-400 font-semibold" on="profile-updated">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            Saved successfully
-                        </x-action-message>
-                    </div>
-                </div>
-            </div>
-        </form>
-
-        <livewire:settings.delete-user-form />
-    </x-settings.layout>
-</section>
+    if (openBtn) openBtn.addEventListener('click', openDrawer);
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    if (backdrop) backdrop.addEventListener('click', closeDrawer);
+});
+</script>
