@@ -22,7 +22,6 @@ use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use Illuminate\Support\Facades\Route;
 use App\Notifications\RealtimeTestNotification;
-use App\Http\Controllers\ScrambleWordController;
 use App\Http\Controllers\SocialController;
 
 Route::get('/', [HomeController::class, 'index'])->middleware([
@@ -50,7 +49,7 @@ Route::middleware(['auth', 'is_admin:admin'])->group(function () {
 
 
     //user tracking
-    Route::get('Users/Tracking', [usertrackingController::class, 'index'])->name('users.tracking');
+    Route::get('Users/Tracking', [UserInformationController::class, 'progress'])->name('users.tracking');
 
     //article and news
     Route::get('article',[ArticleandNewsController::class, 'index'])->name('article');
@@ -82,12 +81,6 @@ Route::middleware(['auth', 'is_admin:admin'])->group(function () {
             Route::get('quizzes/{quiz}/sets/{set}/edit', [AdminQuizController::class, 'editSet'])->name('admin.quizzes.sets.edit');
             Route::put('quizzes/{quiz}/sets/{set}', [AdminQuizController::class, 'updateSet'])->name('admin.quizzes.sets.update');
             Route::delete('quizzes/{quiz}/sets/{set}', [AdminQuizController::class, 'destroySet'])->name('admin.quizzes.sets.destroy');
-
-    // Scramble words management
-    Route::get('manage-scramble-words', [ScrambleWordController::class, 'index'])->name('admin.scramble-words.index');
-    Route::post('manage-scramble-words', [ScrambleWordController::class, 'store'])->name('admin.scramble-words.store');
-    Route::put('manage-scramble-words/{scrambleWord}', [ScrambleWordController::class, 'update'])->name('admin.scramble-words.update');
-    Route::delete('manage-scramble-words/{scrambleWord}', [ScrambleWordController::class, 'destroy'])->name('admin.scramble-words.destroy');
 
     //Feedback Management
     Route::get('feedbacks', [AdminFeedbackController::class, 'index'])->name('admin.feedbacks.index');
@@ -137,9 +130,6 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::get('quiz/result/{attempt}', [QuizController::class, 'result'])->name('quiz.result');
     Route::get('quiz/history', [QuizController::class, 'history'])->name('quiz.history');
 
-    // Scramble game (UI similar to quiz)
-    Route::view('scramble', 'auth.users.view.scramble')->name('scramble');
-
     Route::get('Physical-tools', [ToolsController::class, 'index'])->name('physical.tools');
     Route::post('physical-tools', [ToolsController::class, 'calculate'])->name('calculate.bmi');
     Route::post('physical-tools/meditation', [ToolsController::class, 'start'])->name('meditation.start');
@@ -153,34 +143,34 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::view('Financial-tools','auth.users.view.financial')->name('financial.tools');
     Route::view('mental-tools','auth.users.view.mental')->name('mental.tools');
     Route::get('emotional-tools',[emotional::class, 'index'])->name('emotional.tools');
-    
+
     // Social Tools Routes
     Route::get('social',[SocialController::class, 'index'])->name('social.tools');
     Route::get('social/{post}',[SocialController::class, 'show'])->name('social.show');
-    
+
     // Social Posts
     Route::post('social/posts', [SocialController::class, 'storePost'])->name('social.posts.store');
     Route::put('social/posts/{post}', [SocialController::class, 'updatePost'])->name('social.posts.update');
     Route::delete('social/posts/{post}', [SocialController::class, 'deletePost'])->name('social.posts.destroy');
     Route::post('social/posts/{post}/like', [SocialController::class, 'toggleLike'])->name('social.posts.like');
-    
+
     // Social Comments
     Route::post('social/posts/{post}/comments', [SocialController::class, 'storeComment'])->name('social.comments.store');
     Route::delete('social/comments/{comment}', [SocialController::class, 'deleteComment'])->name('social.comments.destroy');
     Route::post('social/comments/{comment}/like', [SocialController::class, 'toggleCommentLike'])->name('social.comments.like');
-    
+
     // Social Replies
     Route::post('social/comments/{comment}/replies', [SocialController::class, 'storeReply'])->name('social.replies.store');
     Route::delete('social/replies/{reply}', [SocialController::class, 'deleteReply'])->name('social.replies.destroy');
     Route::post('social/replies/{reply}/like', [SocialController::class, 'toggleReplyLike'])->name('social.replies.like');
-    
+
     // Global Chat
     Route::post('social/chat/messages', [SocialController::class, 'sendMessage'])->name('social.chat.send');
     Route::delete('social/chat/messages/{message}', [SocialController::class, 'deleteMessage'])->name('social.chat.destroy');
-    
+
     // Mentions
     Route::get('social/mentions', [SocialController::class, 'getMentions'])->name('social.mentions');
-    
+
     Route::get('leaderboard', [leaderboards::class, 'index'])->name('leaderboards');
 
 });

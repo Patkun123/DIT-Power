@@ -4,9 +4,6 @@
         @include('partials.head')
     </head>
     <body class="min-h-screen bg-white antialiased dark:bg-linear-to-b dark:from-gray-950 dark:to-gray-900">
-        <!-- Loading Screen -->
-        @include('components.loading-screen')
-        
         {{ $slot }}
         @fluxScripts
     </body>

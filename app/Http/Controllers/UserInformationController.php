@@ -25,6 +25,40 @@ class UserInformationController extends Controller
     }
 
     /**
+     * Display user progress with search and registration/update sorting.
+     */
+    public function progress(Request $request)
+    {
+        $validated = $request->validate([
+            'search' => 'nullable|string|max:100',
+            'sort' => 'nullable|in:created_at,updated_at',
+            'direction' => 'nullable|in:asc,desc',
+        ]);
+
+        $search = trim($validated['search'] ?? '');
+        $sort = $validated['sort'] ?? 'created_at';
+        $direction = $validated['direction'] ?? 'desc';
+
+        $users = User::withCount('journals')
+            ->with(['staff', 'information'])
+            ->where('role', '!=', 'admin')
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('firstname', 'like', "%{$search}%")
+                        ->orWhere('lastname', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhereHas('staff', function ($query) use ($search) {
+                            $query->where('office', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->orderBy($sort, $direction)
+            ->get();
+
+        return view('auth.admin.view.user-tracking', compact('users', 'search', 'sort', 'direction'));
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()

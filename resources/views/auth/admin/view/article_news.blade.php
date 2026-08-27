@@ -5,16 +5,14 @@
 @include('auth.admin.partials.layouts.header')
 @section('content')
 @include('auth.admin.partials.modals.addnews')
-<div class="h-70 md:h-80 w-full bg-gradient-to-l from-lime-300 via-lime-600 to-lime-900">
-    <div class="container mx-auto flex items-start justify-start h-full px-2 md:px-70">
-        <div class="flex flex-col mt-40 md:mt-40">
-            <h1 class="text-2xl md:text-4xl text-white">News Management </b></h1>
-            <span class="text-white text-sm md:text-base mt-2"> Manage your News with ease</span>
-        </div>
+<div class="admin-page-hero">
+    <div class="admin-page-hero-inner">
+        <h1>News Management</h1>
+        <p>Publish clear, timely updates for your community</p>
     </div>
 </div>
 
-<main class="p-4 md:ml-64 h-full bg-gray-200 dark:bg-gray-900">
+<main class="admin-page-main p-4 md:ml-64 h-full">
 
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
@@ -53,7 +51,7 @@
 
 
     <!-- News Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 dark:bg-gray-800 p-5 rounded-2xl gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 bg-white dark:bg-gray-800 p-5 rounded-xl gap-6">
     @forelse($articles as $article)
     @include('auth.admin.partials.modals.crudnews')
 <div class="group relative dark:bg-gray-900 hover:shadow-2xl transition-all hover:-translate-y-1 hover:bg-primary-500 rounded-xl shadow-primary-500 overflow-hidden border-t-4 border-primary-500">

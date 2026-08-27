@@ -141,7 +141,7 @@ const pieOptions = {
   },
   legend: { position: 'bottom' },
   dataLabels: { enabled: true },
-  colors: ['#3B82F6', '#10B981', '#F59E0B'],
+  colors: ['#3B82F6', '#D97706', '#F59E0B'],
 };
 
 if (document.getElementById('pie-chart') && typeof ApexCharts !== 'undefined') {
