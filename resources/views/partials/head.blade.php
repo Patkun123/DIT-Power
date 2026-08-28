@@ -3,11 +3,10 @@
 
 <title>{{ $title ?? config('app.name') }} Personalized Online Wellness Resource Hub</title>
 
-<link rel="icon" href="/images/favicon.ico" sizes="any">
 
 <link rel="preconnect" href="https://fonts.bunny.net">
 <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
-<link rel="icon" href="/images/favicon.ico" sizes="any">
+<link rel="icon" href="/dtilogo-icon.ico" sizes="any">
 <script src="{{asset('include/flowbite.js')}}"></script>
 <script src="{{asset('include/apexcharts.js')}}"></script>
 
