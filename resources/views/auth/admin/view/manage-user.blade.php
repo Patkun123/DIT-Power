@@ -1,6 +1,6 @@
 @extends('auth.admin.partials.layouts.app.head')
 
-@section('title', 'manageusers')
+@section('title', 'User Management')
 @include('auth.admin.partials.layouts.side')
 @include('auth.admin.partials.layouts.header')
 @section('content')

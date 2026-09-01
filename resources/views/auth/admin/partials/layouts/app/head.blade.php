@@ -6,8 +6,7 @@
 
         <title>@yield('title', 'Admin') | {{ config('app.name') }}</title>
 
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="dtilogo-icon" href="/dtilogo-icon.png">
+        <link rel="icon" href="/dtilogo-icon.ico" sizes="any">
 
         <script src="{{asset('include/flowbite.js')}}"></script>
         <script src="{{asset('include/apexcharts.js')}}"></script>

@@ -32,6 +32,13 @@ class Password extends Component
             throw $e;
         }
 
+        // NOTE: If your User model casts 'password' => 'hashed' in its casts()
+        // method, do NOT wrap this in Hash::make() — that double-hashes the
+        // password and locks the user out. Just assign the plain value:
+        //
+        // Auth::user()->update(['password' => $validated['password']]);
+        //
+        // If your User model does NOT have that cast, keep Hash::make() below.
         Auth::user()->update([
             'password' => Hash::make($validated['password']),
         ]);

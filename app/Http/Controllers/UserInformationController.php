@@ -145,6 +145,7 @@ class UserInformationController extends Controller
             'lastname' => 'nullable|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'office' => 'nullable|string|max:255',
+            'staff_id' => 'nullable|string|max:255',
             'password' => 'nullable|string|min:6',
         ]);
 
@@ -161,10 +162,18 @@ class UserInformationController extends Controller
         }
         $user->save();
 
-        // Update office in related dti_id record if provided
+        // Update related staff record
+        $staff = dti_id::firstOrNew(['user_id' => $user->id]);
+
         if (!empty($validated['office'])) {
-            $staff = dti_id::firstOrNew(['user_id' => $user->id]);
             $staff->office = $validated['office'];
+        }
+
+        if (!empty($validated['staff_id'])) {
+            $staff->staff_id = $validated['staff_id'];
+        }
+
+        if ($staff->wasRecentlyCreated || $staff->getAttributes()) {
             $staff->save();
         }
 

@@ -145,41 +145,58 @@
                             </div>
                             <!-- Edit Modal -->
                             <div id="edit-user-{{ $user->id }}" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-                                <div class="relative p-4 w-full max-w-lg max-h-full">
-                                    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                                        <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Edit User</h3>
-                                            <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="edit-user-{{ $user->id }}">
-                                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
+                                <div class="relative p-4 w-full max-w-2xl max-h-full">
+                                    <div class="relative bg-white rounded-2xl p-5 shadow-2xl border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                                        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                                            <div>
+                                                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary-600 dark:text-primary-400">User account</p>
+                                                <h3 class="mt-1 text-xl font-bold text-gray-900 dark:text-white">Edit User</h3>
+                                            </div>
+                                            <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white" data-modal-hide="edit-user-{{ $user->id }}">
+                                                <svg class="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
                                                 <span class="sr-only">Close modal</span>
                                             </button>
                                         </div>
-                                        <form method="POST" action="{{ route('users.update', $user->id) }}" class="p-4 md:p-5 space-y-4">
+
+                                        <form method="POST" action="{{ route('users.update', $user->id) }}" class="p-2 space-y-10">
                                             @csrf
                                             @method('PUT')
-                                            <div>
-                                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First name</label>
-                                                <input type="text" name="firstname" value="{{ old('firstname', $user->firstname) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
+
+                                            <div class="grid gap-4 md:grid-cols-2 space-y-2">
+                                                <div>
+                                                    <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">First name</label>
+                                                    <input type="text" name="firstname" value="{{ old('firstname', $user->firstname) }}" class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-800" placeholder="Juan" />
+                                                </div>
+                                                <div>
+                                                    <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">Last name</label>
+                                                    <input type="text" name="lastname" value="{{ old('lastname', $user->lastname) }}" class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-800" placeholder="Dela Cruz" />
+                                                </div>
                                             </div>
-                                            <div>
-                                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last name</label>
-                                                <input type="text" name="lastname" value="{{ old('lastname', $user->lastname) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
+
+                                            <div class="mb-4">
+                                                <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">Email address</label>
+                                                <input type="email" name="email" value="{{ old('email', $user->email) }}" required class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-800" placeholder="name@dti.gov.ph" />
                                             </div>
-                                            <div>
-                                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-                                                <input type="email" name="email" value="{{ old('email', $user->email) }}" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
+
+                                            <div class="grid gap-4 md:grid-cols-2 space-y-2">
+                                                <div>
+                                                    <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">Office Department</label>
+                                                    <input type="text" name="office" value="{{ old('office', $user->staff->office ?? '') }}" class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-800" placeholder="South Cotabato" />
+                                                </div>
+                                                <div>
+                                                    <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">DTI ID</label>
+                                                    <input type="text" name="staff_id" value="{{ old('staff_id', $user->staff->staff_id ?? '') }}" class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-800" placeholder="DTI-001" />
+                                                </div>
                                             </div>
-                                            <div>
-                                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Office Department</label>
-                                                <input type="text" name="office" value="{{ old('office', $user->staff->office ?? '') }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
+
+                                            <div class="mb-4">
+                                                <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">Password <span class="text-xs text-gray-500 dark:text-gray-400">(leave blank to keep current)</span></label>
+                                                <input type="password" name="password" class="w-full rounded-xl border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-800" placeholder="••••••••" />
                                             </div>
-                                            <div>
-                                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password (leave blank to keep)</label>
-                                                <input type="password" name="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
-                                            </div>
-                                            <div class="flex items-center justify-end space-x-2">
-                                                <button data-modal-hide="edit-user-{{ $user->id }}" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:bg-gray-600 dark:hover:border-gray-600">Cancel</button>
-                                                <button type="submit" class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-primary-800">Save</button>
+
+                                            <div class="flex items-center justify-end gap-3 border-t border-gray-200 pt-5 mt-5 dark:border-gray-700">
+                                                <button data-modal-hide="edit-user-{{ $user->id }}" type="button" class="rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600">Cancel</button>
+                                                <button type="submit" class="rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-primary-700 focus:outline-none focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-800">Save changes</button>
                                             </div>
                                         </form>
                                     </div>

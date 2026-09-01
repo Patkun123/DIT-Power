@@ -72,15 +72,15 @@ Route::middleware(['auth', 'is_admin:admin'])->group(function () {
     Route::get('quizzes/{quiz}/questions/{question}/edit', [AdminQuizController::class, 'editQuestion'])->name('admin.quizzes.questions.edit');
     Route::put('quizzes/{quiz}/questions/{question}', [AdminQuizController::class, 'updateQuestion'])->name('admin.quizzes.questions.update');
     Route::delete('quizzes/{quiz}/questions/{question}', [AdminQuizController::class, 'destroyQuestion'])->name('admin.quizzes.questions.destroy');
-            Route::get('quizzes/{quiz}/statistics', [AdminQuizController::class, 'statistics'])->name('admin.quizzes.statistics');
+    Route::get('quizzes/{quiz}/statistics', [AdminQuizController::class, 'statistics'])->name('admin.quizzes.statistics');
 
-            // Quiz Sets Management
-            Route::get('quizzes/{quiz}/sets', [AdminQuizController::class, 'sets'])->name('admin.quizzes.sets');
-            Route::get('quizzes/{quiz}/sets/create', [AdminQuizController::class, 'createSet'])->name('admin.quizzes.sets.create');
-            Route::post('quizzes/{quiz}/sets', [AdminQuizController::class, 'storeSet'])->name('admin.quizzes.sets.store');
-            Route::get('quizzes/{quiz}/sets/{set}/edit', [AdminQuizController::class, 'editSet'])->name('admin.quizzes.sets.edit');
-            Route::put('quizzes/{quiz}/sets/{set}', [AdminQuizController::class, 'updateSet'])->name('admin.quizzes.sets.update');
-            Route::delete('quizzes/{quiz}/sets/{set}', [AdminQuizController::class, 'destroySet'])->name('admin.quizzes.sets.destroy');
+    // Quiz Sets Management
+    Route::get('quizzes/{quiz}/sets', [AdminQuizController::class, 'sets'])->name('admin.quizzes.sets');
+    Route::get('quizzes/{quiz}/sets/create', [AdminQuizController::class, 'createSet'])->name('admin.quizzes.sets.create');
+    Route::post('quizzes/{quiz}/sets', [AdminQuizController::class, 'storeSet'])->name('admin.quizzes.sets.store');
+    Route::get('quizzes/{quiz}/sets/{set}/edit', [AdminQuizController::class, 'editSet'])->name('admin.quizzes.sets.edit');
+    Route::put('quizzes/{quiz}/sets/{set}', [AdminQuizController::class, 'updateSet'])->name('admin.quizzes.sets.update');
+    Route::delete('quizzes/{quiz}/sets/{set}', [AdminQuizController::class, 'destroySet'])->name('admin.quizzes.sets.destroy');
 
     //Feedback Management
     Route::get('feedbacks', [AdminFeedbackController::class, 'index'])->name('admin.feedbacks.index');
@@ -109,7 +109,9 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
-    Route::get('settings/password', Password::class)->name('settings.password');
+    Route::get('/settings/password', Password::class)
+    ->middleware(['auth'])
+    ->name('settings.password');
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
 
     Route::get('/index',[UserIndexController::class, 'index'])->name('index');
