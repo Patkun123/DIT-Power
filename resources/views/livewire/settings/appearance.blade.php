@@ -16,11 +16,11 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-4">Select Theme</label>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6" x-data x-init="$watch('$flux.appearance', value => {})">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6" x-data>
                         <label class="relative flex flex-col items-center p-5 lg:p-6 rounded-xl border-2 transition-all duration-200 cursor-pointer group hover:scale-105"
                                :class="$flux.appearance === 'light' ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-md' : 'border-gray-200 dark:border-gray-700 hover:border-primary-400 dark:hover:border-primary-600'"
                                @click="$flux.appearance = 'light'">
-                            <input type="radio" :checked="$flux.appearance === 'light'" class="sr-only">
+                            <input type="radio" name="appearance" value="light" x-model="$flux.appearance" class="sr-only">
                             <svg class="w-8 h-8 mb-3 transition-colors"
                                  :class="$flux.appearance === 'light' ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400'"
                                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,7 +34,7 @@
                         <label class="relative flex flex-col items-center p-5 lg:p-6 rounded-xl border-2 transition-all duration-200 cursor-pointer group hover:scale-105"
                                :class="$flux.appearance === 'dark' ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-md' : 'border-gray-200 dark:border-gray-700 hover:border-primary-400 dark:hover:border-primary-600'"
                                @click="$flux.appearance = 'dark'">
-                            <input type="radio" :checked="$flux.appearance === 'dark'" class="sr-only">
+                                     <input type="radio" name="appearance" value="dark" x-model="$flux.appearance" class="sr-only">
                             <svg class="w-8 h-8 mb-3 transition-colors"
                                  :class="$flux.appearance === 'dark' ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400'"
                                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -48,7 +48,7 @@
                         <label class="relative flex flex-col items-center p-5 lg:p-6 rounded-xl border-2 transition-all duration-200 cursor-pointer group hover:scale-105"
                                :class="$flux.appearance === 'system' ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-md' : 'border-gray-200 dark:border-gray-700 hover:border-primary-400 dark:hover:border-primary-600'"
                                @click="$flux.appearance = 'system'">
-                            <input type="radio" :checked="$flux.appearance === 'system'" class="sr-only">
+                                     <input type="radio" name="appearance" value="system" x-model="$flux.appearance" class="sr-only">
                             <svg class="w-8 h-8 mb-3 transition-colors"
                                  :class="$flux.appearance === 'system' ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400'"
                                  fill="none" stroke="currentColor" viewBox="0 0 24 24">

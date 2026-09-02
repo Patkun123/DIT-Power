@@ -79,29 +79,29 @@ class Profile extends Component
         $this->coverPhoto = $user->cover_photo;
 
         // Contact Info
-        $this->phone_number = $userInfo->phone_number ?? null;
-        $this->address = $userInfo->address ?? null;
-        $this->gender = $userInfo->gender ?? null;
-        $this->birthday = $userInfo->birthday ? $userInfo->birthday->format('Y-m-d') : null;
-        $this->civil_status = $userInfo->civil_status ?? null;
+        $this->phone_number = $userInfo?->phone_number;
+        $this->address = $userInfo?->address;
+        $this->gender = $userInfo?->gender;
+        $this->birthday = $userInfo?->birthday?->format('Y-m-d');
+        $this->civil_status = $userInfo?->civil_status;
 
         // Work Info
-        $this->career = $userInfo->career ?? null;
-        $this->level_career = $userInfo->level_career ?? null;
-        $this->years_in_dti = $userInfo->years_in_dti ?? null;
-        $this->nature_of_work = $userInfo->nature_of_work ?? null;
-        $this->function = $userInfo->function ?? null;
+        $this->career = $userInfo?->career;
+        $this->level_career = $userInfo?->level_career;
+        $this->years_in_dti = $userInfo?->years_in_dti;
+        $this->nature_of_work = $userInfo?->nature_of_work;
+        $this->function = $userInfo?->function;
 
         // Education
-        $this->educational_attachment_type = $userInfo->educational_attachment_type ?? null;
-        $this->educational_attachment = $userInfo->educational_attachment ?? null;
+        $this->educational_attachment_type = $userInfo?->educational_attachment_type;
+        $this->educational_attachment = $userInfo?->educational_attachment;
 
         // Health Info
-        $this->height = $userInfo->height ?? null;
-        $this->weight = $userInfo->weight ?? null;
-        $this->activity_level = $userInfo->activity_level ?? null;
-        $this->health_goals = $userInfo->health_goals ?? null;
-        $this->dietary_preferences = $userInfo->dietary_preferences ?? null;
+        $this->height = $userInfo?->height;
+        $this->weight = $userInfo?->weight;
+        $this->activity_level = $userInfo?->activity_level;
+        $this->health_goals = $userInfo?->health_goals;
+        $this->dietary_preferences = $userInfo?->dietary_preferences;
 
         // Staff Info
         if ($staffInfo) {
