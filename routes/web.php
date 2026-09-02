@@ -145,9 +145,8 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::view('Financial-tools','auth.users.view.financial')->name('financial.tools');
     Route::get('mental-tools',[emotional::class, 'index'])->name('mental.tools');
     Route::get('emotional-tools',[emotional::class, 'index'])->name('emotional.tools');
-<<<<<<< HEAD
     Route::get('social-wellbeing-tools',[ToolsController::class, 'socialWellbeing'])->name('social.wellbeing.tools');
-    
+
     // Mental & Emotional Well-being API Routes
     Route::post('mental-tools/mood', [emotional::class, 'storeMood'])->name('mental.tools.mood');
     Route::post('mental-tools/gratitude', [emotional::class, 'storeGratitude'])->name('mental.tools.gratitude');
@@ -155,10 +154,7 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::post('mental-tools/stress', [emotional::class, 'storeStress'])->name('mental.tools.stress');
     Route::post('mental-tools/self-care', [emotional::class, 'storeSelfCare'])->name('mental.tools.selfcare');
     Route::post('mental-tools/reflection', [emotional::class, 'storeReflection'])->name('mental.tools.reflection');
-    
-=======
 
->>>>>>> Rooffce
     // Social Tools Routes
     Route::get('social',[SocialController::class, 'index'])->name('social.tools');
     Route::get('social/{post}',[SocialController::class, 'show'])->name('social.show');
