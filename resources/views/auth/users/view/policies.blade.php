@@ -15,21 +15,22 @@
                     class="group overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm cursor-pointer transition hover:-translate-y-1 hover:shadow-xl dark:border-gray-700 dark:bg-gray-800"
                     onclick="openPdfModal('{{ asset('pdfs/' . $pdf->file) }}')"
                 >
-                    <div class="relative aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-gray-700">
+                    <div class="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-gradient-to-br from-slate-100 via-white to-slate-200 dark:from-slate-700 dark:via-slate-800 dark:to-slate-900">
                         <iframe
-                            src="{{ asset('pdfs/' . $pdf->file) }}#page=1&toolbar=0&navpanes=0&scrollbar=0"
-                            title="Preview of {{ $pdf->title }}"
-                            class="pointer-events-none absolute inset-0 h-full w-full border-0 bg-white"
+                            src="{{ asset('pdfs/' . $pdf->file) }}#page=1&toolbar=0&navpanes=0&scrollbar=0&view=FitH"
+                            class="h-full w-full border-0 bg-white"
+                            title="{{ $pdf->title }} preview"
+                            loading="lazy"
                         ></iframe>
-                        <div class="absolute inset-x-0 bottom-0 flex items-center justify-between bg-gray-900/75 px-3 py-2 text-xs font-medium text-white">
-                            <span>PDF document</span>
+                        <div class="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between bg-slate-900/80 px-3 py-2 text-[10px] font-medium text-white dark:bg-slate-950/80">
+                            <span>First page preview</span>
                             <a
                                 href="{{ asset('pdfs/' . $pdf->file) }}"
                                 target="_blank"
                                 rel="noopener"
                                 onclick="event.stopPropagation()"
-                                class="rounded bg-white/20 px-2 py-0.5 hover:bg-white/30"
-                            >Open PDF</a>
+                                class="rounded bg-white/15 px-2 py-0.5 transition hover:bg-white/25"
+                            >Open</a>
                         </div>
                     </div>
                     <div class="p-4">
