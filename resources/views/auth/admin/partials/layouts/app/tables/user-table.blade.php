@@ -219,8 +219,17 @@
 function filterUserTable() {
     const input = document.getElementById('simple-search');
     const filter = input.value.toLowerCase();
+    const officeAliases = {
+        'regional office': ['regional office', 'ro'],
+        'south cotabato': ['south cotabato', 'sc'],
+        'sarangani province': ['sarangani province', 'sp'],
+        'sultan kudarat': ['sultan kudarat', 'sk'],
+        'cotabato province': ['cotabato province', 'cp'],
+        'north cotabato': ['north cotabato', 'nc'],
+        'general santos city': ['general santos city', 'gsc']
+    };
     const selectedOffices = Array.from(document.querySelectorAll('input[name="office_filter"]:checked'))
-        .map((checkbox) => checkbox.value.toLowerCase());
+        .flatMap((checkbox) => officeAliases[checkbox.value.toLowerCase()] || [checkbox.value.toLowerCase()]);
     const table = document.getElementById('user-table');
     const tbody = table.getElementsByTagName('tbody')[0];
     const rows = tbody.getElementsByTagName('tr');
@@ -253,7 +262,7 @@ function filterUserTable() {
             text += th.textContent || th.innerText;
         }
 
-        const office = cells[3] ? (cells[3].textContent || cells[3].innerText).trim().toLowerCase() : '';
+        const office = cells[2] ? (cells[2].textContent || cells[2].innerText).trim().toLowerCase() : '';
         const matchesOffice = selectedOffices.length === 0 || selectedOffices.includes(office);
 
         // Show or hide the row based on whether it matches the filter
@@ -265,9 +274,9 @@ function filterUserTable() {
         }
     }
 
-    // Show "No users found" message if all rows are hidden and there's a search term
+    // Show "No users found" when search or office filters have no matches
     if (noResultsRow) {
-        if (visibleCount === 0 && filter !== '') {
+        if (visibleCount === 0 && (filter !== '' || selectedOffices.length > 0)) {
             noResultsRow.style.display = '';
         } else {
             noResultsRow.style.display = 'none';
