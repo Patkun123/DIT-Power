@@ -7,6 +7,7 @@ use App\Services\ActivityService;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\dti_id;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use SweetAlert2\Laravel\Swal;
 
@@ -17,11 +18,31 @@ class UserInformationController extends Controller
      */
     public function index()
     {
-        $users = User::with(['staff', 'information'])
-                ->where('role', '!=', 'admin') // Exclude admins
-                ->get();
+        $userQuery = User::where('role', '!=', 'admin');
+        $today = Carbon::today();
 
-        return view('auth.admin.view.manage-user', compact('users'));
+        $dailyUsers = (clone $userQuery)
+            ->whereDate('created_at', $today)
+            ->count();
+        $weeklyUsers = (clone $userQuery)
+            ->whereBetween('created_at', [$today->copy()->startOfWeek(), now()])
+            ->count();
+        $monthlyUsers = (clone $userQuery)
+            ->whereBetween('created_at', [$today->copy()->startOfMonth(), now()])
+            ->count();
+        $totalUsers = (clone $userQuery)->count();
+
+        $users = (clone $userQuery)
+            ->with(['staff', 'information'])
+            ->get();
+
+        return view('auth.admin.view.manage-user', compact(
+            'users',
+            'dailyUsers',
+            'weeklyUsers',
+            'monthlyUsers',
+            'totalUsers'
+        ));
     }
 
     /**

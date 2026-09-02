@@ -16,28 +16,28 @@
             <flux:button icon="user-group" variant="primary" color="amber" class="" />
             <div class="">
                 <h2 class="font-semibold">Daily Users</h2>
-                <span class="font-bold text-3xl">{{ $totalUsers ?? 0}}</span>
+                <span class="font-bold text-3xl">{{ $dailyUsers ?? 0 }}</span>
             </div>
         </div>
         <div class="dark:bg-gray-900 hover:dark:text-gray-950 text-lg font-semibold bg-gray-50 rounded-lg transition-all hover:-translate-y-2 hover:bg-primary-400 shadow-primary-500 shadow-md dark:border-gray-600 h-32 md:h-35 flex items-center justify-center space-x-4 p-4">
             <flux:button icon="user-group" variant="primary" color="amber" class="" />
             <div class="">
                 <h2 class="font-semibold">Weekly Users</h2>
-                <span class="font-bold text-3xl">{{ $totalUsers ?? 0}}</span>
+                <span class="font-bold text-3xl">{{ $weeklyUsers ?? 0 }}</span>
             </div>
         </div>
         <div class="dark:bg-gray-900 hover:dark:text-gray-950 text-lg font-semibold bg-gray-50 rounded-lg transition-all hover:-translate-y-2 hover:bg-primary-400 shadow-primary-500 shadow-md dark:border-gray-600 h-32 md:h-35 flex items-center justify-center space-x-4 p-4">
             <flux:button icon="user-group" variant="primary" color="amber" class="" />
             <div class="">
                 <h2 class="font-semibold">Monthly Users</h2>
-                <span class="font-bold text-3xl">{{ $totalUsers ?? 0}}</span>
+                <span class="font-bold text-3xl">{{ $monthlyUsers ?? 0 }}</span>
             </div>
         </div>
         <div class="dark:bg-gray-900 hover:dark:text-gray-950 text-lg font-semibold bg-gray-50 rounded-lg transition-all hover:-translate-y-2 hover:bg-primary-400 shadow-primary-500 shadow-md dark:border-gray-600 h-32 md:h-35 flex items-center justify-center space-x-4 p-4">
             <flux:button icon="user-group" variant="primary" color="amber" class="" />
             <div class="">
                 <h2 class="font-semibold">Total Users</h2>
-                <span class="font-bold text-3xl">{{ $totalUsers ?? 0}}</span>
+                <span class="font-bold text-3xl">{{ $totalUsers ?? 0 }}</span>
             </div>
         </div>
       </div>
