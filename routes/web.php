@@ -50,6 +50,7 @@ Route::middleware(['auth', 'is_admin:admin'])->group(function () {
 
     //user tracking
     Route::get('Users/Tracking', [UserInformationController::class, 'progress'])->name('users.tracking');
+    Route::get('Users/{user}/quiz-attempts/{attempt}', [UserInformationController::class, 'quizAttempt'])->name('users.quiz-attempt');
 
     //article and news
     Route::get('article',[ArticleandNewsController::class, 'index'])->name('article');

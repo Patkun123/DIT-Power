@@ -38,7 +38,11 @@ class UserInformationController extends Controller
         $sort = $validated['sort'] ?? 'updated_desc';
 
         $users = User::withCount('journals')
-            ->with(['staff', 'information'])
+            ->with([
+                'staff',
+                'information',
+                'quizAttempts' => fn ($query) => $query->with('quiz')->latest(),
+            ])
             ->where('role', '!=', 'admin')
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
@@ -60,6 +64,18 @@ class UserInformationController extends Controller
             ->get();
 
         return view('auth.admin.view.user-tracking', compact('users', 'search', 'sort'));
+    }
+
+    /**
+     * Show an admin review of a user's quiz attempt.
+     */
+    public function quizAttempt(User $user, \App\Models\QuizAttempt $attempt)
+    {
+        abort_unless($attempt->user_id === $user->id, 404);
+
+        $attempt->load(['quiz', 'answers.question.choices', 'answers.answer']);
+
+        return view('auth.admin.view.user-quiz-answers', compact('user', 'attempt'));
     }
 
     /**

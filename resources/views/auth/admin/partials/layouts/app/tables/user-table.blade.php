@@ -46,30 +46,30 @@
                             </svg>
                         </button>
                         <div id="filterDropdown" class="z-10 hidden w-48 p-3 bg-white rounded-lg shadow dark:bg-gray-700">
-                            <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Office Department</h6>
+                            <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Filter by office</h6>
                             <ul class="space-y-2 text-sm" aria-labelledby="filterDropdownButton">
                                 <li class="flex items-center">
-                                    <input id="apple" type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                    <input id="south-cotabato" name="office_filter" type="checkbox" value="South Cotabato" onchange="filterUserTable()" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                                     <label for="apple" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">South Cotabato</label>
                                 </li>
                                 <li class="flex items-center">
-                                    <input id="fitbit" type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                    <input id="general-santos-city" name="office_filter" type="checkbox" value="General Santos City" onchange="filterUserTable()" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                                     <label for="fitbit" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">General Santos City</label>
                                 </li>
                                 <li class="flex items-center">
-                                    <input id="razor" type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                    <input id="sarangani-province" name="office_filter" type="checkbox" value="Sarangani Province" onchange="filterUserTable()" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                                     <label for="razor" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">Sarangani Province</label>
                                 </li>
                                 <li class="flex items-center">
-                                    <input id="nikon" type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                    <input id="regional-office" name="office_filter" type="checkbox" value="Regional Office" onchange="filterUserTable()" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                                     <label for="nikon" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">Regional Office</label>
                                 </li>
                                 <li class="flex items-center">
-                                    <input id="benq" type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                    <input id="sultan-kudarat" name="office_filter" type="checkbox" value="Sultan Kudarat" onchange="filterUserTable()" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                                     <label for="benq" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">Sultan Kudarat</label>
                                 </li>
                                 <li class="flex items-center">
-                                    <input id="nikon" type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                    <input id="cotabato-province" name="office_filter" type="checkbox" value="Cotabato Province" onchange="filterUserTable()" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                                     <label for="nikon" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">Cotabato Province</label>
                                 </li>
                             </ul>
@@ -219,6 +219,8 @@
 function filterUserTable() {
     const input = document.getElementById('simple-search');
     const filter = input.value.toLowerCase();
+    const selectedOffices = Array.from(document.querySelectorAll('input[name="office_filter"]:checked'))
+        .map((checkbox) => checkbox.value.toLowerCase());
     const table = document.getElementById('user-table');
     const tbody = table.getElementsByTagName('tbody')[0];
     const rows = tbody.getElementsByTagName('tr');
@@ -251,8 +253,11 @@ function filterUserTable() {
             text += th.textContent || th.innerText;
         }
 
+        const office = cells[3] ? (cells[3].textContent || cells[3].innerText).trim().toLowerCase() : '';
+        const matchesOffice = selectedOffices.length === 0 || selectedOffices.includes(office);
+
         // Show or hide the row based on whether it matches the filter
-        if (text.toLowerCase().indexOf(filter) > -1) {
+        if (text.toLowerCase().indexOf(filter) > -1 && matchesOffice) {
             row.style.display = '';
             visibleCount++;
         } else {
