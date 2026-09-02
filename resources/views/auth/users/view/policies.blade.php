@@ -12,15 +12,29 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 col-span-3">
                 @foreach($pdfs as $pdf)
                 <div
-                    class="bg-white dark:bg-gray-800 rounded-lg shadow cursor-pointer hover:shadow-xl transition transform hover:-translate-y-1"
+                    class="group overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm cursor-pointer transition hover:-translate-y-1 hover:shadow-xl dark:border-gray-700 dark:bg-gray-800"
                     onclick="openPdfModal('{{ asset('pdfs/' . $pdf->file) }}')"
                 >
-                    <div class="p-6 text-center">
-                        <svg class="mx-auto mb-4 w-12 h-12 text-gray-500 dark:text-gray-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 17v-5h1.5a1.5 1.5 0 1 1 0 3H5m12 2v-5h2m-2 3h2M5 10V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1v6M5 19v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1M10 3v4a1 1 0 0 1-1 1H5m6 4v5h1.375A1.627 1.627 0 0 0 14 15.375v-1.75A1.627 1.627 0 0 0 12.375 12H11Z"/>
-                        </svg>
-
-                        <h2 class="font-semibold text-gray-800 dark:text-gray-200">{{ $pdf->title }}</h2>
+                    <div class="relative aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-gray-700">
+                        <iframe
+                            src="{{ asset('pdfs/' . $pdf->file) }}#page=1&toolbar=0&navpanes=0&scrollbar=0"
+                            title="Preview of {{ $pdf->title }}"
+                            class="pointer-events-none absolute inset-0 h-full w-full border-0 bg-white"
+                        ></iframe>
+                        <div class="absolute inset-x-0 bottom-0 flex items-center justify-between bg-gray-900/75 px-3 py-2 text-xs font-medium text-white">
+                            <span>PDF document</span>
+                            <a
+                                href="{{ asset('pdfs/' . $pdf->file) }}"
+                                target="_blank"
+                                rel="noopener"
+                                onclick="event.stopPropagation()"
+                                class="rounded bg-white/20 px-2 py-0.5 hover:bg-white/30"
+                            >Open PDF</a>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h2 class="font-semibold leading-5 text-gray-800 dark:text-gray-200">{{ $pdf->title }}</h2>
+                        <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Click to view full document</p>
                     </div>
                 </div>
                 @endforeach
