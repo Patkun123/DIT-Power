@@ -280,7 +280,6 @@
                 </div>
 
                 <!-- Work Information -->
-                @if($userInfo && ($userInfo->career || $userInfo->level_career || $userInfo->nature_of_work || $userInfo->function || $userInfo->years_in_dti))
                     <div class="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-0 last:pb-0">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Work Information</h3>
@@ -325,31 +324,31 @@
                             </form>
                         @else
                             <div class="space-y-3">
-                                @if($userInfo->career)
+                                @if($userInfo?->career)
                                     <div class="flex items-start gap-4">
                                         <div class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium">Career</div>
                                         <div class="flex-1 text-gray-900 dark:text-white">{{ $userInfo->career }}</div>
                                     </div>
                                 @endif
-                                @if($userInfo->level_career)
+                                @if($userInfo?->level_career)
                                     <div class="flex items-start gap-4">
                                         <div class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium">Level</div>
                                         <div class="flex-1 text-gray-900 dark:text-white">{{ $userInfo->level_career }}</div>
                                     </div>
                                 @endif
-                                @if($userInfo->years_in_dti)
+                                @if($userInfo?->years_in_dti)
                                     <div class="flex items-start gap-4">
                                         <div class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium">Years in DTI</div>
                                         <div class="flex-1 text-gray-900 dark:text-white">{{ $userInfo->years_in_dti }}</div>
                                     </div>
                                 @endif
-                                @if($userInfo->nature_of_work)
+                                @if($userInfo?->nature_of_work)
                                     <div class="flex items-start gap-4">
                                         <div class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium">Nature of Work</div>
                                         <div class="flex-1 text-gray-900 dark:text-white">{{ $userInfo->nature_of_work }}</div>
                                     </div>
                                 @endif
-                                @if($userInfo->function)
+                                @if($userInfo?->function)
                                     <div class="flex items-start gap-4">
                                         <div class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium">Function</div>
                                         <div class="flex-1 text-gray-900 dark:text-white">{{ $userInfo->function }}</div>
@@ -358,10 +357,8 @@
                             </div>
                         @endif
                     </div>
-                @endif
 
                 <!-- Staff Information -->
-                @if($staffInfo)
                     <div class="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-0 last:pb-0">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Staff Information</h3>
@@ -404,25 +401,25 @@
                             </form>
                         @else
                             <div class="space-y-3">
-                                @if($staffInfo->staff_id)
+                                @if($staffInfo?->staff_id)
                                     <div class="flex items-start gap-4">
                                         <div class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium">Staff ID</div>
                                         <div class="flex-1 text-gray-900 dark:text-white">{{ $staffInfo->staff_id }}</div>
                                     </div>
                                 @endif
-                                @if($staffInfo->office)
+                                @if($staffInfo?->office)
                                     <div class="flex items-start gap-4">
                                         <div class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium">Office</div>
                                         <div class="flex-1 text-gray-900 dark:text-white">{{ $staffInfo->office }}</div>
                                     </div>
                                 @endif
-                                @if($staffInfo->department)
+                                @if($staffInfo?->department)
                                     <div class="flex items-start gap-4">
                                         <div class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium">Department</div>
                                         <div class="flex-1 text-gray-900 dark:text-white">{{ $staffInfo->department }}</div>
                                     </div>
                                 @endif
-                                @if($staffInfo->position)
+                                @if($staffInfo?->position)
                                     <div class="flex items-start gap-4">
                                         <div class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium">Position</div>
                                         <div class="flex-1 text-gray-900 dark:text-white">{{ $staffInfo->position }}</div>
@@ -431,10 +428,8 @@
                             </div>
                         @endif
                     </div>
-                @endif
 
                 <!-- Education -->
-                @if($userInfo && ($userInfo->educational_attachment_type || $userInfo->educational_attachment))
                     <div class="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-0 last:pb-0">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Education</h3>
@@ -465,13 +460,13 @@
                             </form>
                         @else
                             <div class="space-y-3">
-                                @if($userInfo->educational_attachment_type)
+                                @if($userInfo?->educational_attachment_type)
                                     <div class="flex items-start gap-4">
                                         <div class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium">Type</div>
                                         <div class="flex-1 text-gray-900 dark:text-white">{{ $userInfo->educational_attachment_type }}</div>
                                     </div>
                                 @endif
-                                @if($userInfo->educational_attachment)
+                                @if($userInfo?->educational_attachment)
                                     <div class="flex items-start gap-4">
                                         <div class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium">Attachment</div>
                                         <div class="flex-1 text-gray-900 dark:text-white">{{ $userInfo->educational_attachment }}</div>
@@ -480,10 +475,8 @@
                             </div>
                         @endif
                     </div>
-                @endif
 
                 <!-- Health Information -->
-                @if($userInfo && ($userInfo->height || $userInfo->weight || $userInfo->activity_level || $userInfo->health_goals || $userInfo->dietary_preferences))
                     <div class="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-0 last:pb-0">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Health Information</h3>
@@ -528,31 +521,31 @@
                             </form>
                         @else
                             <div class="space-y-3">
-                                @if($userInfo->height)
+                                @if($userInfo?->height)
                                     <div class="flex items-start gap-4">
                                         <div class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium">Height</div>
                                         <div class="flex-1 text-gray-900 dark:text-white">{{ $userInfo->height }}</div>
                                     </div>
                                 @endif
-                                @if($userInfo->weight)
+                                @if($userInfo?->weight)
                                     <div class="flex items-start gap-4">
                                         <div class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium">Weight</div>
                                         <div class="flex-1 text-gray-900 dark:text-white">{{ $userInfo->weight }}</div>
                                     </div>
                                 @endif
-                                @if($userInfo->activity_level)
+                                @if($userInfo?->activity_level)
                                     <div class="flex items-start gap-4">
                                         <div class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium">Activity Level</div>
                                         <div class="flex-1 text-gray-900 dark:text-white">{{ $userInfo->activity_level }}</div>
                                     </div>
                                 @endif
-                                @if($userInfo->health_goals)
+                                @if($userInfo?->health_goals)
                                     <div class="flex items-start gap-4">
                                         <div class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium">Health Goals</div>
                                         <div class="flex-1 text-gray-900 dark:text-white">{{ $userInfo->health_goals }}</div>
                                     </div>
                                 @endif
-                                @if($userInfo->dietary_preferences)
+                                @if($userInfo?->dietary_preferences)
                                     <div class="flex items-start gap-4">
                                         <div class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium">Dietary Preferences</div>
                                         <div class="flex-1 text-gray-900 dark:text-white">{{ $userInfo->dietary_preferences }}</div>
@@ -561,7 +554,6 @@
                             </div>
                         @endif
                     </div>
-                @endif
             </div>
         </div>
 
