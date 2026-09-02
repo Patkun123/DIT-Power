@@ -6,7 +6,7 @@
             <div class="mb-10 md:mb-16">
                 <h2 class="mb-4 text-center text-xl font-bold text-gray-700 dark:text-gray-100 md:mb-6 lg:text-3xl">Frequently asked questions</h2>
 
-                <p class="mx-auto max-w-3xl text-center text-gray-500 dark:text-gray-300 md:text-lg">Get answers to common questions about DIT-Power, our comprehensive wellness platform designed specifically for DTI Region 12 employees.</p>
+                <p class="mx-auto max-w-screen-md text-center text-gray-500 dark:text-gray-300 md:text-lg">Get answers to common questions about DIT-Power, our comprehensive wellness platform designed specifically for DTI Region 12 employees.</p>
             </div>
             <!-- text - end -->
 
@@ -190,7 +190,7 @@
                         @if($i === 1) Personal Details
                         @elseif($i === 2) Career Information
                         @elseif($i === 3) Health Profile
-                        @elseif($i === 4) Create your own password
+                        @elseif($i === 4) Secure with a password
                         @endif
                     </p>
                 </span>
@@ -201,13 +201,25 @@
         <!-- Form Card -->
         <div class="dark:bg-gray-900 bg-gray-100 p-6 space-y-10">
             <x-auth-session-status class="text-center" :status="session('status')" />
+
+            @if (session()->has('success'))
+                <div class="p-4 mb-4 text-sm text-green-800 bg-green-50 dark:bg-green-900/20 dark:text-green-200 border border-green-200 dark:border-green-800 rounded-lg">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session()->has('error'))
+                <div class="p-4 mb-4 text-sm text-red-800 bg-red-50 dark:bg-red-900/20 dark:text-red-200 border border-red-200 dark:border-red-800 rounded-lg">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             <form wire:submit.prevent="{{ $step === 4 ? 'register' : 'nextStep' }}" class="space-y-6">
                 @if ($step === 1)
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:input wire:model.defer="firstname" icon="user-circle" :label="__('First Name')" placeholder="First name" required />
                     <flux:input wire:model.defer="lastname" icon="user-circle" :label="__('Last Name')" placeholder="Last name" required />
-                    <flux:select wire:model="gender" :label="__('Gender')">
-                        <flux:select.option value="">Select Gender</flux:select.option>
+                    <flux:select wire:model.defer="gender" placeholder="Select Gender" :label="__('Gender')">
                         <flux:select.option>Male</flux:select.option>
                         <flux:select.option>Female</flux:select.option>
                     </flux:select>
@@ -219,8 +231,7 @@
                         :label="__('Phone Number')"
                         placeholder="+63"
                         required />
-                    <flux:select wire:model="civil_status" :label="__('Civil Status')">
-                        <flux:select.option value="">Select Civil Status</flux:select.option>
+                    <flux:select wire:model.defer="civil_status" :label="__('Civil Status')">
                         <flux:select.option>Married</flux:select.option>
                         <flux:select.option>Single</flux:select.option>
                         <flux:select.option>Widow</flux:select.option>
@@ -232,35 +243,32 @@
                 </div>
                 @endif
                 @if ($step === 2)
+                <!-- HR Profile - Career Information -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:input
-                        type="number"
+                        type="text"
                         wire:model.defer="staff_id"
+                        icon="identification"
                         :label="__('DTI ID Number')"
                         placeholder="Enter your DTI ID"
                         required />
-                    <flux:select wire:model.defer="nature_of_work" :label="__('Nature of Appointment')">
-                        <flux:select.option value="">Select Nature of Appointment</flux:select.option>
+                    <flux:select wire:model.defer="career" :label="__('Nature of Appointment')" required>
                         <flux:select.option>Career</flux:select.option>
                         <flux:select.option>Non-Career</flux:select.option>
-                        <flux:select.option>Contractual</flux:select.option>
-                        <flux:select.option>Job Order</flux:select.option>
-                        <flux:select.option>Casual</flux:select.option>
                     </flux:select>
                     <flux:select wire:model.defer="level_career" :label="__('Level')">
-                        <flux:select.option value="">Select Level</flux:select.option>
                         <flux:select.option>1st</flux:select.option>
                         <flux:select.option>2nd</flux:select.option>
                         <flux:select.option>3rd</flux:select.option>
                     </flux:select>
                     <flux:input
-                        type="number"
+                        type="text"
                         wire:model.defer="years_in_dti"
+                        icon="calendar"
                         :label="__('Years in DTI')"
-                        placeholder="Enter years of service"
-                        min="0" />
-                    <flux:select wire:model.defer="office" :label="__('Office')" required>
-                        <flux:select.option value="">Choose Office...</flux:select.option>
+                        placeholder="e.g., 5 years"
+                    />
+                    <flux:select wire:model.defer="office" :label="__('Office')" placeholder="Choose Office..." required>
                         <flux:select.option>General Santos City</flux:select.option>
                         <flux:select.option>Sarangani Province</flux:select.option>
                         <flux:select.option>South Cotabato</flux:select.option>
@@ -274,50 +282,80 @@
                 @endif
 
                 @if ($step === 3)
+                <!-- Health Profile -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:input type="number" icon="circle-stack" wire:model.defer="height" :label="__('Height')" placeholder="152 (cm)" required />
                     <flux:input wire:model.defer="weight" icon="circle-stack" :label="__('Weight (kg)')" placeholder="52 (kg)" required />
-                    <flux:select wire:model="activity_level" :label="__('Activity Level')">
-                        <flux:select.option value="">Select Activity Level</flux:select.option>
+                    <flux:select wire:model.defer="activity_level" placeholder="Select Activity Level" :label="__('Activity Level')">
                         <flux:select.option>Sedentary</flux:select.option>
                         <flux:select.option>Lightly Active</flux:select.option>
                         <flux:select.option>Moderately Active</flux:select.option>
                         <flux:select.option>Very Active</flux:select.option>
                         <flux:select.option>Extra Active</flux:select.option>
                     </flux:select>
-                    <flux:select wire:model="health_goals" :label="__('Health Goal')">
-                        <flux:select.option value="">Select Health Goal</flux:select.option>
+                    <flux:select wire:model.defer="health_goals" placeholder="Select Health Goals" :label="__('Health Goal')">
                         <flux:select.option>Weight Loss</flux:select.option>
                         <flux:select.option>Muscle Gain</flux:select.option>
                         <flux:select.option>Maintenance</flux:select.option>
                         <flux:select.option>General Fitness</flux:select.option>
                     </flux:select>
-                    <flux:select wire:model="dietary_preferences" :label="__('Preferences')">
-                        <flux:select.option value="">Select Preferences</flux:select.option>
-                        <flux:select.option>Vegetarian</flux:select.option>
-                        <flux:select.option>Gluten-Free</flux:select.option>
-                        <flux:select.option>Vegan</flux:select.option>
-                        <flux:select.option>Dairy-Free</flux:select.option>
-                        <flux:select.option>Balanced</flux:select.option>
-                        <flux:select.option>Meat-Based</flux:select.option>
-                    </flux:select>
+                </div>
+                <div class="grid grid-cols-1 gap-6 mt-6">
+                    <flux:radio.group class="grid grid-cols-2 gap-5" wire:model.defer="dietary_preferences" :label="__('Preferences')">
+                        <flux:radio
+                            value="Vegetarian"
+                            label="Vegetarian"
+                            description="dietary practice that excludes the consumption of meat, poultry, fish, and seafood."
+                            checked />
+                        <flux:radio
+                            value="Gluten-Free"
+                            label="Gluten-Free"
+                            description="Avoids gluten, a protein found in wheat, barley, and rye." />
+                        <flux:radio
+                            value="Vegan"
+                            label="Vegan"
+                            description="Excludes all animal products, including meat, dairy, eggs, and honey." />
+                        <flux:radio
+                            value="Dairy-Free"
+                            label="Dairy-Free"
+                            description="Eliminates milk and dairy products (cheese, yogurt, butter)." />
+                        <flux:radio
+                            value="Balanced"
+                            label="Balanced"
+                            description="A balance between meat, vegetable, fruits, grains, and dairy." />
+                        <flux:radio
+                            value="meat-based"
+                            label="Meat-Based"
+                            description="Heavily relies on meat and a few grams of other nutrients" />
+                    </flux:radio.group>
                 </div>
                 @endif
 
                 @if ($step === 4)
+                <!-- Password -->
+                @php
+                    $userHasPassword = auth()->check() && !empty(auth()->user()->password);
+                @endphp
+                @if($userHasPassword)
+                <div class="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                    <p class="text-sm text-blue-800 dark:text-blue-200">
+                        <strong>Note:</strong> You already have a password. Leave these fields blank to keep your current password, or enter a new password to change it.
+                    </p>
+                </div>
+                @endif
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:input
                         type="password"
                         wire:model.defer="password"
-                        :label="__('New Password')"
-                        placeholder="Enter new password"
-                        required />
+                        :label="__($userHasPassword ? 'Password (Optional)' : 'Password')"
+                        placeholder="Enter password"
+                        :required="!$userHasPassword" />
                     <flux:input
                         type="password"
                         wire:model.defer="password_confirmation"
-                        :label="__('Confirm Password')"
+                        :label="__($userHasPassword ? 'Confirm Password (Optional)' : 'Confirm Password')"
                         placeholder="Re-enter password"
-                        required />
+                        :required="!$userHasPassword" />
                 </div>
                 @endif
 

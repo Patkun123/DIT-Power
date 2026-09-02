@@ -15,7 +15,6 @@ use App\Events\CommentCreated;
 use App\Events\CommentLiked;
 use App\Events\ReplyCreated;
 use App\Services\ChatNotificationService;
-use App\Services\ImageScanService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -32,7 +31,7 @@ class SocialController extends Controller
     }
 
     // ========== POST METHODS ==========
-    
+
     public function storePost(Request $request)
     {
         $validated = $request->validate([
@@ -42,28 +41,7 @@ class SocialController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imageFile = $request->file('image');
-            
-            // Scan the image for security threats
-            $scanService = new ImageScanService();
-            $scanResult = $scanService->scanImage($imageFile);
-            
-            if (!$scanResult['success']) {
-                return back()->withErrors(['image' => $scanResult['message']])->withInput();
-            }
-            
-            // Ensure public/posts directory exists
-            $publicPath = public_path('posts');
-            if (!file_exists($publicPath)) {
-                mkdir($publicPath, 0755, true);
-            }
-            
-            // Generate unique filename
-            $filename = time() . '_' . uniqid() . '.' . $imageFile->getClientOriginalExtension();
-            $imagePath = 'posts/' . $filename;
-            
-            // Move file to public/posts directory
-            $imageFile->move($publicPath, $filename);
+            $imagePath = $request->file('image')->store('posts', 'public');
         }
 
         $post = Post::create([
@@ -98,20 +76,17 @@ class SocialController extends Controller
 
     public function deletePost(Post $post)
     {
-        if (Auth::id() !== $post->user_id) {
+        if (!$this->userCanManagePost($post)) {
             abort(403, 'Unauthorized action.');
         }
 
         if (!empty($post->image)) {
-            $imagePath = public_path($post->image);
-            if (file_exists($imagePath)) {
-                unlink($imagePath);
-            }
+            Storage::disk('public')->delete($post->image);
         }
 
         Mention::where('post_id', $post->id)->delete();
         $post->likes()->delete();
-        
+
         $post->comments()->each(function ($comment) {
             $comment->likes()->delete();
             $comment->replies()->each(function ($reply) {
@@ -129,7 +104,7 @@ class SocialController extends Controller
     public function toggleLike(Request $request, Post $post)
     {
         $user = Auth::user();
-        
+
         if ($post->isLikedBy($user)) {
             $post->unlike($user);
             $message = 'Post unliked';
@@ -153,7 +128,7 @@ class SocialController extends Controller
     }
 
     // ========== COMMENT METHODS ==========
-    
+
     public function storeComment(Request $request, Post $post)
     {
         $validated = $request->validate([
@@ -180,14 +155,14 @@ class SocialController extends Controller
         }
 
         $post = $comment->post;
-        
+
         $comment->likes()->delete();
         $comment->replies()->each(function ($reply) {
             $reply->childReplies()->delete();
         });
         $comment->replies()->delete();
         $comment->delete();
-        
+
         $post->decrementCommentsCount();
 
         return back()->with('success', 'Comment deleted successfully!');
@@ -196,7 +171,7 @@ class SocialController extends Controller
     public function toggleCommentLike(Request $request, Comment $comment)
     {
         $user = Auth::user();
-        
+
         if ($comment->isLikedBy($user)) {
             $comment->unlike($user);
             $message = 'Comment unliked';
@@ -220,7 +195,7 @@ class SocialController extends Controller
     }
 
     // ========== REPLY METHODS ==========
-    
+
     public function storeReply(Request $request, Comment $comment)
     {
         $validated = $request->validate([
@@ -249,10 +224,10 @@ class SocialController extends Controller
         }
 
         $comment = $reply->comment;
-        
+
         $reply->childReplies()->delete();
         $reply->delete();
-        
+
         $comment->decrementRepliesCount();
 
         return back()->with('success', 'Reply deleted successfully!');
@@ -261,7 +236,7 @@ class SocialController extends Controller
     public function toggleReplyLike(Request $request, Reply $reply)
     {
         $user = Auth::user();
-        
+
         if ($reply->isLikedBy($user)) {
             $reply->unlike($user);
             $message = 'Reply unliked';
@@ -282,7 +257,7 @@ class SocialController extends Controller
     }
 
     // ========== CHAT METHODS ==========
-    
+
     public function sendMessage(Request $request)
     {
         $validated = $request->validate([
@@ -330,7 +305,7 @@ class SocialController extends Controller
     }
 
     // ========== MENTION METHODS ==========
-    
+
     public function getMentions()
     {
         $mentions = Mention::where('user_id', Auth::id())
@@ -342,7 +317,7 @@ class SocialController extends Controller
     }
 
     // ========== HELPER METHODS ==========
-    
+
     private function processMentions($content, $model, $type, $postId = null)
     {
         preg_match_all('/@(\w+\s+\w+)/', $content, $matches);
@@ -353,7 +328,7 @@ class SocialController extends Controller
 
                 if ($user && $user->id !== Auth::id()) {
                     $mentionPostId = $postId ?? ($model instanceof Post ? $model->id : ($model->post_id ?? null));
-                    
+
                     Mention::create([
                         'user_id' => $user->id,
                         'mentioned_by' => Auth::id(),
@@ -379,5 +354,16 @@ class SocialController extends Controller
                 }
             }
         }
+    }
+
+    private function userCanManagePost(Post $post): bool
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return false;
+        }
+
+        return $user->id === $post->user_id || $user->role === 'admin';
     }
 }

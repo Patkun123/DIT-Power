@@ -26,6 +26,7 @@ class User extends Authenticatable
         'password',
         'role',
         'profileimage',
+        'cover_photo',
         'bio',
     ];
 
@@ -131,7 +132,7 @@ class User extends Authenticatable
             return asset('storage/' . $this->profileimage);
         }
 
-        // Use the same default image as header
+        // Use default profile image like in header
         return asset('Images/default.png');
     }
 

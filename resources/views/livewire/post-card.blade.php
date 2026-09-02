@@ -1,448 +1,411 @@
-@if($deleted || !$post || !$post->user)
-    {{-- Post deleted or invalid - render nothing --}}
-    <div></div>
-@else
-<div id="post-{{ $post->id }}" class="p-4">
-    <!-- Facebook-style Post Header -->
-    <div class="flex items-center justify-between mb-3">
-        <div class="flex items-center space-x-3">
-            <img class="h-10 w-10 rounded-full object-cover cursor-pointer"
-                 src="{{ $post->user->profile_image_url }}"
-                 alt="{{ $post->user->firstname }} {{ $post->user->lastname }}"
-                 onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($post->user->firstname . ' ' . $post->user->lastname) }}&background=random&color=fff&size=100&bold=true'">
-            <div>
-                <h3 class="font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-colors">
-                    {{ $post->user->firstname }} {{ $post->user->lastname }}
-                </h3>
-                <div class="flex items-center space-x-1 text-sm text-gray-500 dark:text-gray-400">
-                    <span>{{ $post->created_at->diffForHumans() }}</span>
-                    <span>•</span>
-                    <span>
-                        @php($office = optional($post->user->staff)->office)
-                        @switch($office)
-                            @case('RO') Regional Office @break
-                            @case('SK') Sultan Kudarat Office @break
-                            @case('SP') Sarangani Province Office @break
-                            @case('SC') South Cotabato Office @break
-                            @case('CP') Cotabato Office @break
-                            @case('GSC') General Santos City @break
-                            @default {{ $office ?? 'Unknown Office' }}
-                        @endswitch
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <!-- More Options (Delete for owner/admin) -->
-        <div class="relative" x-data="{ open: false }">
-            <button @click="open = !open" class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
-                </svg>
-            </button>
-            <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-40 sm:w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg overflow-hidden z-20">
-                @if(auth()->check() && auth()->id() === $post->user_id)
-                    <button wire:click="startEdit" class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">Edit post</button>
-                    <button onclick="confirmDelete({{ $post->id }})" class="w-full text-left px-3 py-2 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30">Delete post</button>
-                @else
-                    <button class="w-full text-left px-3 py-2 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30">Report</button>
-                @endif
-    </div>
-        </div>
-    </div>
-
-    <!-- Post Content / Edit -->
-    <div class="mb-3">
-        @if($isEditing)
-            <div class="space-y-2">
-                <textarea wire:model.defer="editContent"
-                          class="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y"
-                          rows="4"
-                          maxlength="1000"
-                          placeholder="Update your post..."></textarea>
-                
-                <!-- Current Image Display -->
-                @if($post->image && !$showEditImagePreview && !$editImage)
-                    <div class="relative mt-2">
-                        <img src="{{ asset($post->image) }}" 
-                             alt="Current post image" 
-                             class="w-full max-h-96 object-cover rounded-lg">
-                        <button type="button" wire:click="removeEditImage" 
-                                class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                    </div>
-                @endif
-
-                <!-- New Image Preview -->
-                @if($showEditImagePreview && $editImage)
-                    <div class="relative mt-2">
-                        <img src="{{ $editImage->temporaryUrl() }}" 
-                             alt="New image preview" 
-                             class="w-full max-h-96 object-cover rounded-lg">
-                        <button wire:click="removeEditImage" 
-                                class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                    </div>
-                @endif
-
-                <!-- Image Upload Input -->
-                <div class="mt-2">
-                    <label class="block">
-                        <input type="file" 
-                               wire:model="editImage" 
-                               accept="image/*" 
-                               class="hidden">
-                        <span class="inline-flex items-center px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                            {{ $post->image ? 'Change Image' : 'Add Image' }}
+<div>
+@php
+    $canManagePost = auth()->check() && (auth()->id() === $post->user_id || auth()->user()->role === 'admin');
+@endphp
+@if(!$deleted)
+<div class="p-4">
+    {{-- Post Header --}}
+    <div class="flex items-start justify-between mb-3">
+        <div class="flex items-start space-x-3 flex-1">
+            <a href="{{ route('settings.profile') }}" class="flex-shrink-0">
+                <img class="h-10 w-10 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600 cursor-pointer hover:opacity-90 transition-opacity"
+                     src="{{ $post->user->profile_image_url }}"
+                     alt="{{ $post->user->firstname }} {{ $post->user->lastname }}"
+                     onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($post->user->firstname . ' ' . $post->user->lastname) }}&background=random&color=fff&size=100&bold=true'">
+            </a>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center space-x-1 flex-wrap">
+                    <a href="{{ route('settings.profile') }}" class="font-semibold text-gray-900 dark:text-white hover:underline text-sm">
+                        {{ $post->user->firstname }} {{ $post->user->lastname }}
+                    </a>
+                    @if($post->user->staff)
+                        <span class="text-xs text-gray-500 dark:text-gray-400">·</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">
+                            @switch($post->user->staff->office)
+                                @case('RO') Regional Office @break
+                                @case('SK') Sultan Kudarat Office @break
+                                @case('SP') Sarangani Province Office @break
+                                @case('SC') South Cotabato Office @break
+                                @case('CP') Cotabato Office @break
+                                @case('GSC') General Santos City @break
+                                @default {{ $post->user->staff->office }}
+                            @endswitch
                         </span>
-                    </label>
-                    @error('editImage') 
-                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                    @enderror
+                    @endif
                 </div>
-
-                <div class="flex items-center gap-2 flex-wrap">
-                    <button wire:click="updatePost" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors">Save</button>
-                    <button wire:click="cancelEdit" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">Cancel</button>
+                <div class="flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span>{{ $post->created_at->diffForHumans() }}</span>
+                    <span>·</span>
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v.878A2.996 2.996 0 0110 16a2.996 2.996 0 01-3-2.122V13a2 2 0 00-2-2H4.083C4.028 10.675 4 10.34 4 10c0-.747.1-1.468.332-2.027z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>Public</span>
                 </div>
             </div>
-        @else
-            <p class="text-gray-900 dark:text-white whitespace-pre-wrap leading-relaxed">{!! $this->parseMentions($post->content) !!}</p>
-            @if($post->image)
-                <div class="mt-3">
-                    <img src="{{ asset($post->image) }}"
-                         alt="Post image"
-                         class="w-full max-h-96 object-cover rounded-lg cursor-pointer hover:opacity-95 transition-opacity">
+        </div>
+        @if($canManagePost)
+            <div class="relative" x-data="{
+                open: false,
+                showDeleteModal: false,
+                openDeleteModal() {
+                    this.showDeleteModal = true;
+                    this.open = false;
+                },
+                closeDeleteModal() {
+                    this.showDeleteModal = false;
+                },
+                confirmDelete() {
+                    $wire.deletePost();
+                    this.showDeleteModal = false;
+                }
+            }">
+                <button @click="open = !open"
+                        class="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500 dark:text-gray-400">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+                    </svg>
+                </button>
+                <div x-show="open"
+                     @click.away="open = false"
+                     x-transition
+                     class="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50">
+                    <button wire:click="startEdit"
+                            @click="open = false"
+                            class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        Edit Post
+                    </button>
+                    <button type="button"
+                            @click="openDeleteModal()"
+                            class="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-60">
+                        Delete Post
+                    </button>
                 </div>
-            @endif
-        @endif
-    </div>
-    <!-- Engagement Stats -->
-    <div class="flex items-center justify-between py-2 text-sm text-gray-500 dark:text-gray-400">
-        <div class="flex items-center space-x-4">
-            @if($post->likes_count > 0)
-                <div class="flex items-center space-x-1">
-                    <div class="flex -space-x-1">
-                        <div class="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
-                            <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
-                            </svg>
+
+                {{-- Delete Confirmation Modal --}}
+                <div x-cloak
+                     x-show="showDeleteModal"
+                     x-transition.opacity
+                     class="fixed inset-0 z-50 flex items-center justify-center px-4">
+                    <div class="absolute inset-0 bg-black bg-opacity-40" @click="closeDeleteModal()"></div>
+                    <div x-show="showDeleteModal"
+                         x-transition.scale
+                         class="relative w-full max-w-sm bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-6 space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 005.656 0M9 10h.01M15 10h.01M7 21h10a2 2 0 002-2V7.414a2 2 0 00-.586-1.414l-3.414-3.414A2 2 0 0013.586 2H7a2 2 0 00-2 2v15a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Delete post?</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">This action cannot be undone. The post and all related comments will be permanently removed.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-end space-x-3">
+                            <button type="button"
+                                    @click="closeDeleteModal()"
+                                    class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+                                Cancel
+                            </button>
+                            <button type="button"
+                                    @click="confirmDelete()"
+                                    wire:loading.attr="disabled"
+                                    wire:target="deletePost"
+                                    class="px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg disabled:opacity-60">
+                                Delete
+                            </button>
                         </div>
                     </div>
-                    <span>{{ $post->likes_count }} {{ $post->likes_count == 1 ? 'like' : 'likes' }}</span>
                 </div>
-            @endif
+            </div>
+        @endif
+    </div>
 
-            @if($post->comments_count > 0)
-                <button wire:click="toggleComments" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                    {{ $post->comments_count }} {{ $post->comments_count == 1 ? 'comment' : 'comments' }}
+    {{-- Edit Mode --}}
+    @if($isEditing)
+        <div class="mb-3">
+            <textarea wire:model="editContent"
+                      class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                      rows="3"></textarea>
+            <div class="flex items-center justify-end space-x-2 mt-2">
+                <button wire:click="cancelEdit"
+                        class="px-4 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                    Cancel
                 </button>
+                <button wire:click="updatePost"
+                        class="px-4 py-1.5 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                    Save
+                </button>
+            </div>
+        </div>
+    @endif
+
+    {{-- Post Content --}}
+    <div class="mb-3">
+        <p class="text-gray-900 dark:text-white whitespace-pre-wrap text-sm leading-relaxed">{!! $this->parseMentions($post->content) !!}</p>
+
+        @if($post->image)
+            <div class="mt-3 rounded-lg overflow-hidden">
+                <img src="{{ asset('storage/' . $post->image) }}"
+                     alt="Post image"
+                     class="w-full h-auto max-h-[500px] object-contain bg-gray-50 dark:bg-gray-900">
+            </div>
+        @endif
+    </div>
+
+    {{-- Post Stats --}}
+    @if($post->likes_count > 0 || $post->comments_count > 0)
+        <div class="flex items-center justify-between py-2 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-400">
+            <div class="flex items-center space-x-1">
+                @if($post->likes_count > 0)
+                    <div class="flex items-center space-x-1">
+                        <div class="w-4 h-4 bg-blue-600 rounded-full flex items-center justify-center">
+                            <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.834a1 1 0 001.707.707l3.546-3.547a1 1 0 00.293-.707V8.5a1 1 0 00-1.707-.707L7.293 9.793a1 1 0 00-.293.707zM15.293 8.293a1 1 0 011.414 0l1.5 1.5a1 1 0 010 1.414l-1.5 1.5a1 1 0 01-1.414-1.414l.793-.793-.793-.793a1 1 0 010-1.414z"/>
+                            </svg>
+                        </div>
+                        <span>{{ $post->likes_count }}</span>
+                    </div>
+                @endif
+            </div>
+            @if($post->comments_count > 0)
+                <span>{{ $post->comments_count }} {{ $post->comments_count == 1 ? 'comment' : 'comments' }}</span>
             @endif
         </div>
-    </div>
-    <!-- Action Buttons -->
-    <div class="flex items-center border-t border-gray-200 dark:border-gray-700 pt-3">
-        <div class="flex items-center justify-around w-full">
-            <!-- Like Button -->
-            <button wire:click="toggleLike"
-                    class="flex items-center justify-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex-1">
-                <svg class="w-5 h-5 {{ $post->isLikedBy(auth()->user()) ? 'text-blue-600 fill-current' : 'text-gray-500' }}"
-                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-                <span class="text-sm font-medium {{ $post->isLikedBy(auth()->user()) ? 'text-blue-600' : 'text-gray-500 dark:text-gray-400' }}">
-                    Like
-                </span>
-            </button>
+    @endif
 
-            <!-- Comment Button -->
-            <button wire:click="toggleComments"
-                    class="flex items-center justify-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex-1">
-                <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
-                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Comment</span>
-            </button>
-        </div>
+    {{-- Post Actions (Facebook Style) --}}
+    <div class="flex items-center border-t border-gray-200 dark:border-gray-700 pt-1 mt-1">
+        <button wire:click="toggleLike"
+                class="flex-1 flex items-center justify-center space-x-2 py-2 px-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group">
+            <svg class="w-5 h-5 {{ $post->isLikedBy(auth()->user()) ? 'text-blue-600 dark:text-blue-400 fill-current' : 'text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400' }}"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
+            </svg>
+            <span class="text-sm font-medium {{ $post->isLikedBy(auth()->user()) ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400' }}">Like</span>
+        </button>
+
+        <button wire:click="toggleComments"
+                class="flex-1 flex items-center justify-center space-x-2 py-2 px-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group">
+            <svg class="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <span class="text-sm font-medium text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">Comment</span>
+        </button>
     </div>
 
-    <!-- Comments Section -->
+    {{-- Comments Section --}}
     @if($showComments)
-        <div class="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
-            <!-- Add Comment Form -->
-            <div class="mb-4">
+        <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+            {{-- Add Comment Form --}}
+            <div class="mb-3">
                 <form wire:submit.prevent="addComment">
-                    <div class="flex space-x-3">
-                        <img class="h-8 w-8 rounded-full object-cover"
+                    <div class="flex items-start space-x-2">
+                        <img class="h-8 w-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600 flex-shrink-0"
                              src="{{ auth()->user()->profile_image_url }}"
                              alt="{{ auth()->user()->firstname }} {{ auth()->user()->lastname }}"
                              onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->firstname . ' ' . auth()->user()->lastname) }}&background=random&color=fff&size=100&bold=true'">
                         <div class="flex-1 relative">
-                            <textarea wire:model="newComment"
-                                      wire:keyup="searchUsers($event.target.value, 'comment')"
-                                      wire:keydown.escape="hideMentionSuggestions"
-                                      placeholder="Write a comment... (use @ to mention someone)"
-                                      class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-full text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-all duration-200"
-                                      rows="1"
-                                      style="min-height: 36px; max-height: 100px;"
-                                      oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';"></textarea>
+                            <div class="bg-gray-100 dark:bg-gray-700 rounded-2xl px-3 py-2 focus-within:ring-2 focus-within:ring-blue-500 transition-all">
+                                <textarea wire:model="newComment"
+                                          wire:keyup="searchUsers($event.target.value, 'comment')"
+                                          wire:keydown.escape="hideMentionSuggestions"
+                                          placeholder="Write a comment..."
+                                          class="w-full bg-transparent border-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none resize-none text-sm"
+                                          rows="1"
+                                          style="min-height: 20px; max-height: 100px;"
+                                          oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';"></textarea>
+                            </div>
 
-                            <!-- Mention Suggestions Dropdown -->
+                            {{-- Mention Suggestions --}}
                             @if($showMentionSuggestions && $currentMentionField === 'comment')
-                                <div class="mention-suggestions absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                                <div class="absolute left-0 right-0 top-full mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-xl max-h-56 overflow-y-auto z-10">
                                     @foreach($mentionSuggestions as $index => $user)
                                         <button type="button"
                                                 wire:click="selectMention({{ $user->id }}, 'comment')"
-                                                class="mention-suggestion-item w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-3 {{ $selectedMentionIndex === $index ? 'bg-blue-50 dark:bg-blue-900' : '' }}">
+                                                class="w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 {{ $selectedMentionIndex === $index ? 'bg-blue-50 dark:bg-blue-900/60' : '' }}">
                                             <img class="h-8 w-8 rounded-full object-cover"
                                                  src="{{ $user->profile_image_url }}"
-                                                 alt="{{ $user->firstname }} {{ $user->lastname }}"
-                                                 onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($user->firstname . ' ' . $user->lastname) }}&background=random&color=fff&size=100&bold=true'">
-                                            <div>
-                                                <p class="font-medium text-gray-900 dark:text-white">{{ $user->firstname }} {{ $user->lastname }}</p>
-                                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $user->staff->position ?? 'Employee' }}</p>
+                                                 alt="{{ $user->firstname }} {{ $user->lastname }}">
+                                            <div class="min-w-0 flex-1">
+                                                <p class="font-medium text-gray-900 dark:text-white truncate text-sm">{{ $user->firstname }} {{ $user->lastname }}</p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ $user->staff->position ?? 'Employee' }}</p>
                                             </div>
                                         </button>
                                     @endforeach
                                 </div>
                             @endif
-
-                            @error('newComment')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
                         </div>
-                        <button type="submit"
-                                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm rounded-lg transition-all duration-200 hover:shadow-md transform hover:scale-105 font-medium"
-                                wire:loading.attr="disabled">
-                            <span wire:loading.remove wire:target="addComment">Comment</span>
-                            <span wire:loading wire:target="addComment" class="flex items-center space-x-2">
-                                <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                <span>Posting...</span>
-                            </span>
-                        </button>
                     </div>
+                    @error('newComment')
+                        <p class="mt-1 ml-10 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
                 </form>
             </div>
 
-            <!-- Comments List -->
+            {{-- Comments List --}}
             <div class="space-y-3">
                 @foreach($post->comments as $comment)
-                    <div id="comment-{{ $comment->id }}" class="flex space-x-3">
-                        <img class="h-8 w-8 rounded-full object-cover cursor-pointer"
-                             src="{{ $comment->user->profile_image_url }}"
-                             alt="{{ $comment->user->firstname }} {{ $comment->user->lastname }}"
-                             onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($comment->user->firstname . ' ' . $comment->user->lastname) }}&background=random&color=fff&size=100&bold=true'">
-                        <div class="flex-1">
-                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                                <div class="flex items-center justify-between mb-1">
-                                    <h4 class="font-semibold text-gray-900 dark:text-white text-sm hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-colors">
+                    <div class="flex items-start space-x-2">
+                        <a href="{{ route('settings.profile') }}" class="flex-shrink-0">
+                            <img class="h-8 w-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600 cursor-pointer hover:opacity-90 transition-opacity"
+                                 src="{{ $comment->user->profile_image_url }}"
+                                 alt="{{ $comment->user->firstname }} {{ $comment->user->lastname }}"
+                                 onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($comment->user->firstname . ' ' . $comment->user->lastname) }}&background=random&color=fff&size=100&bold=true'">
+                        </a>
+                        <div class="flex-1 min-w-0">
+                            <div class="bg-gray-100 dark:bg-gray-700 rounded-2xl px-3 py-2">
+                                <div class="flex items-center space-x-2 mb-1">
+                                    <a href="{{ route('settings.profile') }}" class="font-semibold text-gray-900 dark:text-white hover:underline text-sm">
                                         {{ $comment->user->firstname }} {{ $comment->user->lastname }}
-                                    </h4>
-                                    <span class="text-xs text-gray-500 dark:text-gray-400">
-                                        {{ $comment->created_at->diffForHumans() }}
-                                    </span>
+                                    </a>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">{{ $comment->created_at->diffForHumans() }}</span>
                                 </div>
                                 <p class="text-gray-900 dark:text-white text-sm leading-relaxed">{!! $this->parseMentions($comment->content) !!}</p>
-
-                                <!-- Comment Actions -->
-                                <div class="flex items-center space-x-4 mt-2 text-xs">
-                                    <button wire:click="toggleCommentLike({{ $comment->id }})"
-                                            class="flex items-center space-x-1 text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                        <svg class="w-3 h-3 {{ $comment->isLikedBy(auth()->user()) ? 'text-blue-600 fill-current' : '' }}"
-                                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                        </svg>
-                                        <span>{{ $comment->likes_count }}</span>
-                                    </button>
-
-                                    <button wire:click="startReply({{ $comment->id }}, {{ $comment->user_id }})"
-                                            class="text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                                            title="Reply to {{ $comment->user->firstname }} {{ $comment->user->lastname }}">
-                                        Reply to {{ $comment->user->firstname }}
-                                    </button>
-                                </div>
                             </div>
 
-                            <!-- Replies Section - Always show if there are replies or if toggled -->
-                            @if(isset($showReplies[$comment->id]) && $showReplies[$comment->id] || $comment->replies->where('parent_reply_id', null)->count() > 0)
-                                <div class="mt-3 space-y-2">
-                                    <!-- Add Reply Form -->
-                                    <form wire:submit.prevent="addReply({{ $comment->id }})">
-                                        <div class="flex space-x-2">
-                                            <img class="h-6 w-6 rounded-full object-cover"
-                                                 src="{{ auth()->user()->profile_image_url }}"
-                                                 alt="{{ auth()->user()->firstname }} {{ auth()->user()->lastname }}"
-                                                 onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->firstname . ' ' . auth()->user()->lastname) }}&background=random&color=fff&size=100&bold=true'">
-                                            <div class="flex-1 relative">
+                            {{-- Comment Actions --}}
+                            <div class="flex items-center space-x-4 mt-1 ml-2 text-xs">
+                                <button wire:click="toggleCommentLike({{ $comment->id }})"
+                                        class="font-semibold text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                    {{ $comment->isLikedBy(auth()->user()) ? 'Unlike' : 'Like' }}
+                                </button>
+                                @if($comment->replies_count > 0 || isset($showReplies[$comment->id]))
+                                    <button wire:click="toggleReplies({{ $comment->id }})"
+                                            class="font-semibold text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                        {{ $comment->replies_count }} {{ $comment->replies_count == 1 ? 'reply' : 'replies' }}
+                                    </button>
+                                @else
+                                    <button wire:click="startReply({{ $comment->id }})"
+                                            class="font-semibold text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                        Reply
+                                    </button>
+                                @endif
+                            </div>
+
+                            {{-- Replies Section --}}
+                            @if(isset($showReplies[$comment->id]) && $showReplies[$comment->id])
+                                <div class="mt-2 space-y-2">
+                                    {{-- Add Reply Form --}}
+                                    <form wire:submit.prevent="addReply({{ $comment->id }})" class="flex items-start space-x-2">
+                                        <img class="h-7 w-7 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600 flex-shrink-0"
+                                             src="{{ auth()->user()->profile_image_url }}"
+                                             alt="{{ auth()->user()->firstname }} {{ auth()->user()->lastname }}"
+                                             onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->firstname . ' ' . auth()->user()->lastname) }}&background=random&color=fff&size=100&bold=true'">
+                                        <div class="flex-1 relative">
+                                            <div class="bg-gray-100 dark:bg-gray-700 rounded-2xl px-3 py-1.5 focus-within:ring-2 focus-within:ring-blue-500 transition-all">
                                                 <textarea wire:model="newReply.{{ $comment->id }}"
                                                           wire:keyup="searchUsers($event.target.value, 'reply_{{ $comment->id }}')"
                                                           wire:keydown.escape="hideMentionSuggestions"
-                                                          placeholder="Write a reply... (use @ to mention someone)"
-                                                          class="w-full px-3 py-1 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-full text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-all duration-200"
+                                                          placeholder="Write a reply..."
+                                                          class="w-full bg-transparent border-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none resize-none text-sm"
                                                           rows="1"
-                                                          style="min-height: 28px; max-height: 80px;"
+                                                          style="min-height: 18px; max-height: 80px;"
                                                           oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';"></textarea>
-
-                                                <!-- Mention Suggestions Dropdown -->
-                                                @if($showMentionSuggestions && $currentMentionField === 'reply_' . $comment->id)
-                                                    <div class="mention-suggestions absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                                                        @foreach($mentionSuggestions as $index => $user)
-                                                            <button type="button"
-                                                                    wire:click="selectMention({{ $user->id }}, 'reply_{{ $comment->id }}')"
-                                                                    class="mention-suggestion-item w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2 {{ $selectedMentionIndex === $index ? 'bg-blue-50 dark:bg-blue-900' : '' }}">
-                                                                <img class="h-6 w-6 rounded-full object-cover"
-                                                                     src="{{ $user->profile_image_url }}"
-                                                                     alt="{{ $user->firstname }} {{ $user->lastname }}"
-                                                                     onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($user->firstname . ' ' . $user->lastname) }}&background=random&color=fff&size=100&bold=true'">
-                                                                <div>
-                                                                    <p class="font-medium text-gray-900 dark:text-white text-sm">{{ $user->firstname }} {{ $user->lastname }}</p>
-                                                                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ $user->staff->position ?? 'Employee' }}</p>
-                                                                </div>
-                                                            </button>
-                                                        @endforeach
-                                                    </div>
-                                                @endif
-
-                                                @error("newReply.{$comment->id}")
-                                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                                                @enderror
                                             </div>
-                                            <button type="submit"
-                                                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 text-xs rounded-lg transition-all duration-200 hover:shadow-md transform hover:scale-105 font-medium"
-                                                    wire:loading.attr="disabled">
-                                                <span wire:loading.remove wire:target="addReply({{ $comment->id }})">Reply</span>
-                                                <span wire:loading wire:target="addReply({{ $comment->id }})" class="flex items-center space-x-1">
-                                                    <svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
-                                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                    </svg>
-                                                    <span>Posting...</span>
-                                                </span>
-                                            </button>
+
+                                            {{-- Mention Suggestions for Reply --}}
+                                            @if($showMentionSuggestions && $currentMentionField === 'reply_' . $comment->id)
+                                                <div class="absolute left-0 right-0 top-full mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-xl max-h-56 overflow-y-auto z-10">
+                                                    @foreach($mentionSuggestions as $index => $user)
+                                                        <button type="button"
+                                                                wire:click="selectMention({{ $user->id }}, 'reply_{{ $comment->id }}')"
+                                                                class="w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 {{ $selectedMentionIndex === $index ? 'bg-blue-50 dark:bg-blue-900/60' : '' }}">
+                                                            <img class="h-8 w-8 rounded-full object-cover"
+                                                                 src="{{ $user->profile_image_url }}"
+                                                                 alt="{{ $user->firstname }} {{ $user->lastname }}">
+                                                            <div class="min-w-0 flex-1">
+                                                                <p class="font-medium text-gray-900 dark:text-white truncate text-sm">{{ $user->firstname }} {{ $user->lastname }}</p>
+                                                                <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ $user->staff->position ?? 'Employee' }}</p>
+                                                            </div>
+                                                        </button>
+                                                    @endforeach
+                                                </div>
+                                            @endif
                                         </div>
                                     </form>
 
-                                    <!-- Replies List -->
+                                    {{-- Replies List --}}
                                     @foreach($comment->replies->where('parent_reply_id', null) as $reply)
-                                        <div id="reply-{{ $reply->id }}" class="flex space-x-2 ml-6">
-                                            <img class="h-6 w-6 rounded-full object-cover cursor-pointer"
-                                                 src="{{ $reply->user->profile_image_url }}"
-                                                 alt="{{ $reply->user->firstname }} {{ $reply->user->lastname }}"
-                                                 onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($reply->user->firstname . ' ' . $reply->user->lastname) }}&background=random&color=fff&size=100&bold=true'">
-                                            <div class="flex-1">
-                                                <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
-                                                    <div class="flex items-center justify-between mb-1">
-                                                        <h5 class="font-medium text-gray-900 dark:text-white text-xs hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-colors">
+                                        <div class="flex items-start space-x-2">
+                                            <a href="{{ route('settings.profile') }}" class="flex-shrink-0">
+                                                <img class="h-7 w-7 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600 cursor-pointer hover:opacity-90 transition-opacity"
+                                                     src="{{ $reply->user->profile_image_url }}"
+                                                     alt="{{ $reply->user->firstname }} {{ $reply->user->lastname }}"
+                                                     onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($reply->user->firstname . ' ' . $reply->user->lastname) }}&background=random&color=fff&size=100&bold=true'">
+                                            </a>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="bg-gray-100 dark:bg-gray-700 rounded-2xl px-3 py-2">
+                                                    <div class="flex items-center space-x-2 mb-1">
+                                                        <a href="{{ route('settings.profile') }}" class="font-semibold text-gray-900 dark:text-white hover:underline text-sm">
                                                             {{ $reply->user->firstname }} {{ $reply->user->lastname }}
-                                                        </h5>
-                                                        <span class="text-xs text-gray-500 dark:text-gray-400">
-                                                            {{ $reply->created_at->diffForHumans() }}
-                                                        </span>
+                                                        </a>
+                                                        <span class="text-xs text-gray-500 dark:text-gray-400">{{ $reply->created_at->diffForHumans() }}</span>
                                                     </div>
-                                                    <p class="text-gray-900 dark:text-white text-xs leading-relaxed">{!! $this->parseMentions($reply->content) !!}</p>
-
-                                                    <!-- Reply Actions -->
-                                                    <div class="flex items-center space-x-3 mt-2 text-xs">
-                                                        <button wire:click="startNestedReply({{ $reply->id }}, {{ $reply->user_id }})"
-                                                                class="text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                                                                title="Reply to {{ $reply->user->firstname }} {{ $reply->user->lastname }}">
-                                                            Reply to {{ $reply->user->firstname }}
-                                                        </button>
-                                                    </div>
+                                                    <p class="text-gray-900 dark:text-white text-sm leading-relaxed">{!! $this->parseMentions($reply->content) !!}</p>
                                                 </div>
 
-                                                <!-- Nested Replies Section - Always show if there are nested replies or if toggled -->
-                                                @if(isset($showNestedReplies[$reply->id]) && $showNestedReplies[$reply->id] || $reply->childReplies->count() > 0)
+                                                {{-- Reply Actions --}}
+                                                <div class="flex items-center space-x-4 mt-1 ml-2 text-xs">
+                                                    <button wire:click="toggleCommentLike({{ $reply->id }})"
+                                                            class="font-semibold text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                                        {{ $reply->isLikedBy(auth()->user()) ? 'Unlike' : 'Like' }}
+                                                    </button>
+                                                    @if($reply->childReplies->count() > 0 || isset($showNestedReplies[$reply->id]))
+                                                        <button wire:click="toggleNestedReplies({{ $reply->id }})"
+                                                                class="font-semibold text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                                            {{ $reply->childReplies->count() }} {{ $reply->childReplies->count() == 1 ? 'reply' : 'replies' }}
+                                                        </button>
+                                                    @else
+                                                        <button wire:click="startNestedReply({{ $reply->id }})"
+                                                                class="font-semibold text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                                            Reply
+                                                        </button>
+                                                    @endif
+                                                </div>
+
+                                                {{-- Nested Replies --}}
+                                                @if(isset($showNestedReplies[$reply->id]) && $showNestedReplies[$reply->id])
                                                     <div class="mt-2 space-y-2">
-                                                        <!-- Add Nested Reply Form -->
-                                                        <form wire:submit.prevent="addNestedReply({{ $reply->id }})">
-                                                            <div class="flex space-x-2">
-                                                                <img class="h-5 w-5 rounded-full object-cover"
-                                                                     src="{{ auth()->user()->profile_image_url }}"
-                                                                     alt="{{ auth()->user()->firstname }} {{ auth()->user()->lastname }}"
-                                                                     onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->firstname . ' ' . auth()->user()->lastname) }}&background=random&color=fff&size=100&bold=true'">
-                                                                <div class="flex-1 relative">
-                                                                    <textarea wire:model="newNestedReply.{{ $reply->id }}"
+                                                        {{-- Add Nested Reply Form --}}
+                                                        <form wire:submit.prevent="addNestedReply({{ $reply->id }})" class="flex items-start space-x-2">
+                                                            <img class="h-6 w-6 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600 flex-shrink-0"
+                                                                 src="{{ auth()->user()->profile_image_url }}"
+                                                                 alt="{{ auth()->user()->firstname }} {{ auth()->user()->lastname }}"
+                                                                 onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->firstname . ' ' . auth()->user()->lastname) }}&background=random&color=fff&size=100&bold=true'">
+                                                            <div class="flex-1 relative">
+                                                                <div class="bg-gray-100 dark:bg-gray-700 rounded-2xl px-3 py-1.5 focus-within:ring-2 focus-within:ring-blue-500 transition-all">
+                                                                    <textarea wire:model="newNestedReply.{{ $reply->parent_reply_id ?? $reply->id }}"
                                                                               wire:keyup="searchUsers($event.target.value, 'nested_reply_{{ $reply->id }}')"
                                                                               wire:keydown.escape="hideMentionSuggestions"
-                                                                              placeholder="Write a reply... (use @ to mention someone)"
-                                                                              class="w-full px-2 py-1 text-xs bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-full text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-all duration-200"
+                                                                              placeholder="Write a reply..."
+                                                                              class="w-full bg-transparent border-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none resize-none text-sm"
                                                                               rows="1"
-                                                                              style="min-height: 24px; max-height: 60px;"
+                                                                              style="min-height: 18px; max-height: 80px;"
                                                                               oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';"></textarea>
-
-                                                                    <!-- Mention Suggestions Dropdown -->
-                                                                    @if($showMentionSuggestions && $currentMentionField === 'nested_reply_' . $reply->id)
-                                                                        <div class="mention-suggestions absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                                                                            @foreach($mentionSuggestions as $index => $user)
-                                                                                <button type="button"
-                                                                                        wire:click="selectMention({{ $user->id }}, 'nested_reply_{{ $reply->id }}')"
-                                                                                        class="mention-suggestion-item w-full px-2 py-1 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2 {{ $selectedMentionIndex === $index ? 'bg-blue-50 dark:bg-blue-900' : '' }}">
-                                                                                    <img class="h-5 w-5 rounded-full object-cover"
-                                                                                         src="{{ $user->profile_image_url }}"
-                                                                                         alt="{{ $user->firstname }} {{ $user->lastname }}"
-                                                                                         onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($user->firstname . ' ' . $user->lastname) }}&background=random&color=fff&size=100&bold=true'">
-                                                                                    <div>
-                                                                                        <p class="font-medium text-gray-900 dark:text-white text-xs">{{ $user->firstname }} {{ $user->lastname }}</p>
-                                                                                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $user->staff->position ?? 'Employee' }}</p>
-                                                                                    </div>
-                                                                                </button>
-                                                                            @endforeach
-                                                                        </div>
-                                                                    @endif
-
-                                                                    @error("newNestedReply.{$reply->id}")
-                                                                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                                                                    @enderror
                                                                 </div>
-                                                                <button type="submit"
-                                                                        class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 text-xs rounded-lg transition-all duration-200 hover:shadow-md transform hover:scale-105 font-medium"
-                                                                        wire:loading.attr="disabled">
-                                                                    <span wire:loading.remove wire:target="addNestedReply({{ $reply->id }})">Reply</span>
-                                                                    <span wire:loading wire:target="addNestedReply({{ $reply->id }})" class="flex items-center space-x-1">
-                                                                        <svg class="w-2 h-2 animate-spin" fill="none" viewBox="0 0 24 24">
-                                                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                                        </svg>
-                                                                        <span>Posting...</span>
-                                                                    </span>
-                                                                </button>
                                                             </div>
                                                         </form>
 
-                                                        <!-- Nested Replies List -->
+                                                        {{-- Nested Replies List --}}
                                                         @foreach($reply->childReplies as $nestedReply)
-                                                            <div id="reply-{{ $nestedReply->id }}" class="flex space-x-2 ml-8">
-                                                                <img class="h-5 w-5 rounded-full object-cover cursor-pointer"
-                                                                     src="{{ $nestedReply->user->profile_image_url }}"
-                                                                     alt="{{ $nestedReply->user->firstname }} {{ $nestedReply->user->lastname }}"
-                                                                     onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($nestedReply->user->firstname . ' ' . $nestedReply->user->lastname) }}&background=random&color=fff&size=100&bold=true'">
-                                                                <div class="flex-1">
-                                                                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
-                                                                        <div class="flex items-center justify-between mb-1">
-                                                                            <h6 class="font-medium text-gray-900 dark:text-white text-xs hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-colors">
+                                                            <div class="flex items-start space-x-2">
+                                                                <a href="{{ route('settings.profile') }}" class="flex-shrink-0">
+                                                                    <img class="h-6 w-6 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600 cursor-pointer hover:opacity-90 transition-opacity"
+                                                                         src="{{ $nestedReply->user->profile_image_url }}"
+                                                                         alt="{{ $nestedReply->user->firstname }} {{ $nestedReply->user->lastname }}"
+                                                                         onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($nestedReply->user->firstname . ' ' . $nestedReply->user->lastname) }}&background=random&color=fff&size=100&bold=true'">
+                                                                </a>
+                                                                <div class="flex-1 min-w-0">
+                                                                    <div class="bg-gray-100 dark:bg-gray-700 rounded-2xl px-3 py-2">
+                                                                        <div class="flex items-center space-x-2 mb-1">
+                                                                            <a href="{{ route('settings.profile') }}" class="font-semibold text-gray-900 dark:text-white hover:underline text-sm">
                                                                                 {{ $nestedReply->user->firstname }} {{ $nestedReply->user->lastname }}
-                                                                            </h6>
-                                                                            <span class="text-xs text-gray-500 dark:text-gray-400">
-                                                                                {{ $nestedReply->created_at->diffForHumans() }}
-                                                                            </span>
+                                                                            </a>
+                                                                            <span class="text-xs text-gray-500 dark:text-gray-400">{{ $nestedReply->created_at->diffForHumans() }}</span>
                                                                         </div>
-                                                                        <p class="text-gray-900 dark:text-white text-xs leading-relaxed">{!! $this->parseMentions($nestedReply->content) !!}</p>
+                                                                        <p class="text-gray-900 dark:text-white text-sm leading-relaxed">{!! $this->parseMentions($nestedReply->content) !!}</p>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -462,85 +425,4 @@
     @endif
 </div>
 @endif
-
-@push('scripts')
-<script>
-    // Scroll to anchor functionality
-    function scrollToAnchor() {
-        if (!window.location.hash) return;
-
-        const hash = window.location.hash;
-        let tries = 0;
-
-        function attemptScroll() {
-            const target = document.querySelector(hash);
-            if (target) {
-                target.scrollIntoView({ behavior: "smooth", block: "center" });
-                target.classList.add("ring-2", "ring-yellow-400", "bg-yellow-50");
-
-                // remove highlight after 2s
-                setTimeout(() => {
-                    target.classList.remove("ring-2", "ring-yellow-400", "bg-yellow-50");
-                }, 2000);
-            } else if (tries < 20) {
-                // try again until Livewire finishes rendering
-                tries++;
-                setTimeout(attemptScroll, 300);
-            }
-        }
-
-        attemptScroll();
-    }
-
-    document.addEventListener("DOMContentLoaded", scrollToAnchor);
-    document.addEventListener("livewire:update", scrollToAnchor);
-    document.addEventListener("livewire:navigated", scrollToAnchor);
-
-    // Delete confirmation with SweetAlert2
-    function confirmDelete(postId) {
-        Swal.fire({
-            title: 'Delete Post?',
-            text: "This action cannot be undone. All comments and likes will be deleted.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#ef4444',
-            cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'Cancel',
-            reverseButtons: true,
-            focusCancel: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Call Livewire method to delete
-                Livewire.find(document.querySelector(`#post-${postId}`).closest('[wire\\:id]').getAttribute('wire:id'))
-                    .call('deletePost');
-            }
-        });
-    }
-
-    // Listen for delete success event
-    document.addEventListener('livewire:init', () => {
-        Livewire.on('deleteSuccess', (event) => {
-            Swal.fire({
-                title: 'Deleted!',
-                text: event.message || 'Post has been deleted successfully.',
-                icon: 'success',
-                confirmButtonColor: '#3b82f6',
-                timer: 3000,
-                timerProgressBar: true
-            });
-        });
-
-        Livewire.on('deleteError', (event) => {
-            Swal.fire({
-                title: 'Error!',
-                text: event.message || 'Failed to delete post.',
-                icon: 'error',
-                confirmButtonColor: '#3b82f6'
-            });
-        });
-    });
-</script>
-
-@endpush
-
+</div>
