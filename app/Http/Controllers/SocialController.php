@@ -15,6 +15,7 @@ use App\Events\CommentCreated;
 use App\Events\CommentLiked;
 use App\Events\ReplyCreated;
 use App\Services\ChatNotificationService;
+use App\Services\ImageScanService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -41,7 +42,28 @@ class SocialController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('posts', 'public');
+            $imageFile = $request->file('image');
+            
+            // Scan the image for security threats
+            $scanService = new ImageScanService();
+            $scanResult = $scanService->scanImage($imageFile);
+            
+            if (!$scanResult['success']) {
+                return back()->withErrors(['image' => $scanResult['message']])->withInput();
+            }
+            
+            // Ensure public/posts directory exists
+            $publicPath = public_path('posts');
+            if (!file_exists($publicPath)) {
+                mkdir($publicPath, 0755, true);
+            }
+            
+            // Generate unique filename
+            $filename = time() . '_' . uniqid() . '.' . $imageFile->getClientOriginalExtension();
+            $imagePath = 'posts/' . $filename;
+            
+            // Move file to public/posts directory
+            $imageFile->move($publicPath, $filename);
         }
 
         $post = Post::create([
@@ -81,7 +103,10 @@ class SocialController extends Controller
         }
 
         if (!empty($post->image)) {
-            Storage::disk('public')->delete($post->image);
+            $imagePath = public_path($post->image);
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
         }
 
         Mention::where('post_id', $post->id)->delete();

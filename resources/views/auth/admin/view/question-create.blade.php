@@ -54,15 +54,15 @@
 
             <form action="{{ route('admin.quizzes.questions.store', $quiz) }}" method="POST" class="p-6">
                 @csrf
-                
+
                 <div class="space-y-6">
                     <!-- Question Content -->
                     <div>
                         <label for="content" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Question <span class="text-red-500">*</span>
                         </label>
-                        <textarea id="content" 
-                                  name="content" 
+                        <textarea id="content"
+                                  name="content"
                                   rows="4"
                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                   placeholder="Enter your question here..."
@@ -77,12 +77,22 @@
                         <label for="set" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Set
                         </label>
-                        <select id="set" 
-                                name="set" 
+                        @php
+                            $quizSets = $quiz->sets()->orderBy('set_number')->get();
+                            $defaultSet = old('set', $quizSets->first()?->set_number ?? '1');
+                        @endphp
+                        <select id="set"
+                                name="set"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                            <option value="1" {{ old('set', '1') == '1' ? 'selected' : '' }}>Set 1</option>
-                            <option value="2" {{ old('set') == '2' ? 'selected' : '' }}>Set 2</option>
-                            <option value="3" {{ old('set') == '3' ? 'selected' : '' }}>Set 3</option>
+                            @if($quizSets->isEmpty())
+                                <option value="1" {{ (string) $defaultSet === '1' ? 'selected' : '' }}>Set 1</option>
+                            @else
+                                @foreach($quizSets as $quizSet)
+                                    <option value="{{ $quizSet->set_number }}" {{ (string) $defaultSet === (string) $quizSet->set_number ? 'selected' : '' }}>
+                                        {{ $quizSet->set_name ?: 'Set ' . $quizSet->set_number }}
+                                    </option>
+                                @endforeach
+                            @endif
                         </select>
                         @error('set')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -100,8 +110,8 @@
                                     <label class="flex-shrink-0 w-8 text-sm font-medium text-gray-700 dark:text-gray-300">
                                         {{ $letter }}.
                                     </label>
-                                    <input type="text" 
-                                           name="choices[{{ $letter }}]" 
+                                    <input type="text"
+                                           name="choices[{{ $letter }}]"
                                            value="{{ old('choices.' . $letter) }}"
                                            class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                            placeholder="Enter choice {{ $letter }}"
@@ -122,8 +132,8 @@
                         <label for="answer" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Correct Answer <span class="text-red-500">*</span>
                         </label>
-                        <select id="answer" 
-                                name="answer" 
+                        <select id="answer"
+                                name="answer"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 required>
                             <option value="">Select correct answer</option>
@@ -140,11 +150,11 @@
 
                 <!-- Form Actions -->
                 <div class="flex items-center justify-end space-x-4 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                    <a href="{{ route('admin.quizzes.questions', $quiz) }}" 
+                    <a href="{{ route('admin.quizzes.questions', $quiz) }}"
                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">
                         Cancel
                     </a>
-                    <button type="submit" 
+                    <button type="submit"
                             class="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-800">
                         Add Question
                     </button>

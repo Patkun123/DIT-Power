@@ -1,9 +1,9 @@
 <aside
-      class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 md:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
+      class="admin-sidebar fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full md:translate-x-0"
       aria-label="Sidenav"
       id="drawer-navigation"
     >
-      <div class="overflow-y-auto py-5 px-3 h-full bg-white dark:bg-gray-800">
+      <div class="overflow-y-auto py-5 px-3 h-full">
         <form action="#" method="GET" class="md:hidden mb-2">
           <label for="sidebar-search" class="sr-only">Search</label>
           <div class="relative">
@@ -34,20 +34,19 @@
         </form>
         <ul class="space-y-2">
             <flux:navlist variant="outline">
-            <flux:navlist.item  icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Overview') }}</flux:navlist.item>
-            <flux:navlist.item icon="inbox" :href="route('admin.scramble-words.index')" :current="request()->routeIs('admin.scramble-words.index')" wire:navigate>{{ __('Scramble Management') }}</flux:navlist.item>
-            <flux:navlist.item icon="inbox" :href="route('managequiz')" :current="request()->routeIs('managequiz')" wire:navigate>{{ __('ManageQuiz') }}</flux:navlist.item>
-            <flux:navlist.group expandable heading="Manage User" class="hidden lg:grid">
-                <flux:navlist.item :href="route('manage.user')" :current="request()->routeIs('manage.user')" wire:navigate>{{ __('Manage User') }}</flux:navlist.item>
-                <flux:navlist.item :href="route('users.tracking')" :current="request()->routeIs('users.tracking')" wire:navigate>{{ __('User Progress') }}</flux:navlist.item>
+            <flux:navlist.item  icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')">{{ __('Overview') }}</flux:navlist.item>
+            <flux:navlist.item icon="inbox" :href="route('managequiz')" :current="request()->routeIs('managequiz')">{{ __('ManageQuiz') }}</flux:navlist.item>
+            <flux:navlist.group expandable heading="Manage User">
+              <flux:navlist.item :href="route('manage.user')" :current="request()->routeIs('manage.user')">{{ __('Manage User') }}</flux:navlist.item>
+              <flux:navlist.item :href="route('users.tracking')" :current="request()->routeIs('users.tracking')">{{ __('User Progress') }}</flux:navlist.item>
             </flux:navlist.group>
-            <flux:navlist.group expandable heading="Anouncement & News" class="hidden lg:grid">
-                <flux:navlist.item icon="calendar" :href="route('admin.events.index')" :current="request()->routeIs('admin.events.*')" wire:navigate>{{ __('Manage Events') }}</flux:navlist.item>
-                <flux:navlist.item icon="document-text" :href="route('admin.content.index')" :current="request()->routeIs('admin.content.*')" wire:navigate>{{ __('Home Content') }}</flux:navlist.item>
-                <flux:navlist.item icon="newspaper" :href="route('article')" :current="request()->routeIs('article')" wire:navigate>{{ __('News Article') }}</flux:navlist.item>
+            <flux:navlist.group expandable heading="Announcements & News">
+              <flux:navlist.item icon="calendar" :href="route('admin.events.index')" :current="request()->routeIs('admin.events.*')">{{ __('Manage Events') }}</flux:navlist.item>
+              <flux:navlist.item icon="document-text" :href="route('admin.content.index')" :current="request()->routeIs('admin.content.*')">{{ __('Home Content') }}</flux:navlist.item>
+              <flux:navlist.item icon="newspaper" :href="route('article')" :current="request()->routeIs('article')">{{ __('News Article') }}</flux:navlist.item>
             </flux:navlist.group>
-            <flux:navlist.group expandable heading="Feedback Management" class="hidden lg:grid">
-                <flux:navlist.item :href="route('admin.feedbacks.index')" :current="request()->routeIs('admin.feedbacks.*')" wire:navigate>{{ __('User Feedbacks') }}</flux:navlist.item>
+            <flux:navlist.group expandable heading="Feedback Management">
+              <flux:navlist.item :href="route('admin.feedbacks.index')" :current="request()->routeIs('admin.feedbacks.*')">{{ __('User Feedbacks') }}</flux:navlist.item>
             </flux:navlist.group>
         </flux:navlist>
         </ul>

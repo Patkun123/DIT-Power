@@ -30,25 +30,28 @@ class Register extends Component
     public string $educational_attachment = '';
 
     public ?string $phone_number = null;
-    public ?string $gender = null;
+    public ?string $gender = '';
     public ?string $birthday = null;
     public ?string $address = null;
     public ?string $height = null;
     public ?string $weight = null;
-    public ?string $activity_level = null;
-    public ?string $health_goals = null;
-    public ?string $dietary_preferences = null;
+    public ?string $activity_level = '';
+    public ?string $health_goals = '';
+    public ?string $dietary_preferences = '';
 
     public ?string $staff_id = null;
 
-    public ?string $office = null;
+    public ?string $office = '';
 
     public ?string $position = null;
 
     public ?string $department = null;
 
+    public ?string $years_in_dti = null;
+
     public int $step = 1;
 
+<<<<<<< HEAD
     public function mount(): void
     {
         $user = Auth::user();
@@ -88,6 +91,13 @@ class Register extends Component
                 $this->position = $staff->position ?? null;
                 $this->department = $staff->department ?? null;
             }
+=======
+    public function updatedBirthday($value)
+    {
+        // Normalize empty string to null for date validation
+        if ($value === '' || $value === null) {
+            $this->birthday = null;
+>>>>>>> Rooffce
         }
     }
 
@@ -114,6 +124,7 @@ class Register extends Component
                 return;
             }
 
+<<<<<<< HEAD
             // Check if user already has a password
             $userHasPassword = !empty($user->password);
 
@@ -131,6 +142,11 @@ class Register extends Component
             } else {
                 // If creating new record, staff_id must be unique
                 $staffIdRule[] = 'unique:dti_id,staff_id';
+=======
+            // Normalize empty birthday string to null
+            if ($this->birthday === '') {
+                $this->birthday = null;
+>>>>>>> Rooffce
             }
 
             $validated = $this->validate([
@@ -154,10 +170,17 @@ class Register extends Component
                 'level_career'          => ['nullable', 'string', 'max:255'],
                 'years_in_dti'          => ['nullable', 'string', 'max:10'],
                 'civil_status'          => ['nullable', 'string'],
+<<<<<<< HEAD
+=======
+                'career'                => ['nullable', 'string'],
+                'level_career'          => ['nullable', 'string'],
+                'years_in_dti'          => ['nullable', 'string'],
+>>>>>>> Rooffce
                 'nature_of_work'        => ['nullable', 'string'],
                 'function'              => ['nullable', 'string'],
                 'educational_attachment_type' => ['nullable', 'string'],
                 'educational_attachment'      => ['nullable', 'string'],
+                'years_in_dti'          => ['nullable', 'string'],
             ]);
 
             // Update user record - only fields that belong to users table
@@ -175,6 +198,7 @@ class Register extends Component
             user_information::updateOrCreate(
                 ['user_id' => $user->id],
                 [
+<<<<<<< HEAD
                     'phone_number'        => $this->phone_number,
                     'gender'              => $this->gender,
                     'birthday'            => $this->birthday,
@@ -192,6 +216,25 @@ class Register extends Component
                     'function'            => $this->function ?: '',
                     'educational_attachment_type' => $this->educational_attachment_type ?: '',
                     'educational_attachment'      => $this->educational_attachment ?: '',
+=======
+                    'phone_number'        => !empty($this->phone_number) ? $this->phone_number : null,
+                    'gender'              => !empty($this->gender) ? $this->gender : null,
+                    'birthday'            => !empty($this->birthday) ? $this->birthday : null,
+                    'address'             => !empty($this->address) ? $this->address : null,
+                    'height'              => !empty($this->height) ? $this->height : null,
+                    'weight'              => !empty($this->weight) ? $this->weight : null,
+                    'activity_level'      => !empty($this->activity_level) ? $this->activity_level : null,
+                    'health_goals'        => !empty($this->health_goals) ? $this->health_goals : null,
+                    'dietary_preferences' => !empty($this->dietary_preferences) ? $this->dietary_preferences : null,
+                    'civil_status'        => !empty($this->civil_status) ? $this->civil_status : 'Single',
+                    'career'              => !empty($this->career) ? $this->career : null,
+                    'level_career'        => !empty($this->level_career) ? $this->level_career : '1st',
+                    'nature_of_work'      => !empty($this->nature_of_work) ? $this->nature_of_work : null,
+                    'function'            => !empty($this->function) ? $this->function : null,
+                    'educational_attachment_type' => !empty($this->educational_attachment_type) ? $this->educational_attachment_type : null,
+                    'educational_attachment'      => !empty($this->educational_attachment) ? $this->educational_attachment : null,
+                    'years_in_dti'        => !empty($this->years_in_dti) ? $this->years_in_dti : null,
+>>>>>>> Rooffce
                 ]
             );
 
@@ -246,15 +289,28 @@ class Register extends Component
 
     protected function validateCurrentStep(): void
     {
+        // Normalize empty birthday string to null
+        if ($this->birthday === '') {
+            $this->birthday = null;
+        }
+
         if ($this->step === 1) {
             $this->validate([
                 'firstname' => ['required', 'string', 'max:255'],
                 'lastname'  => ['required', 'string', 'max:255'],
+<<<<<<< HEAD
                 'phone_number' => ['required', 'string', 'max:20'],
                 'address'   => ['required', 'string', 'max:500'],
                 'birthday'  => ['nullable', 'date'],
                 'gender'    => ['nullable', 'string'],
                 'civil_status' => ['nullable', 'string'],
+=======
+                'birthday'            => ['nullable', 'date', 'date_format:Y-m-d'],
+                'phone_number'        => ['nullable', 'string'],
+                'gender'              => ['nullable', 'string'],
+                'address'             => ['nullable', 'string'],
+                'civil_status'        => ['nullable', 'string'],
+>>>>>>> Rooffce
             ]);
         }
 
@@ -272,6 +328,7 @@ class Register extends Component
             }
 
             $this->validate([
+<<<<<<< HEAD
                 'staff_id'      => $staffIdRule,
                 'career'        => ['required', 'string', 'max:255'],
                 'level_career'  => ['nullable', 'string', 'max:255'],
@@ -279,16 +336,32 @@ class Register extends Component
                 'office'        => ['required', 'string', 'max:255'],
                 'position'      => ['required', 'string', 'max:255'],
                 'department'    => ['required', 'string', 'max:255'],
+=======
+                'staff_id'            => ['required', 'string', 'max:255'],
+                'nature_of_work'      => ['nullable', 'string'],
+                'level_career'        => ['nullable', 'string'],
+                'years_in_dti'        => ['nullable', 'string'],
+                'office'              => ['nullable', 'string'],
+                'position'            => ['nullable', 'string'],
+                'department'          => ['nullable', 'string'],
+>>>>>>> Rooffce
             ]);
         }
 
         if ($this->step === 3) {
             // Health Profile
             $this->validate([
+<<<<<<< HEAD
                 'height'            => ['required', 'string', 'max:10'],
                 'weight'            => ['required', 'string', 'max:10'],
                 'activity_level'    => ['nullable', 'string'],
                 'health_goals'      => ['nullable', 'string'],
+=======
+                'height'              => ['nullable', 'string'],
+                'weight'              => ['nullable', 'string'],
+                'activity_level'      => ['nullable', 'string'],
+                'health_goals'        => ['nullable', 'string'],
+>>>>>>> Rooffce
                 'dietary_preferences' => ['nullable', 'string'],
             ]);
         }

@@ -42,6 +42,7 @@
                 </div>
             </div>
         </div>
+<<<<<<< HEAD
         @if($canManagePost)
             <div class="relative" x-data="{
                 open: false,
@@ -113,6 +114,112 @@
                                     class="px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg disabled:opacity-60">
                                 Delete
                             </button>
+=======
+
+        <!-- More Options (Delete for owner/admin) -->
+        <div class="relative" x-data="{ open: false }">
+            <button @click="open = !open" class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+            </button>
+            <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-40 sm:w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg overflow-hidden z-20">
+                @if(auth()->check() && auth()->id() === $post->user_id)
+                    <button wire:click="startEdit" class="w-full text-left px-3 py-2 text-xs hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">Edit post</button>
+                    <button onclick="confirmDelete({{ $post->id }})" class="w-full text-left px-3 py-2 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30">Delete post</button>
+                @else
+                    <button class="w-full text-left px-3 py-2 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30">Report</button>
+                @endif
+    </div>
+        </div>
+    </div>
+
+    <!-- Post Content / Edit -->
+    <div class="mb-3">
+        @if($isEditing)
+            <div class="space-y-2">
+                <textarea wire:model.defer="editContent"
+                          class="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y"
+                          rows="4"
+                          maxlength="1000"
+                          placeholder="Update your post..."></textarea>
+                
+                <!-- Current Image Display -->
+                @if($post->image && !$showEditImagePreview && !$editImage)
+                    <div class="relative mt-2">
+                        <img src="{{ asset($post->image) }}" 
+                             alt="Current post image" 
+                             class="w-full max-h-96 object-cover rounded-lg">
+                        <button type="button" wire:click="removeEditImage" 
+                                class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                @endif
+
+                <!-- New Image Preview -->
+                @if($showEditImagePreview && $editImage)
+                    <div class="relative mt-2">
+                        <img src="{{ $editImage->temporaryUrl() }}" 
+                             alt="New image preview" 
+                             class="w-full max-h-96 object-cover rounded-lg">
+                        <button wire:click="removeEditImage" 
+                                class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                @endif
+
+                <!-- Image Upload Input -->
+                <div class="mt-2">
+                    <label class="block">
+                        <input type="file" 
+                               wire:model="editImage" 
+                               accept="image/*" 
+                               class="hidden">
+                        <span class="inline-flex items-center px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            {{ $post->image ? 'Change Image' : 'Add Image' }}
+                        </span>
+                    </label>
+                    @error('editImage') 
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="flex items-center gap-2 flex-wrap">
+                    <button wire:click="updatePost" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors">Save</button>
+                    <button wire:click="cancelEdit" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">Cancel</button>
+                </div>
+            </div>
+        @else
+            <p class="text-gray-900 dark:text-white whitespace-pre-wrap leading-relaxed">{!! $this->parseMentions($post->content) !!}</p>
+            @if($post->image)
+                <div class="mt-3">
+                    <img src="{{ asset($post->image) }}"
+                         alt="Post image"
+                         class="w-full max-h-96 object-cover rounded-lg cursor-pointer hover:opacity-95 transition-opacity">
+                </div>
+            @endif
+        @endif
+    </div>
+    <!-- Engagement Stats -->
+    <div class="flex items-center justify-between py-2 text-sm text-gray-500 dark:text-gray-400">
+        <div class="flex items-center space-x-4">
+            @if($post->likes_count > 0)
+                <div class="flex items-center space-x-1">
+                    <div class="flex -space-x-1">
+                        <div class="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                            <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                            </svg>
+>>>>>>> Rooffce
                         </div>
                     </div>
                 </div>

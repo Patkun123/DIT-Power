@@ -7,8 +7,7 @@
 
     <title>{{ $title ?? config('app.name') }} Personalized Online Wellness Resource HUB</title>
 
-    <link rel="icon" href="/favicon.ico" sizes="any">
-    <link rel="dtilogo-icon" href="/dtilogo-icon.png">
+    <link rel="icon" href="/dtilogo-icon.ico" sizes="any">
 
     <script src="{{asset('include/flowbite.js')}}"></script>
     <script src="{{asset('include/apexcharts.js')}}"></script>
@@ -29,7 +28,6 @@
 </head>
 
 <body class="dark:bg-gray-900 bg-gray-100">
-    @include('components.loading-screen')
     @include('sweetalert2::index')
     @include('auth.users.partials.header')
     <section class="mt-16 lg:mt-20">

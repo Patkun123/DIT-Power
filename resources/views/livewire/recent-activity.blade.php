@@ -1,4 +1,4 @@
-<div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+<div class="admin-activity bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
         <div class="flex items-center space-x-3">
@@ -6,7 +6,7 @@
             <h2 class="text-xl font-bold text-gray-800 dark:text-white">Recent Activity</h2>
         </div>
         <div class="flex items-center space-x-2">
-            <button wire:click="refresh" 
+            <button wire:click="refresh"
                     class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
                     title="Refresh">
                 <flux:icon name="arrow-path" class="w-5 h-5" />
@@ -39,7 +39,7 @@
         <!-- Date Filter -->
         <div class="flex items-center space-x-2">
             <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Period:</label>
-            <select wire:model.live="filter" 
+            <select wire:model.live="filter"
                     class="text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
                 <option value="all">All Time</option>
                 <option value="today">Today</option>
@@ -51,7 +51,7 @@
         <!-- Activity Type Filter -->
         <div class="flex items-center space-x-2">
             <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Type:</label>
-            <select wire:model.live="activityType" 
+            <select wire:model.live="activityType"
                     class="text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
                 <option value="all">All Activities</option>
                 <option value="quiz_taken">Quiz Taken</option>
@@ -92,7 +92,7 @@
                                 {{ $activity->time_ago }}
                             </span>
                         </div>
-                        
+
                         <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
                             {{ $activity->description }}
                         </p>

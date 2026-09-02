@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Post;
 use App\Models\Mention;
 use App\Events\PostCreated;
+use App\Services\ImageScanService;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
@@ -28,12 +29,16 @@ class CreatePost extends Component
     public $currentMentionField = '';
 
     protected $rules = [
+<<<<<<< HEAD
         'content' => 'required|string|max:1000',
         'image' => 'nullable|image|max:8192',
+=======
+        'content' => 'nullable|string|max:1000',
+        'image' => 'nullable|image|max:8048',
+>>>>>>> Rooffce
     ];
 
     protected $messages = [
-        'content.required' => 'Post content is required.',
         'content.max' => 'Post content cannot exceed 1000 characters.',
         'image.image' => 'File must be an image.',
         'image.max' => 'Image size cannot exceed 8MB.',
@@ -52,12 +57,53 @@ class CreatePost extends Component
     {
         try {
             $this->validateOnly('image');
+<<<<<<< HEAD
             $this->showImagePreview = true;
         } catch (\Exception $e) {
             Log::error('Image validation failed', [
                 'error' => $e->getMessage()
             ]);
             $this->addError('image', 'Failed to upload image: ' . $e->getMessage());
+=======
+
+            // Scan the image for security threats
+            if ($this->image) {
+                try {
+                    $scanService = new ImageScanService();
+                    $scanResult = $scanService->scanImage($this->image);
+
+                    if (!$scanResult['success']) {
+                        Log::warning('Image scan failed during upload', [
+                            'error' => $scanResult['message'],
+                            'file' => $this->image->getClientOriginalName(),
+                        ]);
+                        $this->addError('image', $scanResult['message']);
+                        $this->image = null;
+                        $this->showImagePreview = false;
+                        return;
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Image scanning exception', [
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString(),
+                    ]);
+                    // In case of scanning errors, allow upload but log the issue
+                    // You can change this to block uploads if needed
+                    $this->addError('image', 'Image validation encountered an error. Please try again.');
+                    $this->image = null;
+                    $this->showImagePreview = false;
+                    return;
+                }
+            }
+
+            $this->showImagePreview = true;
+        } catch (\Exception $e) {
+            Log::error('Image upload validation failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            $this->addError('image', 'Failed to process image. Please try again.');
+>>>>>>> Rooffce
             $this->image = null;
             $this->showImagePreview = false;
         }
@@ -66,6 +112,7 @@ class CreatePost extends Component
     public function createPost()
     {
         try {
+<<<<<<< HEAD
             Log::info('Starting post creation', [
                 'user_id' => Auth::id(),
                 'has_image' => !is_null($this->image)
@@ -134,6 +181,115 @@ class CreatePost extends Component
 
             session()->flash('error', 'Failed to create post. Please try again.');
             $this->addError('general', 'An error occurred: ' . $e->getMessage());
+=======
+            // Custom validation: at least content or image must be provided
+            if (empty(trim($this->content)) && !$this->image) {
+                $this->addError('content', 'Please provide either post content or an image.');
+                return;
+            }
+
+            $this->validate();
+
+            // Scan image before storing
+            $imagePath = null;
+            if ($this->image) {
+                try {
+                    $scanService = new ImageScanService();
+                    $scanResult = $scanService->scanImage($this->image);
+
+                    if (!$scanResult['success']) {
+                        Log::warning('Image scan failed during post creation', [
+                            'error' => $scanResult['message'],
+                            'file' => $this->image->getClientOriginalName(),
+                        ]);
+                        $this->addError('image', $scanResult['message']);
+                        return;
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Image scanning exception during post creation', [
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString(),
+                    ]);
+                    $this->addError('image', 'Image validation encountered an error. Please try again.');
+                    return;
+                }
+
+                try {
+                    // Ensure public/posts directory exists
+                    $publicPath = public_path('posts');
+                    if (!file_exists($publicPath)) {
+                        if (!mkdir($publicPath, 0755, true)) {
+                            throw new \Exception('Failed to create posts directory. Please check permissions.');
+                        }
+                    }
+
+                    // Check if directory is writable
+                    if (!is_writable($publicPath)) {
+                        throw new \Exception('Posts directory is not writable. Please check permissions.');
+                    }
+
+                    // Generate unique filename
+                    $filename = time() . '_' . uniqid() . '.' . $this->image->getClientOriginalExtension();
+                    $imagePath = 'posts/' . $filename;
+                    $fullPath = $publicPath . DIRECTORY_SEPARATOR . $filename;
+
+                    // Use Livewire's storePubliclyAs to store in storage first (more reliable)
+                    // Then copy to public directory for direct access
+                    $storedPath = $this->image->storePubliclyAs('posts', $filename, 'public');
+                    
+                    if ($storedPath) {
+                        // Copy from storage to public directory
+                        $storagePath = storage_path('app/public/posts/' . $filename);
+                        if (file_exists($storagePath)) {
+                            if (!copy($storagePath, $fullPath)) {
+                                Log::warning('Could not copy from storage to public, trying direct method');
+                                // Fallback to direct method
+                                $this->saveImageDirectly($fullPath);
+                            }
+                        } else {
+                            // Storage path doesn't exist, try direct method
+                            $this->saveImageDirectly($fullPath);
+                        }
+                    } else {
+                        // storePubliclyAs failed, try direct method
+                        $this->saveImageDirectly($fullPath);
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Image storage failed', [
+                        'error' => $e->getMessage(),
+                        'file' => $this->image->getClientOriginalName(),
+                        'trace' => $e->getTraceAsString(),
+                    ]);
+                    $this->addError('image', 'Failed to save image: ' . $e->getMessage());
+                    return;
+                }
+            }
+
+            $post = Post::create([
+                'user_id' => Auth::id(),
+                'content' => trim($this->content) ?: null,
+                'image' => $imagePath,
+            ]);
+
+            // Process mentions in post content (only if content exists)
+            if (!empty(trim($this->content))) {
+                $this->processMentions($this->content, $post, 'post');
+            }
+
+            // Dispatch event for real-time updates
+            $this->dispatch('postCreated');
+
+            // Reset form
+            $this->reset(['content', 'image', 'showImagePreview']);
+
+            session()->flash('message', 'Post created successfully!');
+        } catch (\Exception $e) {
+            Log::error('Post creation failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            $this->addError('content', 'Failed to create post. Please try again.');
+>>>>>>> Rooffce
         }
     }
 
@@ -253,6 +409,32 @@ class CreatePost extends Component
                         'mention_id' => $post->id,
                     ],
                 ]);
+            }
+        }
+    }
+
+    private function saveImageDirectly($fullPath)
+    {
+        // Try multiple methods to get the file content
+        $tempPath = $this->image->getRealPath();
+        
+        if (!$tempPath || !file_exists($tempPath)) {
+            $tempPath = $this->image->getPathname();
+        }
+        
+        if (!$tempPath || !file_exists($tempPath)) {
+            $tempPath = method_exists($this->image, 'path') ? $this->image->path() : null;
+        }
+        
+        if ($tempPath && file_exists($tempPath)) {
+            if (!copy($tempPath, $fullPath)) {
+                throw new \Exception('Failed to copy image to public directory.');
+            }
+        } else {
+            // Last resort: read content directly
+            $fileContent = file_get_contents($this->image->getRealPath() ?: $this->image->path());
+            if ($fileContent === false || file_put_contents($fullPath, $fileContent) === false) {
+                throw new \Exception('Failed to save image file.');
             }
         }
     }

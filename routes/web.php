@@ -22,8 +22,6 @@ use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use Illuminate\Support\Facades\Route;
 use App\Notifications\RealtimeTestNotification;
-use App\Http\Livewire\FinanceDashboard;
-use App\Http\Controllers\ScrambleWordController;
 use App\Http\Controllers\SocialController;
 
 Route::get('/', [HomeController::class, 'index'])->middleware([
@@ -51,7 +49,7 @@ Route::middleware(['auth', 'is_admin:admin'])->group(function () {
 
 
     //user tracking
-    Route::get('Users/Tracking', [usertrackingController::class, 'index'])->name('users.tracking');
+    Route::get('Users/Tracking', [UserInformationController::class, 'progress'])->name('users.tracking');
 
     //article and news
     Route::get('article',[ArticleandNewsController::class, 'index'])->name('article');
@@ -74,21 +72,15 @@ Route::middleware(['auth', 'is_admin:admin'])->group(function () {
     Route::get('quizzes/{quiz}/questions/{question}/edit', [AdminQuizController::class, 'editQuestion'])->name('admin.quizzes.questions.edit');
     Route::put('quizzes/{quiz}/questions/{question}', [AdminQuizController::class, 'updateQuestion'])->name('admin.quizzes.questions.update');
     Route::delete('quizzes/{quiz}/questions/{question}', [AdminQuizController::class, 'destroyQuestion'])->name('admin.quizzes.questions.destroy');
-            Route::get('quizzes/{quiz}/statistics', [AdminQuizController::class, 'statistics'])->name('admin.quizzes.statistics');
+    Route::get('quizzes/{quiz}/statistics', [AdminQuizController::class, 'statistics'])->name('admin.quizzes.statistics');
 
-            // Quiz Sets Management
-            Route::get('quizzes/{quiz}/sets', [AdminQuizController::class, 'sets'])->name('admin.quizzes.sets');
-            Route::get('quizzes/{quiz}/sets/create', [AdminQuizController::class, 'createSet'])->name('admin.quizzes.sets.create');
-            Route::post('quizzes/{quiz}/sets', [AdminQuizController::class, 'storeSet'])->name('admin.quizzes.sets.store');
-            Route::get('quizzes/{quiz}/sets/{set}/edit', [AdminQuizController::class, 'editSet'])->name('admin.quizzes.sets.edit');
-            Route::put('quizzes/{quiz}/sets/{set}', [AdminQuizController::class, 'updateSet'])->name('admin.quizzes.sets.update');
-            Route::delete('quizzes/{quiz}/sets/{set}', [AdminQuizController::class, 'destroySet'])->name('admin.quizzes.sets.destroy');
-
-    // Scramble words management
-    Route::get('manage-scramble-words', [ScrambleWordController::class, 'index'])->name('admin.scramble-words.index');
-    Route::post('manage-scramble-words', [ScrambleWordController::class, 'store'])->name('admin.scramble-words.store');
-    Route::put('manage-scramble-words/{scrambleWord}', [ScrambleWordController::class, 'update'])->name('admin.scramble-words.update');
-    Route::delete('manage-scramble-words/{scrambleWord}', [ScrambleWordController::class, 'destroy'])->name('admin.scramble-words.destroy');
+    // Quiz Sets Management
+    Route::get('quizzes/{quiz}/sets', [AdminQuizController::class, 'sets'])->name('admin.quizzes.sets');
+    Route::get('quizzes/{quiz}/sets/create', [AdminQuizController::class, 'createSet'])->name('admin.quizzes.sets.create');
+    Route::post('quizzes/{quiz}/sets', [AdminQuizController::class, 'storeSet'])->name('admin.quizzes.sets.store');
+    Route::get('quizzes/{quiz}/sets/{set}/edit', [AdminQuizController::class, 'editSet'])->name('admin.quizzes.sets.edit');
+    Route::put('quizzes/{quiz}/sets/{set}', [AdminQuizController::class, 'updateSet'])->name('admin.quizzes.sets.update');
+    Route::delete('quizzes/{quiz}/sets/{set}', [AdminQuizController::class, 'destroySet'])->name('admin.quizzes.sets.destroy');
 
     //Feedback Management
     Route::get('feedbacks', [AdminFeedbackController::class, 'index'])->name('admin.feedbacks.index');
@@ -117,7 +109,9 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
-    Route::get('settings/password', Password::class)->name('settings.password');
+    Route::get('/settings/password', Password::class)
+    ->middleware(['auth'])
+    ->name('settings.password');
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
 
     Route::get('/index',[UserIndexController::class, 'index'])->name('index');
@@ -138,9 +132,6 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::get('quiz/result/{attempt}', [QuizController::class, 'result'])->name('quiz.result');
     Route::get('quiz/history', [QuizController::class, 'history'])->name('quiz.history');
 
-    // Scramble game (UI similar to quiz)
-    Route::view('scramble', 'auth.users.view.scramble')->name('scramble');
-
     Route::get('Physical-tools', [ToolsController::class, 'index'])->name('physical.tools');
     Route::post('physical-tools', [ToolsController::class, 'calculate'])->name('calculate.bmi');
     Route::post('physical-tools/meditation', [ToolsController::class, 'start'])->name('meditation.start');
@@ -154,6 +145,7 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::view('Financial-tools','auth.users.view.financial')->name('financial.tools');
     Route::get('mental-tools',[emotional::class, 'index'])->name('mental.tools');
     Route::get('emotional-tools',[emotional::class, 'index'])->name('emotional.tools');
+<<<<<<< HEAD
     Route::get('social-wellbeing-tools',[ToolsController::class, 'socialWellbeing'])->name('social.wellbeing.tools');
     
     // Mental & Emotional Well-being API Routes
@@ -164,33 +156,36 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::post('mental-tools/self-care', [emotional::class, 'storeSelfCare'])->name('mental.tools.selfcare');
     Route::post('mental-tools/reflection', [emotional::class, 'storeReflection'])->name('mental.tools.reflection');
     
+=======
+
+>>>>>>> Rooffce
     // Social Tools Routes
     Route::get('social',[SocialController::class, 'index'])->name('social.tools');
     Route::get('social/{post}',[SocialController::class, 'show'])->name('social.show');
-    
+
     // Social Posts
     Route::post('social/posts', [SocialController::class, 'storePost'])->name('social.posts.store');
     Route::put('social/posts/{post}', [SocialController::class, 'updatePost'])->name('social.posts.update');
     Route::delete('social/posts/{post}', [SocialController::class, 'deletePost'])->name('social.posts.destroy');
     Route::post('social/posts/{post}/like', [SocialController::class, 'toggleLike'])->name('social.posts.like');
-    
+
     // Social Comments
     Route::post('social/posts/{post}/comments', [SocialController::class, 'storeComment'])->name('social.comments.store');
     Route::delete('social/comments/{comment}', [SocialController::class, 'deleteComment'])->name('social.comments.destroy');
     Route::post('social/comments/{comment}/like', [SocialController::class, 'toggleCommentLike'])->name('social.comments.like');
-    
+
     // Social Replies
     Route::post('social/comments/{comment}/replies', [SocialController::class, 'storeReply'])->name('social.replies.store');
     Route::delete('social/replies/{reply}', [SocialController::class, 'deleteReply'])->name('social.replies.destroy');
     Route::post('social/replies/{reply}/like', [SocialController::class, 'toggleReplyLike'])->name('social.replies.like');
-    
+
     // Global Chat
     Route::post('social/chat/messages', [SocialController::class, 'sendMessage'])->name('social.chat.send');
     Route::delete('social/chat/messages/{message}', [SocialController::class, 'deleteMessage'])->name('social.chat.destroy');
-    
+
     // Mentions
     Route::get('social/mentions', [SocialController::class, 'getMentions'])->name('social.mentions');
-    
+
     Route::get('leaderboard', [leaderboards::class, 'index'])->name('leaderboards');
 
 });

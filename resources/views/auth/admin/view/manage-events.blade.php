@@ -5,16 +5,14 @@
 @include('auth.admin.partials.layouts.header')
 
 @section('content')
-<div class="h-70 md:h-80 w-full bg-gradient-to-l from-primary-400 via-primary-600 to-lime-700">
-    <div class="container mx-auto flex items-start justify-start h-full px-2 md:px-70">
-        <div class="flex flex-col mt-40 md:mt-40">
-            <h1 class="text-2xl md:text-4xl text-white">Manage <b>Upcoming Events</b></h1>
-            <span class="text-white text-sm md:text-base mt-2">Create and manage wellness events</span>
-        </div>
+<div class="admin-page-hero">
+    <div class="admin-page-hero-inner">
+        <h1>Manage <b>Upcoming Events</b></h1>
+        <p>Create and manage wellness events</p>
     </div>
 </div>
 
-<main class="p-4 md:ml-64 h-auto pt-5 bg-gray-200 dark:bg-gray-900">
+<main class="admin-page-main p-4 md:ml-64 h-auto">
     <div class="p-4 md:p-6 mb-6">
         @if (session('success'))
             <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
@@ -53,9 +51,9 @@
         </div>
 
         <!-- Events Table -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+        <div class="admin-surface overflow-hidden">
             @if($events->count())
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <table class="admin-table min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead class="bg-gray-50 dark:bg-gray-700">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Event</th>

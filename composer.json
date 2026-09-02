@@ -11,6 +11,7 @@
     "require": {
         "php": "^8.2",
         "akaunting/laravel-apexcharts": "*",
+        "fakerphp/faker": "^1.23",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "livewire/flux": "^2.1.1",
@@ -21,7 +22,6 @@
         "sweetalert2/laravel": "^0.1.0"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.23",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.18",
         "laravel/sail": "^1.47",
@@ -48,6 +48,9 @@
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "post-install-cmd": [
+            "@php artisan storage:link || true"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""

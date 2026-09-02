@@ -210,7 +210,7 @@
                             id="dropdownNavbarLink"
                             data-dropdown-toggle="games"
                             class="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group
-                                   @if(request()->routeIs('quiz') || request()->routeIs('scramble'))
+                                   @if(request()->routeIs('quiz'))
                                        text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20
                                    @else
                                        text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-600 dark:hover:text-primary-400
@@ -241,20 +241,6 @@
                                             <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm9.008-3.018a1.502 1.502 0 0 1 2.522 1.159v.024a1.44 1.44 0 0 1-1.493 1.418 1 1 0 0 0-1.037.999V14a1 1 0 1 0 2 0v-.539a3.44 3.44 0 0 0 2.529-3.256 3.502 3.502 0 0 0-7-.255 1 1 0 0 0 2 .076c.014-.398.187-.774.48-1.044Zm.982 7.026a1 1 0 1 0 0 2H12a1 1 0 1 0 0-2h-.01Z" clip-rule="evenodd" />
                                         </svg>
                                         <span class="font-medium">Quizzes</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{route('scramble')}}"
-                                        class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group
-                                              @if(request()->routeIs('scramble'))
-                                                  bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400
-                                              @else
-                                                  text-gray-700 dark:text-gray-300
-                                              @endif">
-                                        <svg class="w-4 h-4 text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                                        </svg>
-                                        <span class="font-medium">Scramble Word</span>
                                     </a>
                                 </li>
                             </ul>
@@ -456,16 +442,13 @@
                         </svg>
                         <span class="font-medium">Games & Quizzes</span>
                     </span>
-                    <svg id="mobile-dd-games-arrow" class="w-4 h-4 text-gray-500 dark:text-gray-400 transform transition-transform duration-200 {{ (request()->routeIs('quiz') || request()->routeIs('scramble')) ? 'rotate-180' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg id="mobile-dd-games-arrow" class="w-4 h-4 text-gray-500 dark:text-gray-400 transform transition-transform duration-200 {{ request()->routeIs('quiz') ? 'rotate-180' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6" />
                     </svg>
                 </button>
-                <div id="mobile-dd-games" class="ml-9 space-y-1 {{ (request()->routeIs('quiz') || request()->routeIs('scramble')) ? '' : 'hidden' }}">
+                <div id="mobile-dd-games" class="ml-9 space-y-1 {{ request()->routeIs('quiz') ? '' : 'hidden' }}">
                     <a href="{{ route('quiz') }}" class="block p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors {{ request()->routeIs('quiz') ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300' : 'text-gray-600 dark:text-gray-400' }}">
                         Quizzes
-                    </a>
-                    <a href="{{ route('scramble') }}" class="block p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors {{ request()->routeIs('scramble') ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300' : 'text-gray-600 dark:text-gray-400' }}">
-                        Scramble Word
                     </a>
                 </div>
             </div>
