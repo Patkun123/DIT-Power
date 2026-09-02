@@ -4,15 +4,17 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>@yield('title', 'Admin') | {{ config('app.name') }}</title>
+        <title>{{ $title ?? config('app.name') }} Personalized Online Wellness Resource HUB</title>
 
-        <link rel="icon" href="/dtilogo-icon.ico" sizes="any">
+        <link rel="icon" href="/favicon.ico" sizes="any">
+        <link rel="dtilogo-icon" href="/dtilogo-icon.png">
 
         <script src="{{asset('include/flowbite.js')}}"></script>
         <script src="{{asset('include/apexcharts.js')}}"></script>
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @fluxAppearance
         @fluxScripts
         @livewireStyles()
         <script>
@@ -24,7 +26,7 @@
             }
         </script>
     </head>
-    <body class="admin-shell bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+    <Body class="min-h-screen bg-gray-100 dark:bg-gray-900">
         @include('components.loading-screen')
         @include('sweetalert2::index')
         @yield('content')
@@ -33,6 +35,6 @@
         @livewire('admin.adduser')
         @livewireScripts()
         <script src="{{asset('include/pie.js')}}"></script>
-    </body>
+    </Body>
 
 </html>

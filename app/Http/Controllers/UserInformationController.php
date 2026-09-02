@@ -31,13 +31,11 @@ class UserInformationController extends Controller
     {
         $validated = $request->validate([
             'search' => 'nullable|string|max:100',
-            'sort' => 'nullable|in:created_at,updated_at',
-            'direction' => 'nullable|in:asc,desc',
+            'sort' => 'nullable|in:created_desc,updated_desc,name_asc,name_desc',
         ]);
 
         $search = trim($validated['search'] ?? '');
-        $sort = $validated['sort'] ?? 'created_at';
-        $direction = $validated['direction'] ?? 'desc';
+        $sort = $validated['sort'] ?? 'updated_desc';
 
         $users = User::withCount('journals')
             ->with(['staff', 'information'])
@@ -48,14 +46,20 @@ class UserInformationController extends Controller
                         ->orWhere('lastname', 'like', "%{$search}%")
                         ->orWhere('email', 'like', "%{$search}%")
                         ->orWhereHas('staff', function ($query) use ($search) {
-                            $query->where('office', 'like', "%{$search}%");
+                            $query->where('staff_id', 'like', "%{$search}%")
+                                ->orWhere('office', 'like', "%{$search}%")
+                                ->orWhere('department', 'like', "%{$search}%")
+                                ->orWhere('position', 'like', "%{$search}%");
                         });
                 });
             })
-            ->orderBy($sort, $direction)
+            ->when($sort === 'created_desc', fn ($query) => $query->orderByDesc('created_at'))
+            ->when($sort === 'updated_desc', fn ($query) => $query->orderByDesc('updated_at'))
+            ->when($sort === 'name_asc', fn ($query) => $query->orderBy('firstname')->orderBy('lastname'))
+            ->when($sort === 'name_desc', fn ($query) => $query->orderByDesc('firstname')->orderByDesc('lastname'))
             ->get();
 
-        return view('auth.admin.view.user-tracking', compact('users', 'search', 'sort', 'direction'));
+        return view('auth.admin.view.user-tracking', compact('users', 'search', 'sort'));
     }
 
     /**

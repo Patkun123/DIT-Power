@@ -14,9 +14,10 @@ class Leaderboards extends Component
     public $set1Leaderboard = [];
     public $set2Leaderboard = [];
     public $set3Leaderboard = [];
+    public $setLeaderboards = [];
     public $today = '';
     public $isLoading = false;
-    
+
     // Previous winners data
     public $previousWinners = [];
     public $allTimeChampions = [];
@@ -34,13 +35,22 @@ class Leaderboards extends Component
         $this->isLoading = true;
 
         try {
-            // Overall leaderboard (current active quiz only) - exclude null sets (mini games)
+            // Overall leaderboard (today only) - exclude null sets (mini games)
             $this->overallLeaderboard = $this->getCurrentQuizOverallLeaderboard();
 
-            // Daily leaderboards for each set (excluding mini games)
-            $this->set1Leaderboard = $this->getDailyLeaderboard('1');
-            $this->set2Leaderboard = $this->getDailyLeaderboard('2');
-            $this->set3Leaderboard = $this->getDailyLeaderboard('3');
+            // Build daily leaderboards from whichever numbered sets have attempts today.
+            $setNumbers = QuizAttempt::whereNotNull('set')
+                ->whereDate('created_at', $this->today)
+                ->distinct()
+                ->pluck('set')
+                ->map(fn ($set) => (int) $set)
+                ->filter(fn ($set) => $set > 0)
+                ->sort()
+                ->values();
+
+            $this->setLeaderboards = $setNumbers
+                ->mapWithKeys(fn ($set) => [$set => $this->getDailyLeaderboard($set)])
+                ->all();
 
         } catch (\Exception $e) {
             // Log error or handle gracefully
@@ -52,45 +62,33 @@ class Leaderboards extends Component
 
     private function getCurrentQuizOverallLeaderboard()
     {
-        // Get the current active quiz
-        $activeQuiz = \App\Models\Quiz::where('status', 'active')
-            ->where('start_date', '<=', Carbon::now())
-            ->where('end_date', '>=', Carbon::now())
-            ->first();
-
-        if (!$activeQuiz) {
-            // If no active quiz, return empty collection
-            return collect();
-        }
-
-        // Get overall leaderboard for the current active quiz only
-        return QuizAttempt::select('user_id', 'score', 'correct', 'set')
-            ->with('user:id,firstname,lastname,profileimage')
-            ->where('quiz_id', $activeQuiz->id)
+        // Today's overall leaderboard - aggregate all attempts from today
+        return QuizAttempt::select('user_id')
+            ->selectRaw('SUM(score) as total_score')
+            ->selectRaw('SUM(correct) as total_correct')
+            ->selectRaw('COUNT(*) as attempts_count')
             ->whereNotNull('set')
-            ->whereIn('set', ['1', '2', '3'])
-            ->orderBy('score', 'desc')
-            ->orderBy('correct', 'desc')
-            ->limit(10)
-            ->get()
+            ->whereNotNull('set')
+            ->whereDate('created_at', $this->today)
             ->groupBy('user_id')
-            ->map(function ($attempts) {
-                $user = $attempts->first()->user;
-                $totalScore = $attempts->sum('score');
-                $totalCorrect = $attempts->sum('correct');
-                $attemptsCount = $attempts->count();
-                
+            ->orderByDesc('total_score')
+            ->orderByDesc('total_correct')
+            ->limit(5)
+            ->with('user:id,firstname,lastname,profileimage')
+            ->get()
+            ->map(function ($entry) {
+                $entry->average_score = $entry->attempts_count > 0
+                    ? round($entry->total_score / $entry->attempts_count, 2)
+                    : 0;
+
                 return [
-                    'user' => $user,
-                    'total_score' => $totalScore,
-                    'total_correct' => $totalCorrect,
-                    'attempts_count' => $attemptsCount,
-                    'average_score' => $attemptsCount > 0 ? round($totalScore / $attemptsCount, 2) : 0
+                    'user' => $entry->user,
+                    'total_score' => $entry->total_score,
+                    'total_correct' => $entry->total_correct,
+                    'attempts_count' => $entry->attempts_count,
+                    'average_score' => $entry->average_score,
                 ];
-            })
-            ->sortByDesc('total_score')
-            ->take(5)
-            ->values();
+            });
     }
 
     private function getDailyLeaderboard($set)
@@ -109,7 +107,7 @@ class Leaderboards extends Component
                 $bestScore = $attempts->max('score');
                 $bestCorrect = $attempts->max('correct');
                 $attemptsCount = $attempts->count();
-                
+
                 return [
                     'user' => $user,
                     'best_score' => $bestScore,
@@ -126,16 +124,16 @@ class Leaderboards extends Component
     {
         try {
             $dailyWinnerService = app(DailyWinnerService::class);
-            
+
             // Load recent winners (last 7 days)
             $this->previousWinners = $dailyWinnerService->getRecentWinners(7);
-            
+
             // Load all-time champions
             $this->allTimeChampions = $dailyWinnerService->getAllTimeChampions();
-            
+
             // Load winner statistics
             $this->winnerStats = $dailyWinnerService->getWinnerStats();
-            
+
         } catch (\Exception $e) {
             // Handle error gracefully
             $this->previousWinners = [];

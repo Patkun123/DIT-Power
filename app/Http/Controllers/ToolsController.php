@@ -66,4 +66,10 @@ class ToolsController extends Controller
 
         return back();
     }
+
+    // Social Well-being Tools
+    public function socialWellbeing()
+    {
+        return view('auth.users.view.socialwellbeing');
+    }
 }

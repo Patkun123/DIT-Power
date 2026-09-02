@@ -390,7 +390,8 @@ $selectAnswer = function (int $id, string $letter, int $seconds) {
                 }
             }, 1000)
         })"
-        class="select-none bg-white dark:bg-gray-800 rounded-2xl shadow p-8 max-w-4xl w-full text-center">
+        class="select-none bg-white dark:bg-gray-800 rounded-2xl shadow p-8 max-w-4xl w-full text-center"
+        tabindex="0">
 
             <!-- Timer -->
             <div class="flex justify-end mb-4">
@@ -401,9 +402,17 @@ $selectAnswer = function (int $id, string $letter, int $seconds) {
 
             @foreach ($questions as $question)
                 @if($loop->index == $this->index)
+                    @php
+                        $choices = $question->choices()->inRandomOrder()->get();
+                        $choiceMap = [];
+                        foreach($choices as $choice) {
+                            $choiceMap[strtolower($choice->letter)] = $choice->id;
+                        }
+                    @endphp
                     <div
                         x-data="{
                             selected: null,
+                            choiceMap: @js($choiceMap),
                             selectChoice(choiceId) {
                                 if (this.selected) return; // prevent multiple clicks
                                 this.selected = choiceId;
@@ -413,8 +422,18 @@ $selectAnswer = function (int $id, string $letter, int $seconds) {
 
                                 // auto move after 1s
                                 setTimeout(() => { seconds = 20; }, 1000);
+                            },
+                            handleKeyPress(event) {
+                                if (this.selected) return; // prevent if already answered
+
+                                const key = event.key.toLowerCase();
+                                if (['a', 'b', 'c', 'd'].includes(key) && this.choiceMap[key]) {
+                                    event.preventDefault();
+                                    this.selectChoice(this.choiceMap[key]);
+                                }
                             }
                         }"
+                        @keydown.window="handleKeyPress($event)"
                         class="space-y-8"
                     >
                         <!-- Question -->
@@ -424,7 +443,7 @@ $selectAnswer = function (int $id, string $letter, int $seconds) {
 
                         <!-- Choices -->
                         <div class="grid grid-cols-2 gap-4">
-                            @foreach($question->choices()->inRandomOrder()->get() as $choice)
+                            @foreach($choices as $choice)
                                 <button
                                     x-on:click="selectChoice({{ $choice->id }})"
                                     :class="{
@@ -432,9 +451,12 @@ $selectAnswer = function (int $id, string $letter, int $seconds) {
                                         'bg-red-500 text-white border-red-600': selected === {{ $choice->id }} && {{ $choice->id }} !== {{ $question->correctAnswer()->id }},
                                         'bg-white dark:bg-gray-700 hover:border-primary-500': selected !== {{ $choice->id }},
                                     }"
-                                    class="w-full shadow rounded-xl p-4 border-2 transition font-semibold text-lg cursor-pointer text-gray-800 dark:text-white"
+                                    class="w-full shadow rounded-xl p-4 border-2 transition font-semibold text-lg cursor-pointer text-gray-800 dark:text-white relative"
                                 >
-                                    {{ $choice->content }}
+                                    <span class="absolute top-2 left-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
+                                        {{ strtoupper($choice->letter) }}
+                                    </span>
+                                    <span class="ml-4">{{ $choice->content }}</span>
                                 </button>
                             @endforeach
                         </div>

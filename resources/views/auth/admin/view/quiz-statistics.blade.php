@@ -182,8 +182,22 @@
         <!-- Recent Attempts -->
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700">
             <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Recent Attempts</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Latest quiz attempts by users</p>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Recent Attempts</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Latest quiz attempts by users</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <label for="sort-select" class="text-sm font-medium text-gray-700 dark:text-gray-300">Sort by:</label>
+                        <select id="sort-select"
+                                onchange="window.location.href='{{ route('admin.quizzes.statistics', $quiz) }}?sort=' + this.value"
+                                class="block px-3 py-2 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                            <option value="latest" {{ ($sortBy ?? 'latest') === 'latest' ? 'selected' : '' }}>Latest First</option>
+                            <option value="highest" {{ ($sortBy ?? 'latest') === 'highest' ? 'selected' : '' }}>Highest to Lowest</option>
+                            <option value="overall_highest" {{ ($sortBy ?? 'latest') === 'overall_highest' ? 'selected' : '' }}>Overall Highest to Lowest</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
             <div class="overflow-x-auto">
@@ -235,7 +249,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm text-gray-900 dark:text-white">
-                                    {{ $attempt->correct_answers ?? 0 }}/{{ $stats['total_questions'] }}
+                                    {{ $attempt->correct ?? 0 }}/{{ $stats['total_questions'] }}
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
@@ -270,14 +284,14 @@
 
         <!-- Action Buttons -->
         <div class="mt-6 flex items-center justify-end space-x-4">
-            <a href="{{ route('admin.quizzes.show', $quiz) }}" 
+            <a href="{{ route('admin.quizzes.show', $quiz) }}"
                class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">
                 <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path>
                 </svg>
                 Back to Quiz
             </a>
-            <a href="{{ route('admin.quizzes.questions', $quiz) }}" 
+            <a href="{{ route('admin.quizzes.questions', $quiz) }}"
                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-800">
                 <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path>

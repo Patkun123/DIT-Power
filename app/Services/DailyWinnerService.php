@@ -17,71 +17,66 @@ class DailyWinnerService
     {
         $date = $date ? Carbon::parse($date) : Carbon::yesterday();
         $dateString = $date->format('Y-m-d');
-        
+
         $winners = [];
-        
+
         try {
             DB::beginTransaction();
-            
-            // Calculate overall winner (all-time cumulative)
+
+            // Calculate overall winner (that day's cumulative scores only)
             $overallWinner = $this->calculateOverallWinner($dateString);
             if ($overallWinner) {
                 $winners['overall'] = $overallWinner;
             }
-            
-            // Calculate set-specific winners for the day
-            for ($set = 1; $set <= 3; $set++) {
+
+            // Calculate winners for every numbered set attempted on that day.
+            $setNumbers = QuizAttempt::whereNotNull('set')
+                ->whereDate('created_at', $dateString)
+                ->distinct()
+                ->pluck('set')
+                ->map(fn ($set) => (int) $set)
+                ->filter(fn ($set) => $set > 0);
+
+            foreach ($setNumbers as $set) {
                 $setWinner = $this->calculateSetWinner($set, $dateString);
                 if ($setWinner) {
                     $winners["set_{$set}"] = $setWinner;
                 }
             }
-            
+
             DB::commit();
-            
+
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
         }
-        
+
         return $winners;
     }
-    
+
     /**
-     * Calculate overall winner (for the current active quiz only)
+     * Calculate overall winner (based on that day's cumulative scores only)
      */
     private function calculateOverallWinner($date): ?DailyWinner
     {
-        // Get the active quiz for this date
-        $activeQuiz = \App\Models\Quiz::where('status', 'active')
-            ->where('start_date', '<=', $date)
-            ->where('end_date', '>=', $date)
-            ->first();
-
-        if (!$activeQuiz) {
-            // If no active quiz, return null
-            return null;
-        }
-
-        // Get the user with highest cumulative score for the current active quiz
+        // Get the user with highest cumulative score for that specific day
         $topUser = QuizAttempt::select('user_id')
             ->selectRaw('SUM(score) as total_score')
             ->selectRaw('SUM(correct) as total_correct')
             ->selectRaw('COUNT(*) as attempts_count')
             ->with('user:id,firstname,lastname')
-            ->where('quiz_id', $activeQuiz->id)
             ->whereNotNull('set')
-            ->whereIn('set', ['1', '2', '3'])
-            ->whereDate('created_at', '<=', $date)
+            ->whereNotNull('set')
+            ->whereDate('created_at', $date)
             ->groupBy('user_id')
             ->orderByDesc('total_score')
             ->orderByDesc('total_correct')
             ->first();
-            
+
         if (!$topUser) {
             return null;
         }
-        
+
         // Store or update the overall winner
         return DailyWinner::updateOrCreate(
             [
@@ -97,7 +92,7 @@ class DailyWinnerService
             ]
         );
     }
-    
+
     /**
      * Calculate winner for a specific set on a specific date
      */
@@ -115,11 +110,11 @@ class DailyWinnerService
             ->orderByDesc('best_score')
             ->orderByDesc('best_correct')
             ->first();
-            
+
         if (!$topUser) {
             return null;
         }
-        
+
         // Store or update the set winner
         return DailyWinner::updateOrCreate(
             [
@@ -135,7 +130,7 @@ class DailyWinnerService
             ]
         );
     }
-    
+
     /**
      * Get recent winners for display
      */
@@ -147,15 +142,23 @@ class DailyWinnerService
             ->orderBy('winner_type')
             ->get()
             ->groupBy('winner_type');
-            
-        return [
+
+        $result = [
             'overall' => $winners->get('overall', collect()),
             'set_1' => $winners->get('set_1', collect()),
             'set_2' => $winners->get('set_2', collect()),
             'set_3' => $winners->get('set_3', collect()),
         ];
+
+        foreach ($winners as $winnerType => $entries) {
+            if (str_starts_with($winnerType, 'set_') && !array_key_exists($winnerType, $result)) {
+                $result[$winnerType] = $entries;
+            }
+        }
+
+        return $result;
     }
-    
+
     /**
      * Get winners for a specific date
      */
@@ -165,15 +168,10 @@ class DailyWinnerService
             ->forDate($date)
             ->get()
             ->keyBy('winner_type');
-            
-        return [
-            'overall' => $winners->get('overall'),
-            'set_1' => $winners->get('set_1'),
-            'set_2' => $winners->get('set_2'),
-            'set_3' => $winners->get('set_3'),
-        ];
+
+        return $winners->all();
     }
-    
+
     /**
      * Get all-time champions (users who won most frequently)
      */
@@ -188,10 +186,10 @@ class DailyWinnerService
             ->orderByDesc('total_score')
             ->limit(10)
             ->get();
-            
+
         return $champions;
     }
-    
+
     /**
      * Get winner statistics
      */
@@ -200,14 +198,14 @@ class DailyWinnerService
         $totalWinners = DailyWinner::count();
         $uniqueWinners = DailyWinner::distinct('user_id')->count();
         $totalDays = DailyWinner::distinct('winner_date')->count();
-        
+
         $mostWins = DailyWinner::select('user_id')
             ->selectRaw('COUNT(*) as win_count')
             ->with('user:id,firstname,lastname')
             ->groupBy('user_id')
             ->orderByDesc('win_count')
             ->first();
-            
+
         return [
             'total_winners' => $totalWinners,
             'unique_winners' => $uniqueWinners,

@@ -275,7 +275,7 @@ class AdminQuizController extends Controller
     /**
      * Get quiz statistics
      */
-    public function statistics(Quiz $quiz)
+    public function statistics(Quiz $quiz, Request $request)
     {
         $stats = [
             'total_attempts' => $quiz->attempts()->count(),
@@ -284,13 +284,57 @@ class AdminQuizController extends Controller
             'total_questions' => $quiz->questions()->count(),
         ];
 
-        $recentAttempts = $quiz->attempts()
-            ->with('user')
-            ->latest()
-            ->limit(10)
-            ->get();
+        $sortBy = $request->get('sort', 'latest');
 
-        return view('auth.admin.view.quiz-statistics', compact('quiz', 'stats', 'recentAttempts'));
+        $recentAttemptsQuery = $quiz->attempts()->with('user');
+
+        switch ($sortBy) {
+            case 'highest':
+                $recentAttempts = $recentAttemptsQuery
+                    ->orderBy('score', 'desc')
+                    ->orderBy('created_at', 'desc')
+                    ->limit(10)
+                    ->get();
+                break;
+            case 'overall_highest':
+                // Get the best attempt per user for this quiz, sorted by best score
+                $bestAttemptsPerUser = $quiz->attempts()
+                    ->selectRaw('user_id, MAX(score) as best_score')
+                    ->groupBy('user_id')
+                    ->orderBy('best_score', 'desc')
+                    ->limit(10)
+                    ->get();
+
+                // Get the actual attempt records for these users with their best scores
+                $userIds = $bestAttemptsPerUser->pluck('user_id');
+                $bestScores = $bestAttemptsPerUser->pluck('best_score', 'user_id');
+
+                $recentAttempts = $quiz->attempts()
+                    ->with('user')
+                    ->whereIn('user_id', $userIds)
+                    ->get()
+                    ->groupBy('user_id')
+                    ->map(function ($attempts) use ($bestScores) {
+                        // Get the attempt with the best score for this user
+                        $bestScore = $bestScores[$attempts->first()->user_id];
+                        return $attempts->where('score', $bestScore)->sortByDesc('created_at')->first();
+                    })
+                    ->sortByDesc(function ($attempt) use ($bestScores) {
+                        return $bestScores[$attempt->user_id];
+                    })
+                    ->take(10)
+                    ->values();
+                break;
+            case 'latest':
+            default:
+                $recentAttempts = $recentAttemptsQuery
+                    ->latest()
+                    ->limit(10)
+                    ->get();
+                break;
+        }
+
+        return view('auth.admin.view.quiz-statistics', compact('quiz', 'stats', 'recentAttempts', 'sortBy'));
     }
 
     /**

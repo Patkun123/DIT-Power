@@ -75,9 +75,14 @@ use function Livewire\Volt\{state};
 
     <!-- Overall Leaderboard -->
     <div class="bg-white 2xl:h-110 dark:bg-gray-800 p-6 rounded-xl shadow-md dark:shadow-gray-950 shadow-gray-400">
-        <h2 class="2xl:text-xl text-md font-semibold text-gray-800 dark:text-white mb-6">
-            Current Quiz Overall Leaderboard
-        </h2>
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h2 class="2xl:text-xl text-md font-semibold text-gray-800 dark:text-white">
+                    Today's Overall Leaderboard
+                </h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ $today }}</p>
+            </div>
+        </div>
 
         <div class="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory px-4 py-6
                     lg:grid lg:grid-cols-5 lg:gap-3 lg:justify-items-center lg:overflow-visible">
@@ -95,7 +100,7 @@ use function Livewire\Volt\{state};
                         @if(($entry['user']->profileimage ?? null))
                             <img src="{{ asset('storage/' . $entry['user']->profileimage) }}" alt="{{ $entry['user']->firstname }} {{ $entry['user']->lastname }}" class="w-full h-full object-cover">
                         @else
-                            <img src="{{ asset('images/default.png') }}" alt="Default Profile" class="w-full h-full object-cover">
+                            <img src="{{ asset('Images/default.png') }}" alt="Default Profile" class="w-full h-full object-cover">
                         @endif
                     </div>
                     <div class="font-semibold 2xl:text-md text-sm text-white">
@@ -119,7 +124,7 @@ use function Livewire\Volt\{state};
                             Loading...
                         </div>
                     @else
-                        No active quiz or no attempts yet. Be the first to take a quiz!
+                        No quiz attempts today yet. Be the first to take a quiz and appear on the leaderboard!
                     @endif
                 </div>
             @endforelse
@@ -127,173 +132,54 @@ use function Livewire\Volt\{state};
     </div>
 
     <!-- Daily Set Leaderboards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Set 1 Leaderboard -->
-        <div class="bg-white 2xl:h-110 dark:bg-gray-800 p-6 rounded-xl shadow-md dark:shadow-gray-950 shadow-gray-400">
-            <h2 class="2xl:text-xl text-md font-semibold text-gray-800 dark:text-white mb-4">
-                1st Set - Daily Leaderboard
-            </h2>
-            <div class="space-y-3">
-                @forelse($set1Leaderboard as $index => $entry)
-                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 rounded-full overflow-hidden border-2
-                                        @if($index === 0) border-yellow-300
-                                        @elseif($index === 1) border-gray-300
-                                        @elseif($index === 2) border-amber-600
-                                        @else border-white/30
-                                        @endif">
-                                @if(($entry['user']->profileimage ?? null))
-                                    <img src="{{ asset('storage/' . $entry['user']->profileimage) }}" alt="{{ $entry['user']->firstname }} {{ $entry['user']->lastname }}" class="w-full h-full object-cover">
-                                @else
-                                    <img src="{{ asset('images/default.png') }}" alt="Default Profile" class="w-full h-full object-cover">
-                                @endif
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        @forelse($setLeaderboards as $setNumber => $leaderboard)
+            <div class="bg-white 2xl:min-h-110 dark:bg-gray-800 p-6 rounded-xl shadow-md dark:shadow-gray-950 shadow-gray-400">
+                <h2 class="2xl:text-xl text-md font-semibold text-gray-800 dark:text-white mb-4">
+                    Set {{ $setNumber }} - Daily Leaderboard
+                </h2>
+                <div class="space-y-3">
+                    @forelse($leaderboard as $index => $entry)
+                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div class="flex items-center space-x-3 min-w-0">
+                                <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold
+                                            @if($index === 0) bg-yellow-400 text-yellow-900
+                                            @elseif($index === 1) bg-gray-300 text-gray-700
+                                            @elseif($index === 2) bg-amber-600 text-amber-900
+                                            @else bg-gray-200 text-gray-700
+                                            @endif">
+                                    {{ $index + 1 }}
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="font-medium text-gray-800 dark:text-white truncate">
+                                        {{ $entry['user']->firstname ?? 'Unknown' }} {{ $entry['user']->lastname ?? '' }}
+                                    </div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                                        {{ $entry['attempts_count'] }} attempt(s)
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <div class="font-medium text-gray-800 dark:text-white">
-                                    {{ $entry['user']->firstname ?? 'Unknown' }} {{ $entry['user']->lastname ?? '' }}
+                            <div class="text-right flex-shrink-0 ml-3">
+                                <div class="font-bold text-lg text-gray-800 dark:text-white">
+                                    {{ $entry['best_score'] }}
                                 </div>
                                 <div class="text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $entry['attempts_count'] }} attempt(s)
+                                    {{ $entry['best_correct'] }} correct
                                 </div>
                             </div>
                         </div>
-                        <div class="text-right">
-                            <div class="font-bold text-lg text-gray-800 dark:text-white">
-                                {{ $entry['best_score'] }}
-                            </div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400">
-                                {{ $entry['best_correct'] }} correct
-                            </div>
+                    @empty
+                        <div class="text-center text-gray-500 dark:text-gray-400 py-8">
+                            No attempts today for Set {{ $setNumber }}
                         </div>
-                    </div>
-                @empty
-                    <div class="text-center text-gray-500 dark:text-gray-400 py-8">
-                        @if($isLoading)
-                            <div class="flex items-center justify-center">
-                                <svg class="w-4 h-4 animate-spin text-blue-500 mr-2" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Loading...
-                            </div>
-                        @else
-                            No attempts today for Set 1
-                        @endif
-                    </div>
-                @endforelse
+                    @endforelse
+                </div>
             </div>
-        </div>
-
-        <!-- Set 2 Leaderboard -->
-        <div class="bg-white 2xl:h-110 dark:bg-gray-800 p-6 rounded-xl shadow-md dark:shadow-gray-950 shadow-gray-400">
-            <h2 class="2xl:text-xl text-md font-semibold text-gray-800 dark:text-white mb-4">
-                2nd Set - Daily Leaderboard
-            </h2>
-            <div class="space-y-3">
-                @forelse($set2Leaderboard as $index => $entry)
-                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 rounded-full overflow-hidden border-2
-                                        @if($index === 0) border-yellow-300
-                                        @elseif($index === 1) border-gray-300
-                                        @elseif($index === 2) border-amber-600
-                                        @else border-white/30
-                                        @endif">
-                                @if(($entry['user']->profileimage ?? null))
-                                    <img src="{{ asset('storage/' . $entry['user']->profileimage) }}" alt="{{ $entry['user']->firstname }} {{ $entry['user']->lastname }}" class="w-full h-full object-cover">
-                                @else
-                                    <img src="{{ asset('images/default.png') }}" alt="Default Profile" class="w-full h-full object-cover">
-                                @endif
-                            </div>
-                            <div>
-                                <div class="font-medium text-gray-800 dark:text-white">
-                                    {{ $entry['user']->firstname ?? 'Unknown' }} {{ $entry['user']->lastname ?? '' }}
-                                </div>
-                                <div class="text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $entry['attempts_count'] }} attempt(s)
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div class="font-bold text-lg text-gray-800 dark:text-white">
-                                {{ $entry['best_score'] }}
-                            </div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400">
-                                {{ $entry['best_correct'] }} correct
-                            </div>
-                        </div>
-                    </div>
-                @empty
-                    <div class="text-center text-gray-500 dark:text-gray-400 py-8">
-                        @if($isLoading)
-                            <div class="flex items-center justify-center">
-                                <svg class="w-4 h-4 animate-spin text-blue-500 mr-2" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Loading...
-                            </div>
-                        @else
-                            No attempts today for Set 2
-                        @endif
-                    </div>
-                @endforelse
+        @empty
+            <div class="md:col-span-2 xl:col-span-3 text-center text-gray-500 dark:text-gray-400 py-8">
+                No quiz sets have attempts today yet.
             </div>
-        </div>
-
-        <!-- Set 3 Leaderboard -->
-        <div class="bg-white 2xl:h-110 dark:bg-gray-800 p-6 rounded-xl shadow-md dark:shadow-gray-950 shadow-gray-400">
-            <h2 class="2xl:text-xl text-md font-semibold text-gray-800 dark:text-white mb-4">
-                3rd Set - Daily Leaderboard
-            </h2>
-            <div class="space-y-3">
-                @forelse($set3Leaderboard as $index => $entry)
-                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold
-                                        @if($index === 0) bg-yellow-400 text-yellow-900
-                                        @elseif($index === 1) bg-gray-300 text-gray-700
-                                        @elseif($index === 2) bg-amber-600 text-amber-900
-                                        @else bg-gray-200 text-gray-700
-                                        @endif">
-                                {{ $index + 1 }}
-                            </div>
-                            <div>
-                                <div class="font-medium text-gray-800 dark:text-white">
-                                    {{ $entry['user']->firstname ?? 'Unknown' }} {{ $entry['user']->lastname ?? '' }}
-                                </div>
-                                <div class="text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $entry['attempts_count'] }} attempt(s)
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div class="font-bold text-lg text-gray-800 dark:text-white">
-                                {{ $entry['best_score'] }}
-                            </div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400">
-                                {{ $entry['best_correct'] }} correct
-                            </div>
-                        </div>
-                    </div>
-                @empty
-                    <div class="text-center text-gray-500 dark:text-gray-400 py-8">
-                        @if($isLoading)
-                            <div class="flex items-center justify-center">
-                                <svg class="w-4 h-4 animate-spin text-blue-500 mr-2" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Loading...
-                            </div>
-                        @else
-                            No attempts today for Set 3
-                        @endif
-                    </div>
-                @endforelse
-            </div>
-        </div>
+        @endforelse
     </div>
 
     <!-- Previous Winners Section -->
@@ -343,6 +229,29 @@ use function Livewire\Volt\{state};
                 Previous Winners
             </h2>
 
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                @foreach(collect($previousWinners)->filter(fn ($entries, $winnerType) => str_starts_with($winnerType, 'set_') && $entries->isNotEmpty()) as $winnerType => $entries)
+                    <div class="space-y-3">
+                        <h3 class="font-semibold text-gray-700 dark:text-gray-300 text-sm uppercase tracking-wide">
+                            Set {{ \Illuminate\Support\Str::after($winnerType, 'set_') }} Winners
+                        </h3>
+                        @forelse($entries->take(5) as $winner)
+                            <div class="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-3">
+                                <div class="font-medium text-gray-800 dark:text-white text-sm">
+                                    {{ $winner->user->firstname ?? 'Unknown' }} {{ $winner->user->lastname ?? '' }}
+                                </div>
+                                <div class="text-xs text-gray-600 dark:text-gray-400">
+                                    {{ $winner->formatted_date }} - {{ $winner->score }} pts
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center text-gray-500 dark:text-gray-400 py-4 text-sm">No winners yet</div>
+                        @endforelse
+                    </div>
+                @endforeach
+            </div>
+
+            @if(false)
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Overall Previous Winners -->
                 <div class="space-y-3">
@@ -440,10 +349,11 @@ use function Livewire\Volt\{state};
                     @endforelse
                 </div>
             </div>
+            @endif
         </div>
 
         <!-- Recent Winners -->
-        @if($previousWinners['overall']->isNotEmpty() || $previousWinners['set_1']->isNotEmpty() || $previousWinners['set_2']->isNotEmpty() || $previousWinners['set_3']->isNotEmpty())
+        @if(collect($previousWinners)->flatten(1)->isNotEmpty())
         <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md dark:shadow-gray-950 shadow-gray-400">
             <h2 class="2xl:text-xl text-md font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
                 <svg class="w-6 h-6 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -533,7 +443,7 @@ use function Livewire\Volt\{state};
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             <span class="text-blue-800 dark:text-blue-200">
-                <strong>Note:</strong> Mini games leaderboards are excluded from daily rankings as they are separate from the main quiz sets. Daily leaderboards reset every day at midnight and only show scores from quiz sets 1, 2, and 3.
+                <strong>Note:</strong> Today's overall leaderboard shows cumulative scores from all quiz attempts made today in sets 1, 2, and 3. Mini games are excluded from rankings to ensure fair competition. Leaderboards reset every day at midnight.
             </span>
         </div>
     </div>

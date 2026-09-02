@@ -145,6 +145,7 @@ Route::middleware(['auth','check_profile'])->group(function () {
     Route::view('Financial-tools','auth.users.view.financial')->name('financial.tools');
     Route::view('mental-tools','auth.users.view.mental')->name('mental.tools');
     Route::get('emotional-tools',[emotional::class, 'index'])->name('emotional.tools');
+    Route::get('social-wellbeing-tools',[ToolsController::class, 'socialWellbeing'])->name('social.wellbeing.tools');
 
     // Social Tools Routes
     Route::get('social',[SocialController::class, 'index'])->name('social.tools');
