@@ -73,7 +73,7 @@ class Leaderboards extends Component
             ->groupBy('user_id')
             ->orderByDesc('total_score')
             ->orderByDesc('total_correct')
-            ->limit(5)
+            ->limit(10)
             ->with('user:id,firstname,lastname,profileimage')
             ->get()
             ->map(function ($entry) {
@@ -99,7 +99,6 @@ class Leaderboards extends Component
             ->whereDate('created_at', $this->today)
             ->orderBy('score', 'desc')
             ->orderBy('correct', 'desc')
-            ->limit(5)
             ->get()
             ->groupBy('user_id')
             ->map(function ($attempts) {
@@ -116,7 +115,7 @@ class Leaderboards extends Component
                 ];
             })
             ->sortByDesc('best_score')
-            ->take(5)
+            ->take(10)
             ->values();
     }
 
