@@ -77,17 +77,16 @@ use function Livewire\Volt\{state};
             </div>
         </div>
 
-        <div class="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory px-4 py-6
-                    lg:grid lg:grid-cols-5 lg:gap-3 lg:justify-items-center lg:overflow-visible">
+        <div class="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory px-4 py-6">
 
             @forelse($overallLeaderboard as $index => $entry)
                 <div class="shrink-0 snap-center text-center
-                            @if($index === 0) bg-gradient-to-b from-yellow-400 via-yellow-600 to-yellow-500 shadow-2xl shadow-yellow-500
-                            @elseif($index === 1) bg-gradient-to-b from-gray-300 via-gray-500 to-gray-400 shadow-2xl shadow-gray-500
-                            @elseif($index === 2) bg-gradient-to-b from-amber-600 via-amber-800 to-amber-700 shadow-2xl shadow-amber-500
-                            @else bg-gradient-to-b from-silver-500 via-silver-700 to-silver-500 shadow-2xl shadow-silver-500
-                            @endif
-                            h-50 w-50 lg:w-35 2xl:h-70 2xl:w-45 rounded-2xl flex flex-col items-center justify-center">
+                    @if($index === 0) bg-gradient-to-b from-yellow-400 via-yellow-600 to-yellow-500 shadow-2xl shadow-yellow-500
+                    @elseif($index === 1) bg-gradient-to-b from-gray-300 via-gray-500 to-gray-400 shadow-2xl shadow-gray-500
+                    @elseif($index === 2) bg-gradient-to-b from-amber-600 via-amber-800 to-amber-700 shadow-2xl shadow-amber-500
+                    @else bg-gradient-to-b from-blue-500 via-blue-700 to-blue-600 shadow-2xl shadow-blue-500
+                    @endif
+                    h-50 w-50 lg:w-35 2xl:h-70 2xl:w-45 rounded-2xl flex flex-col items-center justify-center">
 
                     <div class="bg-gray-200 w-12 h-12 2xl:w-16 2xl:h-16 rounded-full mb-2 overflow-hidden border-2 border-white/60">
                         @if(($entry['user']->profileimage ?? null))
@@ -107,7 +106,7 @@ use function Livewire\Volt\{state};
                     </div>
                 </div>
             @empty
-                <div class="col-span-5 text-center text-gray-500 dark:text-gray-400 py-8">
+                <div class="w-full text-center text-gray-500 dark:text-gray-400 py-8">
                     @if($isLoading)
                         <div class="flex items-center justify-center">
                             <svg class="w-6 h-6 animate-spin text-blue-500 mr-2" fill="none" viewBox="0 0 24 24">
