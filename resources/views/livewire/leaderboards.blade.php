@@ -85,13 +85,17 @@ use function Livewire\Volt\{state};
             [&::-webkit-scrollbar-thumb]:rounded-full
             hover:[&::-webkit-scrollbar-thumb]:bg-gray-500">
             @forelse($overallLeaderboard as $index => $entry)
-                <div class="shrink-0 snap-center text-center
-                    @if($index === 0) bg-gradient-to-b from-yellow-400 via-yellow-600 to-yellow-500 shadow-2xl shadow-yellow-500
-                    @elseif($index === 1) bg-gradient-to-b from-gray-300 via-gray-500 to-gray-400 shadow-2xl shadow-gray-500
-                    @elseif($index === 2) bg-gradient-to-b from-amber-600 via-amber-800 to-amber-700 shadow-2xl shadow-amber-500
-                    @else bg-gradient-to-b from-blue-500 via-blue-700 to-blue-600 shadow-2xl shadow-blue-500
-                    @endif
-                    h-50 w-50 lg:w-35 2xl:h-70 2xl:w-45 rounded-2xl flex flex-col items-center justify-center">
+                <div class="shrink-0 snap-center text-center relative
+                            @if($index === 0) bg-gradient-to-b from-yellow-400 via-yellow-600 to-yellow-500 shadow-2xl shadow-yellow-500
+                            @elseif($index === 1) bg-gradient-to-b from-gray-300 via-gray-500 to-gray-400 shadow-2xl shadow-gray-500
+                            @elseif($index === 2) bg-gradient-to-b from-amber-600 via-amber-800 to-amber-700 shadow-2xl shadow-amber-500
+                            @else bg-gradient-to-b from-blue-500 via-blue-700 to-blue-600 shadow-2xl shadow-blue-500
+                            @endif
+                            h-50 w-50 lg:w-35 2xl:h-70 2xl:w-45 rounded-2xl flex flex-col items-center justify-center">
+
+                    <div class="absolute top-2 left-2 w-7 h-7 2xl:w-8 2xl:h-8 rounded-full flex items-center justify-center text-xs 2xl:text-sm font-bold bg-white/90 text-gray-800 shadow-md">
+                        {{ $index + 1 }}
+                    </div>
 
                     <div class="bg-gray-200 w-12 h-12 2xl:w-16 2xl:h-16 rounded-full mb-2 overflow-hidden border-2 border-white/60">
                         @if(($entry['user']->profileimage ?? null))
