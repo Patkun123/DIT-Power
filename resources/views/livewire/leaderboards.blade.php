@@ -77,8 +77,13 @@ use function Livewire\Volt\{state};
             </div>
         </div>
 
-        <div class="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory px-4 py-6">
-
+        <div class="flex gap-4 overflow-x-auto snap-x snap-mandatory px-4 pt-6 pb-4
+            [&::-webkit-scrollbar]:h-2
+            [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-gray-700
+            [&::-webkit-scrollbar-track]:rounded-full
+            [&::-webkit-scrollbar-thumb]:bg-gray-400 dark:[&::-webkit-scrollbar-thumb]:bg-gray-500
+            [&::-webkit-scrollbar-thumb]:rounded-full
+            hover:[&::-webkit-scrollbar-thumb]:bg-gray-500">
             @forelse($overallLeaderboard as $index => $entry)
                 <div class="shrink-0 snap-center text-center
                     @if($index === 0) bg-gradient-to-b from-yellow-400 via-yellow-600 to-yellow-500 shadow-2xl shadow-yellow-500
