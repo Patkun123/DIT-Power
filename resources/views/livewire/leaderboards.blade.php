@@ -127,11 +127,11 @@ use function Livewire\Volt\{state};
     <!-- Daily Set Leaderboards -->
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         @forelse($setLeaderboards as $setNumber => $leaderboard)
-            <div class="bg-white 2xl:min-h-110 dark:bg-gray-800 p-6 rounded-xl shadow-md dark:shadow-gray-950 shadow-gray-400">
-                <h2 class="2xl:text-xl text-md font-semibold text-gray-800 dark:text-white mb-4">
+            <div class="bg-white 2xl:h-110 h-96 dark:bg-gray-800 p-6 rounded-xl shadow-md dark:shadow-gray-950 shadow-gray-400 flex flex-col">
+                <h2 class="2xl:text-xl text-md font-semibold text-gray-800 dark:text-white mb-4 flex-shrink-0">
                     Set {{ $setNumber }} - Daily Leaderboard
                 </h2>
-                <div class="space-y-3">
+                <div class="space-y-3 overflow-y-auto pr-1">
                     @forelse($leaderboard as $index => $entry)
                         <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                             <div class="flex items-center space-x-3 min-w-0">
